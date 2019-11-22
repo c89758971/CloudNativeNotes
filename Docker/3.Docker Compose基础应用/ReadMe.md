@@ -201,6 +201,7 @@ return 'Hello from Docker! I have been seen {} times.\n'.format(count)
 
 ![应用验证-2](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Docker/3.Docker%20Compose%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/compose-test-2.png)
 
+compose-test-1
 *Where to go next：*
 * 其他项目部署：
     
