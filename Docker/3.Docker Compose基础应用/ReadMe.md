@@ -124,6 +124,7 @@ redis_1  | 1:M 17 Aug 22:11:10.483 * Ready to accept connections
 ```
 2. 访问对应机器的5000端口进行测试：
 
+![应用验证-1](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Docker/3.Docker%20Compose%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/compose-test-1.png)
 
 
 3. 使用docker image ls命令，进行查看：
@@ -198,6 +199,7 @@ return 'Hello from Docker! I have been seen {} times.\n'.format(count)
 
 2. 刷新浏览器，效果如下所示：
 
+![应用验证-2](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Docker/3.Docker%20Compose%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/compose-test-2.png)
 
 *Where to go next：*
 * 其他项目部署：
