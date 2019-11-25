@@ -2,6 +2,7 @@
 
 **1.架构图：**
 
+![应用验证-2](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/1.Kubernetes%E5%9F%BA%E7%A1%80/Kubernetes-Components-1.png)
 
 * Master节点：（又称为控制平面：control plane）
     
