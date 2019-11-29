@@ -1,5 +1,5 @@
-
-####1.系统级别的pod资源清单
+![deployment拓扑-1](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/7.Pod%E6%8E%A7%E5%88%B6%E5%99%A8-Deployment/deployment.png)
+**1.系统级别的pod资源清单**
 系统默认的这四个pod，修改后不需要手动重载，k8s集群会自动热加载（数分钟内）
 ```bash
 cd /etc/kubernetes/manifests/
@@ -13,7 +13,7 @@ cd /etc/kubernetes/manifests/
 
 ```
 
-####2.分类
+**2.分类**
 ```text
 守护进程型：
     无状态应用：
@@ -28,7 +28,7 @@ cd /etc/kubernetes/manifests/
     Cronjob：定时任务
 ```
     
-####3.Deployment
+**3.Deployment**
 ```text
 用来管理ReplicaSet以及它的历史版本（支持回滚）,实现支持各种发布策略：滚动、蓝绿、金丝雀发布（金丝雀可以分特定流量到不同版本，但这个功能需要服务网格的支持）
    
@@ -42,15 +42,19 @@ ngx-new-cb79d555   2         2         2       2d22h   nginx        nginx       
 
 ```   
     
-####4.ReplicaSet
+**4.ReplicaSet**
 ```text
    在给定的任何时间，保证一个明确的pod运行数量
    管理底层Pod
    不应该人为介入进行调整、管理
 ```
 
-####5.Pod观察命令
+**5.Pod观察命令**
 ```bash
 #实时观察Pod：
 kubectl get pod -w
 ```
+
+**6.deployment-demo**
+
+https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/7.Pod%E6%8E%A7%E5%88%B6%E5%99%A8-Deployment/depolyment-nginx.yaml
