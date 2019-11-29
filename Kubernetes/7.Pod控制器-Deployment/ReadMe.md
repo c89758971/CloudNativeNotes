@@ -1,5 +1,6 @@
 ![deployment拓扑-1](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/7.Pod%E6%8E%A7%E5%88%B6%E5%99%A8-Deployment/deployment.png)
 **1.系统级别的pod资源清单**
+
 系统默认的这四个pod，修改后不需要手动重载，k8s集群会自动热加载（数分钟内）
 ```bash
 cd /etc/kubernetes/manifests/
