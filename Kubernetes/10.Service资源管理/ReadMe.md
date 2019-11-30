@@ -14,14 +14,18 @@ kubectl explain svc
 
 2) Service默认类型为ClusterIP，还有ExternalName,  NodePort和LoadBalancer，共四种类型
 
+![ClusterIP](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/10.Service%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/clusterIP.png)
 * ClusterIP：只能在集群内部被访问
-
+    
+![NodePort](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/10.Service%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/nodePort.png)
 * NodePort：可以被集群外部访问到，节点的请求会DNAT到Serviceip，然后再调度至PodIP
-
+    
+![LoadBalancer](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/10.Service%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/LoadBalancer.png)
 * LoadBalancer：需要结合公有云的LBAAS（需要付费），支持动态接入
-
+    
+![ExternalName](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/10.Service%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/ExternalName.png)
 * ExternalName：将集群外部Serice引入集群内部供各客户端使用，需要设置标签选择器，而需要手动定义一个endpoint资源，指向外部的资源地址
-
+    
 **3.Endpoints**
 
 1) 查看命令
