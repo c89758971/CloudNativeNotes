@@ -46,6 +46,8 @@ ngx-new-cb79d555   2         2         2       2d22h   nginx        nginx       
 * 滚动发布和回滚
 
 1) 发布nginx1.10版本，并限制滚动策略：最多新增1个(maxSurge)最少下线1个(maxUnavailable)
+
+   第一次发布的时候是新增1个，下线2个
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -129,6 +131,92 @@ deploy-nginx-5745bb45d7   3         3         3       11m    nginx        nginx:
 deploy-nginx-67f876bcb6   0         0         0       10m    nginx        nginx:1.11-alpine   app=nginx,pod-template-hash=67f876bcb6
 
 ```
+
+* 金丝雀发布
+
+1) 将上文的1.10的nginx，发布金丝雀版本：1.14
+```bash
+[root@centos-1 chapter5]# kubectl set image deployment deploy-nginx nginx=nginx:1.14-alpine && kubectl rollout pause deployment deploy-nginx
+deployment.apps/deploy-nginx image updated
+deployment.apps/deploy-nginx paused
+```
+
+2) 此时发现pod新老版本共存，2个新的2个老的
+```bash
+^C[root@centos-1 dingqishi]# kubectl get pod  -w
+NAME                            READY   STATUS    RESTARTS   AGE
+deploy-nginx-5745bb45d7-5wfml   1/1     Running   0          18m
+deploy-nginx-5745bb45d7-84s4c   1/1     Running   0          18m
+deploy-nginx-5745bb45d7-dqt8q   1/1     Running   0          18m
+    
+    
+deploy-nginx-754874567-l6q7h    0/1     Pending   0          0s
+deploy-nginx-754874567-l6q7h    0/1     Pending   0          0s
+deploy-nginx-5745bb45d7-5wfml   1/1     Terminating   0          18m
+deploy-nginx-754874567-l6q7h    0/1     ContainerCreating   0          0s
+deploy-nginx-754874567-q4bsh    0/1     Pending             0          0s
+deploy-nginx-754874567-q4bsh    0/1     Pending             0          0s
+deploy-nginx-754874567-q4bsh    0/1     ContainerCreating   0          1s
+deploy-nginx-5745bb45d7-5wfml   0/1     Terminating         0          18m
+deploy-nginx-5745bb45d7-5wfml   0/1     Terminating         0          18m
+deploy-nginx-5745bb45d7-5wfml   0/1     Terminating         0          18m
+deploy-nginx-754874567-l6q7h    0/1     Running             0          24s
+deploy-nginx-754874567-l6q7h    1/1     Running             0          25s
+deploy-nginx-754874567-q4bsh    0/1     Running             0          27s
+deploy-nginx-754874567-q4bsh    1/1     Running             0          27s
+    
+        
+[root@centos-1 dingqishi]# kubectl get pod  
+NAME                            READY   STATUS    RESTARTS   AGE
+deploy-nginx-5745bb45d7-84s4c   1/1     Running   0          19m
+deploy-nginx-5745bb45d7-dqt8q   1/1     Running   0          19m
+deploy-nginx-754874567-l6q7h    1/1     Running   0          61s
+deploy-nginx-754874567-q4bsh    1/1     Running   0          61s
+```
+
+3) 如果新版本的用户满意度不高，需要回滚的话，就用上文提到的rollout命令
+```bash
+kubectl rollout undo deployment/deploy-nginx --to-revision=0
+```
+4) 如果新版本用户满意度不错，需要完成剩余Pod更新的话，需要使用resume命令
+```bash
+[root@centos-1 chapter5]# kubectl rollout resume deployment deploy-nginx
+deployment.apps/deploy-nginx resumed
+    
+        
+[root@centos-1 dingqishi]# kubectl get pod  -w
+NAME                            READY   STATUS    RESTARTS   AGE
+deploy-nginx-5745bb45d7-84s4c   1/1     Running   0          27m
+deploy-nginx-5745bb45d7-dqt8q   1/1     Running   0          27m
+deploy-nginx-754874567-l6q7h    1/1     Running   0          8m35s
+deploy-nginx-754874567-q4bsh    1/1     Running   0          8m35s
+    
+    
+    
+    
+deploy-nginx-5745bb45d7-84s4c   1/1     Terminating   0          30m
+deploy-nginx-5745bb45d7-dqt8q   1/1     Terminating   0          30m
+deploy-nginx-754874567-l6zz8    0/1     Pending       0          0s
+deploy-nginx-754874567-l6zz8    0/1     Pending       0          0s
+deploy-nginx-754874567-l6zz8    0/1     ContainerCreating   0          0s
+deploy-nginx-5745bb45d7-84s4c   0/1     Terminating         0          30m
+deploy-nginx-5745bb45d7-dqt8q   0/1     Terminating         0          30m
+deploy-nginx-754874567-l6zz8    0/1     Running             0          3s
+deploy-nginx-754874567-l6zz8    1/1     Running             0          3s
+deploy-nginx-5745bb45d7-84s4c   0/1     Terminating         0          30m
+deploy-nginx-5745bb45d7-84s4c   0/1     Terminating         0          30m
+deploy-nginx-5745bb45d7-dqt8q   0/1     Terminating         0          30m
+deploy-nginx-5745bb45d7-dqt8q   0/1     Terminating         0          30m
+    
+        
+[root@centos-1 dingqishi]# kubectl get pod  
+NAME                           READY   STATUS    RESTARTS   AGE
+deploy-nginx-754874567-l6q7h   1/1     Running   0          14m
+deploy-nginx-754874567-l6zz8   1/1     Running   0          3m33s
+deploy-nginx-754874567-q4bsh   1/1     Running   0          14m
+
+```
+
 **4.ReplicaSet**
 ```text
    在给定的任何时间，保证一个明确的pod运行数量
