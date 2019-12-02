@@ -146,11 +146,40 @@ Unknown：
 ```
 
 **5.Pod Security(十分重要)**
+    
+Pod对象的安全上下文用于设定Pod或容器的权限和访问控制功能，其支持设置的常用属性包括以下几个方面：
+```text
+1）基于用户ID（UID）和组ID（GID）控制访问对象（如文件）时的权限
+2）以特权或非特权的方式运行
+3）通过Linux Capabilities为其提供部分特权
+4）基于Seccomp过滤进程的系统调用
+5）基于SELinux的安全标签
+6）是否能够进行权限升级
+```
+
+其中包括2个安全级别：
 
     两个级别：
          kubectl explain pod.spec.securityContext
          kubectl explain pod.spec.containers.[].securityContext.capabilities
+ 
 
+最后，看一个配置清单：以uid为1000的非特权用户运行busybox容器，并禁止权限升级
+```yaml
+apiVersion: v1
+kind: Pod
+metedata:
+  name:pod-with-securitycontext
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    command: ["/bin/sh","-c","sleep 86400"]
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      allowPrivilegeEscalation: false
+```
 
 **6.资源配额**
 
@@ -204,3 +233,16 @@ BestEffort: 未设置requests或limits属性的pod资源，优先级最低
 
 ```
 
+**8.Pod中断预算**
+
+PDB（PodDisruptionBudget）中断预算由k8s1.4版本引入，用于为那些自愿的中断做好预算方案，
+限制可自愿中断的最大Pod副本数量或确保最少可用的Pod副本数，以确保服务的高可用性。
+1) 分类
+```text
+非自愿中断：
+    由不可控的外界因素所导致的Pod中断退出操作，例如：硬件或系统故障、网络故障、节点故障等
+    
+        
+自愿中断：
+    由用户特地执行的管理操作导致的Pod中断，例如：排空节点、人为删除Pod对象等
+```
