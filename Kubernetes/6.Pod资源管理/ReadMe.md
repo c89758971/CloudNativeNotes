@@ -168,8 +168,8 @@ Pod对象的安全上下文用于设定Pod或容器的权限和访问控制功�
 ```yaml
 apiVersion: v1
 kind: Pod
-metedata:
-  name:pod-with-securitycontext
+metadata:
+  name: pod-with-securitycontext
 spec:
   containers:
   - name: busybox
@@ -179,6 +179,14 @@ spec:
       runAsNonRoot: true
       runAsUser: 1000
       allowPrivilegeEscalation: false
+```
+测试如下：
+```bash
+[root@centos-1 ~]# kubectl exec -it   pod-with-securitycontext -- /bin/sh
+/ $ ps -ef|grep busy
+   25 1000      0:00 grep busy
+/ $ mkdir 1
+mkdir: can't create directory '1': Permission denied
 ```
 
 **6.资源配额**

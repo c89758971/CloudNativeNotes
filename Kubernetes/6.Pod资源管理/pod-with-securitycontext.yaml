@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
-metedata:
-  name:pod-with-securitycontext
+metadata:
+  name: pod-with-securitycontext
 spec:
   containers:
   - name: busybox
