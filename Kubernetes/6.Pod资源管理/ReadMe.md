@@ -254,3 +254,21 @@ PDB（PodDisruptionBudget）中断预算由k8s1.4版本引入，用于为那些�
 自愿中断：
     由用户特地执行的管理操作导致的Pod中断，例如：排空节点、人为删除Pod对象等
 ```
+
+2) 命令
+```bash
+kubectl get pdb
+```
+
+3) demo
+```yaml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: ngx-new
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: ngx-new
+```
