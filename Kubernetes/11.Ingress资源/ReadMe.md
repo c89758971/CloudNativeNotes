@@ -13,7 +13,7 @@ Ingress：
 
 **2.Ingress代理逻辑**
 
-TBD
+![ingress架构图](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/11.Ingress%E8%B5%84%E6%BA%90/ingress-congroller-nodeport.png)
 
 
 **3.Ingress-Nginx部署和简单测试**
