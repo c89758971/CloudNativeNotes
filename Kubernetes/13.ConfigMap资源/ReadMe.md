@@ -261,7 +261,7 @@ metadata:
   selfLink: ""
 ```
 
-4) 编辑nginx-cmfiles-volumes.yaml，通过pv挂载配置文件
+4) 编辑nginx-cmfiles-volumes.yaml
 ```yaml
 apiVersion: v1
 kind: Pod
