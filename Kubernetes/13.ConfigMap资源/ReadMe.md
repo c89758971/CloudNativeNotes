@@ -1,9 +1,11 @@
 **1.应用场景定义**
 
 * ConfigMap：保存非敏感配置
+    
+    https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
 * Secret：保存敏感配置信息
 
-**2.根据CMD创建 ConfigMap**
+**2.根据CMD创建ConfigMap(Pod配置不会热加载)**
 
 1) 在config的namespace中，创建一个名为filebeat-cfg的configmap，具体如下
 ```bash
@@ -28,7 +30,7 @@ metadata:
   uid: 2cc00197-60b6-4850-9c24-ef4f385ae058
 ```
 
-3) 编辑pod-configmap.yaml,并加载我们的配置
+3) 编辑nginx-cmcmd.yaml,并加载我们的配置
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -150,3 +152,259 @@ nginx_static_value=123123
 
     环境变量只会在Pod生成时加载，修改configMap，并不会被热加载到Pod中，需要重新生成Pod才行
 
+9) 如何解决Pod中配置热加载的问题呢？请看下面的例子
+
+**3.根据目录创建ConfigMap，并挂载(Pod配置可以热加载)**
+
+1) 创建nginx所需目录和虚拟主机配置
+```bash
+[root@centos-1 conf.d]# pwd
+/root/mainfasts/conf.d
+    
+[root@centos-1 conf.d]# cat server1.conf 
+server {
+    listen       80;
+    server_name  www.baidu.com;
+
+    location / {
+        root   /server1.html;
+        index  index.html index.htm;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
+    
+[root@centos-1 conf.d]# cat server2.conf 
+server {
+    listen       80;
+    server_name  www.nginx.com;
+
+    location / {
+        root   /server2.html;
+        index  index.html index.htm;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
+```
+2) 导入至configmap
+```bash
+kubectl create configmap nginx-cfg -n config --from-file=/root/mainfasts/conf.d/
+```
+
+3) 检查configmap配置载入情况
+```bash
+[root@centos-1 conf.d]# kubectl get cm -n config -o yaml
+apiVersion: v1
+items:
+- apiVersion: v1
+  data:
+    log_level: warning
+    redis_host: www.baidu.com
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: "2019-12-04T08:17:32Z"
+    name: filebeat-cfg
+    namespace: config
+    resourceVersion: "76435"
+    selfLink: /api/v1/namespaces/config/configmaps/filebeat-cfg
+    uid: 2cc00197-60b6-4850-9c24-ef4f385ae058
+- apiVersion: v1
+  data:
+    server1.conf: |
+      server {
+          listen       80;
+          server_name  www.baidu.com;
+
+          location / {
+              root   /server1.html;
+              index  index.html index.htm;
+          }
+
+          error_page   500 502 503 504  /50x.html;
+          location = /50x.html {
+              root   /usr/share/nginx/html;
+          }
+      }
+    server2.conf: |
+      server {
+          listen       80;
+          server_name  www.nginx.com;
+
+          location / {
+              root   /server2.html;
+              index  index.html index.htm;
+          }
+
+          error_page   500 502 503 504  /50x.html;
+          location = /50x.html {
+              root   /usr/share/nginx/html;
+          }
+      }
+  kind: ConfigMap
+  metadata:
+    creationTimestamp: "2019-12-04T10:11:23Z"
+    name: nginx-cfg
+    namespace: config
+    resourceVersion: "81456"
+    selfLink: /api/v1/namespaces/config/configmaps/nginx-cfg
+    uid: 86374cc1-605c-4b4a-abfa-769df0a4a94d
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
+```
+
+4) 编辑nginx-cmfiles-volumes.yaml，通过pv挂载配置文件
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  namespace: config
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    volumeMounts:
+    - name: nginx-conf               #自定义volumes的名字
+      mountPath: /etc/nginx/conf.d/    #挂载到Pod中的路径
+  volumes:
+  - name: nginx-conf                 #自定义volumes的名字
+    configMap:
+      defaultMode: 0644
+      name: nginx-cfg                 #configMap名
+      items:
+      - key: server1.conf                   #configMap中的变量名
+        path: server1_new.conf                #期望以什么名字保存在Pod目录中
+      - key: server2.conf
+        path: server2_new.conf
+
+
+```
+
+5) apply配置文件，并进入Pod查看配置读取和挂载情况
+```bash
+[root@centos-1 mainfasts]# kubectl exec -it  nginx -n config -- /bin/sh
+# cd /etc/nginx/conf.d
+# ls
+server1_new.conf  server2_new.conf
+# cat server1_new.conf
+server {
+    listen       80;
+    server_name  www.baidu.com;
+
+    location / {
+        root   /server1.html;
+        index  index.html index.htm;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
+# cat server2_new.conf
+server {
+    listen       80;
+    server_name  www.nginx.com;
+
+    location / {
+        root   /server2.html;
+        index  index.html index.htm;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
+
+```
+6) 修改configmap参数(分别将server_name修改成taobao和jingdong)
+```bash
+[root@centos-1 conf.d]# kubectl get cm nginx-cfg -n config -o yaml
+apiVersion: v1
+data:
+  server1.conf: |
+    server {
+        listen       80;
+        server_name  www.taobao.com;
+
+        location / {
+            root   /server1.html;
+            index  index.html index.htm;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+  server2.conf: |
+    server {
+        listen       80;
+        server_name  www.jingdong.com;
+
+        location / {
+            root   /server2.html;
+            index  index.html index.htm;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2019-12-04T10:11:23Z"
+  name: nginx-cfg
+  namespace: config
+  resourceVersion: "87316"
+  selfLink: /api/v1/namespaces/config/configmaps/nginx-cfg
+  uid: 86374cc1-605c-4b4a-abfa-769df0a4a94d
+[root@centos-1 conf.d]# 
+
+```
+
+7) 几秒后Pod的配置文件也自动的进行了热更新
+```bash
+# cat server1_new.conf
+server {
+    listen       80;
+    server_name  www.baidu.com;
+
+    location / {
+        root   /server1.html;
+        index  index.html index.htm;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
+# cat server1_new.conf
+server {
+    listen       80;
+    server_name  www.taobao.com;
+
+    location / {
+        root   /server1.html;
+        index  index.html index.htm;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
+# 
+```
