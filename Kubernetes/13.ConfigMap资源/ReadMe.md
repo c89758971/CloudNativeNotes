@@ -408,3 +408,24 @@ server {
 }
 # 
 ```
+
+**4.使用配置清单申明configmap**
+
+1) 参考ingress的配置文件：configmap-demo.yaml
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"ConfigMap","metadata":{"annotations":{},"labels":{"app.kubernetes.io/name":"ingress-nginx","app.kubernetes.io/part-of":"ingress-nginx"},"name":"nginx-configuration","namespace":"ingress-nginx"}}
+  creationTimestamp: "2019-12-05T07:10:54Z"
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/part-of: ingress-nginx
+  name: nginx-configuration
+  namespace: ingress-nginx
+  resourceVersion: "7097"
+  selfLink: /api/v1/namespaces/ingress-nginx/configmaps/nginx-configuration
+  uid: d9646c79-7c33-4afd-b3cc-03da176f6b53
+```
