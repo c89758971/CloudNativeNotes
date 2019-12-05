@@ -20,6 +20,7 @@
 
 1) 具体金丝雀发布流程如下图所示
 
+![金丝雀发布](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/15.StatefulSet%E8%B5%84%E6%BA%90/sts-canarydeploy.png)
 
 
 
