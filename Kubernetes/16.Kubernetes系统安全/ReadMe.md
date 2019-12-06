@@ -1,4 +1,4 @@
-**1.实际演练**
+**1.实际演练:新证书、新用户和新集群**
 
 1) 生成私钥ilinux.crt
     ```bash
@@ -131,4 +131,192 @@
     NAME                     READY   STATUS    RESTARTS   AGE
     ngx-new-cb79d555-hfc7h   1/1     Running   0          9d
 
+    ```
+
+**2.RBAC**
+
+官方文档：
+
+https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+
+
+1)  授权模型
+    ```text
+    基于节点：
+        Node：专用的授权插件，根据Pod对象调度的结果为Node进行授权
+        
+    基于用户：
+        ABAC：1.17之前的策略，新版本已经默认使用RBAC
+        RBAC：赋予某个角色对于某个资源进行某种操作，其中角色可以是人也可以是组
+    其他：
+        Webhook
+    ```
+    
+2) 当前K8s集群采用的集群策略查看(Node+RBAC)
+    ```bash
+    [root@centos-1 chapter10]# cat /etc/kubernetes/manifests/kube-apiserver.yaml 
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      creationTimestamp: null
+      labels:
+        component: kube-apiserver
+        tier: control-plane
+      name: kube-apiserver
+      namespace: kube-system
+    spec:
+      containers:
+      - command:
+        - kube-apiserver
+        - --advertise-address=192.168.0.104
+        - --allow-privileged=true
+        - --authorization-mode=Node,RBAC
+
+    ```
+    
+3) 相关命令
+    ```bash
+    #名称空间级别权限和绑定
+    kubectl explain role  
+    kubectl explain rolebinding
+       
+    #集群级别权限和绑定
+    kubectl explain ClusterRole  
+    kubectl explain ClusterRoleBinding
+    ```
+    
+4) 常用策略
+
+（以下所有操作都基于上面创建的ilinux用户进行，并且每个操作之前需要删除之前配置过的权限
+，否则会相互影响）
+
+* Role+RoleBinding
+  
+    正常使用：某个名称空间级别的权限授权
+    
+    * 编辑role：res-reader.yaml
+    ```yaml
+    kind: Role             #名称空间权限
+    apiVersion: rbac.authorization.k8s.io/v1
+    metadata:
+      namespace: default         #只能读取default名称空间下的对应规则
+      name: res-reader
+    rules:
+    - apiGroups: [""]   # "" 表示核心群组：core API group
+      resources: ["pods", "pods/log", "services"]
+      verbs: ["get", "list", "watch"]
+    ```
+    
+    * 编辑rolebinding：ilinux-res-reader.yaml
+    ```yaml
+    kind: RoleBinding                 #名称空间级别权限绑定;ClusterRoleBinding为集群级别的权限绑定
+    apiVersion: rbac.authorization.k8s.io/v1
+    metadata:
+      name: ilinux-res-reader                   #增加可读性，命名规则：<用户>-<权限>
+      namespace: default
+    subjects:
+    - kind: User
+      name: ilinux
+      apiGroup: rbac.authorization.k8s.io
+    roleRef:
+      kind: Role
+      name: res-reader
+      apiGroup: rbac.authorization.k8s.io
+    ```
+    * 依次apply配置文件，发现ilinux用户至在default名称空间下有对应"pods", "pods/log", "services"的对应权限，和预期一样
+    ```bash
+    [root@centos-1 RBAC]# kubectl get pod --kubeconfig=/tmp/ilinux.kubeconfig 
+    NAME                     READY   STATUS    RESTARTS   AGE
+    ngx-new-cb79d555-hfc7h   1/1     Running   0          10d
+      
+    [root@centos-1 RBAC]# kubectl get service --kubeconfig=/tmp/ilinux.kubeconfig
+    NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+    kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   11d
+      
+    [root@centos-1 RBAC]# kubectl get service --kubeconfig=/tmp/ilinux.kubeconfig -n ingress-nginx
+    Error from server (Forbidden): services is forbidden: User "ilinux" cannot list resource "services" in API group "" in the namespace "ingress-nginx"
+    ```
+  
+* ClusterRole+ClusterRoleBinding
+
+    正常使用：k8s集群级别的权限授权
+    
+    * 编辑ClusterRole：cluster-res-reader.yaml
+    ```yaml
+    kind: ClusterRole             #集群范围权限
+    apiVersion: rbac.authorization.k8s.io/v1
+    metadata:
+      name: cluster-res-reader
+    rules:
+    - apiGroups: [""]   # "" 表示核心群组：core API group
+      resources: ["pods", "pods/log", "services"]
+      verbs: ["get", "list", "watch"]
+    
+    ```
+
+    * 编辑ClusterRoleBinding：cluster-ilinux-res-reader.yaml
+    ```yaml
+    kind: ClusterRoleBinding                  #ClusterRoleBinding为集群级别的权限绑定
+    apiVersion: rbac.authorization.k8s.io/v1
+    metadata:
+      name: cluster-ilinux-res-reader                   #增加可读性，命名规则：<用户>-<权限>
+    subjects:
+    - kind: User
+      name: ilinux
+      apiGroup: rbac.authorization.k8s.io
+    roleRef:
+      kind: ClusterRole
+      name: cluster-res-reader
+      apiGroup: rbac.authorization.k8s.io
+    ```
+
+    * 依次apply配置文件，并通过以下命令观察权限生成情况
+    ```bash
+    [root@centos-1 RBAC]# kubectl get clusterrole
+    [root@centos-1 RBAC]# kubectl get clusterrolebinding
+    ```
+    
+    * 这时，我们发现ilinux用户已经具有集群级别（所有名称空间）的对应权限
+    ```bash
+    [root@centos-1 RBAC]# kubectl get service --kubeconfig=/tmp/ilinux.kubeconfig -n ingress-nginx
+    NAME                       TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+    nginx-ingress-controller   NodePort   10.99.160.254   <none>        80:30080/TCP,443:30443/TCP   26h
+      
+    [root@centos-1 RBAC]# kubectl get service --kubeconfig=/tmp/ilinux.kubeconfig 
+    NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+    kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   11d
+    ```
+     
+* ClusterRole+RoleBinding
+
+    交叉使用：其中ClusterRole策略会降级成rolebinding名称空间的策略，效果和role+rolebinding一样，
+    好处就是在名称空间很多的时候，重复权限的配置文件会少一半，而且更灵活
+
+    * 使用上面的ClusterRole（cluster-res-reader.yaml），并apply-f
+    
+    * 编辑rolebinding：cluster-default-ilinux-res-reader.yaml
+    ```yaml
+    kind: RoleBinding                 #名称空间级别权限绑定;ClusterRoleBinding为集群级别的权限绑定
+    apiVersion: rbac.authorization.k8s.io/v1
+    metadata:
+      name: cluster-default-ilinux-res-reader                   #增加可读性，命名规则：<用户>-<权限>
+      namespace: default
+    subjects:
+    - kind: User
+      name: ilinux
+      apiGroup: rbac.authorization.k8s.io
+    roleRef:
+      kind: ClusterRole
+      name: cluster-res-reader
+      apiGroup: rbac.authorization.k8s.io    
+    ```
+
+    * 测试和预期一样，ClusterRole降级成default名称空间的权限了
+    ```yaml
+    [root@centos-1 RBAC]# kubectl get service --kubeconfig=/tmp/ilinux.kubeconfig 
+    NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+    kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   11d
+        
+    [root@centos-1 RBAC]# kubectl get service --kubeconfig=/tmp/ilinux.kubeconfig  -n ingress-nginx
+    Error from server (Forbidden): services is forbidden: User "ilinux" cannot list resource "services" in API group "" in the namespace "ingress-nginx"
     ```
