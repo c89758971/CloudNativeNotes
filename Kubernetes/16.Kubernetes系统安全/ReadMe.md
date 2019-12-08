@@ -183,6 +183,10 @@ https://kubernetes.io/docs/reference/access-authn-authz/rbac/
     #集群级别权限和绑定
     kubectl explain ClusterRole  
     kubectl explain ClusterRoleBinding
+       
+    #策略详情查看
+    kubectl get role  view -o yaml
+    kubectl get clusterrole  view -o yaml
     ```
     
 4) 常用策略
