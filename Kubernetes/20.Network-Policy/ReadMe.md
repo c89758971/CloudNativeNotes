@@ -9,11 +9,14 @@
 * 精准的流控
 
 
-    flannel本身不支持Network Policy，需要使用calcio、istio等service mesh，可参考附录中的第二篇文档进行flannel+calcio结合
+    flannel本身不支持Network Policy，需要使用calico、istio等service mesh，可参考附录中的第二篇文档进行flannel+calcio结合
     Network Policy 的作用对象是 Pod，也可以应用到 Namespace 和集群的 Ingress、Egress 流量。
     Network Policy 是作用在 L3/4 层的，即限制的是对 IP 地址和端口的访问，如果需要对应用层做访问限制需要使用如 Istio 这类 Service Mesh。
 
 **2.核心参数讲解**
+
+![networkploicy](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/20.Network-Policy/networkpolicy.png)
+
 
 ```text
 Ingress（类似安全组的内外网入）：
