@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: required-nodeAffinity-pod-and
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:         #硬亲和
+        nodeSelectorTerms:
+        - matchExpressions:
+          - {key: zone, operator: In, values: ["foo", "bar"]}          #key级别，是与关系（and）
+          - {key: ssd, operator: Exists, values: []}
+  containers:
+  - name: myapp
+    image: ikubernetes/myapp:v1
+    resources:
+      requests:
+        cpu: 6
+        memory: 20Gi
