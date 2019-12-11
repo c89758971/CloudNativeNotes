@@ -8,6 +8,10 @@
 **1.调度流程**
 
 
+![调度流程](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/21.%E8%B0%83%E5%BA%A6%E5%99%A8%E4%B8%8E%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6/k8s-scheduler.png)
+
+
+
 如图所示，调度流程分为两大块：
 
 * Filtering
@@ -17,9 +21,9 @@
   所有过滤器：https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler/algorithm/predicates
   
   
-  1) Filtering：Pod Affinity
+1) Filtering：Pod Affinity
 
-        Pod之间的亲和性，表示是否愿意调度在一个区域（可以是node、机架、也可以是机房）
+      Pod之间的亲和性，表示是否愿意调度在一个区域（可以是node、机架、也可以是机房）
 
 
 * Scoring
