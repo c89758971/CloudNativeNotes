@@ -5,6 +5,7 @@
 
 **2.Flannel架构图**
 
+![Flannel-1](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/19.%E7%BD%91%E7%BB%9C%E6%8F%92%E4%BB%B6%E4%BD%93%E7%B3%BB/flannel.png)
 
 
 说明：
