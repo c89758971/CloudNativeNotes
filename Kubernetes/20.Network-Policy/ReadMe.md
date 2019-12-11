@@ -14,7 +14,7 @@
 **1.应用场景**
 
 * 多租户隔离（名称空间级别、Pod级别）
-* 精准的流控
+* K8S集群概念的安全组
 
 
     flannel本身不支持Network Policy，需要使用calico、istio等service mesh，可参考附录中的最后一篇文档进行flannel+calcio结合
