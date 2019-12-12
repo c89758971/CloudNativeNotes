@@ -25,12 +25,12 @@ Pod-B: 只会调度至node-3
 ###  Taints Effect
 
 参数  | 描述  
----- | ----- | ------ 
+---- | ----- 
 key  | string类型，最大长度253个字符，必须小写或数字开头
 value  | string类型，最大长度63个字符，必须小写或数字开头
-effect  | Noschedule | 1.不允许非法pod调度上来 2.taints变更，不会驱离非法的pod
-effect  | PreferNoSchedule | 1.最好不要把非法pod调度上来 2.taints变更，不会驱离非法的pod
-effect  | NoExecute | 1.不允许非法pod调度上来 2.taints变更，会驱离非法的pod，驱离时间为tolerationSeconds
+effect：Noschedule | 1.不允许非法pod调度上来 2.taints变更，不会驱离非法的pod
+effect：PreferNoSchedule | 1.最好不要把非法pod调度上来 2.taints变更，不会驱离非法的pod
+effect：NoExecute | 1.不允许非法pod调度上来 2.taints变更，会驱离非法的pod，驱离时间为tolerationSeconds
 
 
 
