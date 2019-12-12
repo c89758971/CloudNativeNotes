@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-with-pod-anti-affinity
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      name: myapp
+      labels:
+        app: myapp
+    spec:
+      affinity:
+        podAntiAffinity:         #pod反亲和
+          requiredDuringSchedulingIgnoredDuringExecution:            #硬亲和
+          - labelSelector:                                           #表示不能调度至有运行标签为app<in>myapp的pod的节点上
+              matchExpressions:
+              - {key: app, operator: In, values: ["myapp"]}
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - name: myapp
+        image: ikubernetes/myapp:v1

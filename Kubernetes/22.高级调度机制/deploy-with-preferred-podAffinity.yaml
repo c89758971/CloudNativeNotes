@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-with-preferred-pod-affinity
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      name: myapp
+      labels:
+        app: myapp
+    spec:
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:        #软亲和，表示调度至标签为app<in>db的pod的那些node节点中时，
+                                                                    rack级别打分80，zone级别只有20（表示更愿意调度至同一个rack）
+          - weight: 80                                            #注意这里是或关系，只有key级别才是与关系
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - {key: app, operator: In, values: ["db"]}
+              topologyKey: rack   #机架
+          - weight: 20
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - {key: app, operator: In, values: ["db"]}
+              topologyKey: zone
+      containers:
+      - name: myapp
+        image: ikubernetes/myapp:v1
