@@ -19,14 +19,18 @@ Taint（污点）和Toleration（容忍）可以作用于node和pod上，其目�
 ```text
 Pod-A：调度至node-1和node-3
 Pod-B: 只会调度至node-3
+注意：Taints存在于node，Tolerations存在于pod
 ```
  
 ###  Taints Effect
 
-表头  | 表头  | 表头
+参数  | 描述  
 ---- | ----- | ------ 
-单元格内容  | 单元格内容 | 单元格内容
-单元格内容  | 单元格内容 | 单元格内容 
+key  | string类型，最大长度253个字符，必须小写或数字开头
+value  | string类型，最大长度63个字符，必须小写或数字开头
+effect  | Noschedule | 1.不允许非法pod调度上来 2.taints变更，不会驱离非法的pod
+effect  | PreferNoSchedule | 1.最好不要把非法pod调度上来 2.taints变更，不会驱离非法的pod
+effect  | NoExecute | 1.不允许非法pod调度上来 2.taints变更，会驱离非法的pod，驱离时间为tolerationSeconds
 
 
 
