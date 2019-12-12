@@ -83,7 +83,6 @@ node.cloudprovider.kubernetes.io/uninitialized | 节点未初始化，不可用
 ---- | ----- 
 kubectl taint -h | taint的帮助命令
 kubectl taint nodes foo dedicated=special-user:NoSchedule | 给node打污点，修改需要使用--overwrite=true
-kubectl taint -h | taint的帮助命令
 kubectl taint nodes foo dedicated:NoSchedule- | 移除taint污点
 
 ### 实际操作
