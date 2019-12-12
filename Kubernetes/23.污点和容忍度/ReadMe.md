@@ -6,6 +6,7 @@ Taint（污点）和Toleration（容忍）可以作用于node和pod上，其目�
 - 概念引入
 - Taints Effect
 - How to match?
+- Taint based Evictions
 
 ### 概念引入 
 
@@ -41,7 +42,7 @@ operator | 描述
 Equal | key、value和effect必须都相同
 Exists | key和effect必须相同
 
-需要注意operator默认是Equal
+需要注意operator没指定的话，默认是Equal
 ```text
 Note:
 有两个特殊用法:
@@ -56,6 +57,23 @@ tolerations:
   operator: "Exists"
 
 ```
+
+### Taint based Evictions
+从K8S1.6开始支持了很多封装好的驱离式effect，node controller会根据实际情况，自动给node节点打上对应污点，从而保证了
+Pod调度的合理性和安全性，具体如下所示：
+
+taint effect | 描述
+---- | ----- 
+node.kubernetes.io/not-ready | 节点未就绪
+node.kubernetes.io/unreachable | 节点不可达
+node.kubernetes.io/out-of-disk | 节点地盘耗尽 
+node.kubernetes.io/memory-pressure | 内存存在压力
+node.kubernetes.io/disk-pressure | 磁盘存在压力
+node.kubernetes.io/network-unavailable | 网络不可达
+node.kubernetes.io/unschedulable | Node is unschedulable
+node.cloudprovider.kubernetes.io/uninitialized | 节点未初始化，不可用
+
+
  
  
  
