@@ -7,6 +7,9 @@ Taint（污点）和Toleration（容忍）可以作用于node和pod上，其目�
 - Taints Effect
 - How to match?
 - Taint based Evictions
+- 常用命令
+- 实际操作
+- 附录：参考文档
 
 ### 概念引入 
 
@@ -74,10 +77,125 @@ node.kubernetes.io/unschedulable | Node is unschedulable
 node.cloudprovider.kubernetes.io/uninitialized | 节点未初始化，不可用
 
 
+### 常用命令
  
- 
- 
- 
+命令 | 说明
+---- | ----- 
+kubectl taint -h | taint的帮助命令
+kubectl taint nodes foo dedicated=special-user:NoSchedule | 给node打污点，修改需要使用--overwrite=true
+kubectl taint -h | taint的帮助命令
+kubectl taint nodes foo dedicated:NoSchedule- | 移除taint污点
+
+### 实际操作
+
+1) 首先给centos-3这个节点打上污点,effect为NoSchedule
+```bash
+kubectl taint nodes centos-3.shared department=ops:NoSchedule
+
+```
+
+2) 编辑filebeat-ds,并apply 
+```yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: filebeat-ds
+  labels:
+    app: filebeat
+spec:
+  selector:
+    matchLabels:
+      app: filebeat
+  template:
+    metadata:
+      labels:
+        app: filebeat
+    spec:
+      containers:
+      - name: filebeat
+        image:  prima/filebeat:6.4.2
+        env:
+        - name: REDIS_HOST
+          value: db.ikubernetes.is:6379
+        - name: LOG_LEVEL
+          value: info
+
+```
+3) 发现ds并没有部署到centos-3节点，污点生效，且和预期符合一致
+```bash
+[root@centos-1 chapter12]# kubectl get pod -o wide
+NAME                     READY   STATUS              RESTARTS   AGE    IP           NODE              NOMINATED NODE   READINESS GATES
+filebeat-ds-tg7gf        0/1     ContainerCreating   0          3m2s   <none>       centos-2.shared   <none>           <none>
+ngx-new-cb79d555-2c7qq   1/1     Running             0          2d1h   10.244.1.7   centos-2.shared   <none>           <none>
+
+```
+
+4) delete之前的yaml，我们重新编辑file-ds-tolerations.yaml（增加容忍度），并apply
+```yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: filebeat-ds
+  labels:
+    app: filebeat
+spec:
+  selector:
+    matchLabels:
+      app: filebeat
+  template:
+    metadata:
+      labels:
+        app: filebeat
+    spec:
+      containers:
+      - name: filebeat
+        image:  prima/filebeat:6.4.2
+        env:
+        - name: REDIS_HOST
+          value: db.ikubernetes.is:6379
+        - name: LOG_LEVEL
+          value: info
+      tolerations:
+      - key: "department"
+        operator: "Equal"
+        value: "ops"
+        effect: "NoSchedule"
+```
+
+5) 观察pod，发现centos-3.shared已经运行pod，新增的容忍度功能成功
+```bash
+[root@centos-1 chapter12]# kubectl get pod -o wide
+NAME                     READY   STATUS              RESTARTS   AGE     IP           NODE              NOMINATED NODE   READINESS GATES
+filebeat-ds-l2png        0/1     ContainerCreating   0          2m43s   <none>       centos-2.shared   <none>           <none>
+filebeat-ds-qq2nc        0/1     ContainerCreating   0          2m43s   <none>       centos-3.shared   <none>           <none>
+```
+
+6) 接下来我们修改node3污点，测试Noschedule策略是否如期一致
+```bash
+kubectl taint nodes centos-3.shared department=test:NoSchedule --overwrite=true
+```
+7) 我们发现pod还是在运行，并不会驱离，和预期一致
+```bash
+[root@centos-1 chapter12]# kubectl get pod -o wide
+NAME                     READY   STATUS              RESTARTS   AGE     IP           NODE              NOMINATED NODE   READINESS GATES
+filebeat-ds-l2png        0/1     ContainerCreating   0          5m18s   <none>       centos-2.shared   <none>           <none>
+filebeat-ds-qq2nc        0/1     ContainerCreating   0          5m18s   <none>       centos-3.shared   <none>           <none>
+
+```
+
+8) 最后，我们将node3的污点effect修改为NoExecute，观察pod是否被驱离（如果没指定tolerationSeconds，就马上驱离）
+```bash
+kubectl taint nodes centos-3.shared department=test:NoExecute --overwrite=true
+```
+
+9) 发现centos-3.shared上已经没有pod了，和预期一致
+```bash
+[root@centos-1 chapter12]# kubectl get pod -o wide
+NAME                     READY   STATUS             RESTARTS   AGE     IP           NODE              NOMINATED NODE   READINESS GATES
+filebeat-ds-l2png        0/1     ImagePullBackOff   0          7m37s   10.244.1.7   centos-2.shared   <none>           <none>
+
+```
+
 ### 附录：参考文档
 
 * 官方文档：
