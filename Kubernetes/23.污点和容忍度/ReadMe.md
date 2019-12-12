@@ -5,7 +5,7 @@ Taint（污点）和Toleration（容忍）可以作用于node和pod上，其目�
  
 - 概念引入
 - Taints Effect
-
+- How to match?
 
 ### 概念引入 
 
@@ -33,9 +33,29 @@ effect：PreferNoSchedule | 1.最好不要把非法pod调度上来。2.taints变
 effect：NoExecute | 1.不允许非法pod调度上来。2.taints变更，会驱离非法的pod，驱离时间为tolerationSeconds
 
 
+### How to match?
+无论是Taints还是Tolerations（污点和容忍度），都有三个字段：key、value和effect，具体匹配规则如下：
 
- 
- 
+operator | 描述
+---- | ----- 
+Equal | key、value和effect必须都相同
+Exists | key和effect必须相同
+
+需要注意operator默认是Equal
+```text
+Note:
+有两个特殊用法:
+#Exists：空字段key，会匹配所有的keys, values and effects，意味着容忍所有
+tolerations:
+- operator: "Exists"
+    
+    
+#Exists：空effect，会匹配所有的key: "key"的effect
+tolerations:
+- key: "key"
+  operator: "Exists"
+
+```
  
  
  
