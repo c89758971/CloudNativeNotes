@@ -21,6 +21,10 @@
 ### 扩展架构图
 
 
+![扩展架构图](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/24.%E4%BD%BF%E7%94%A8CRD%E6%89%A9%E5%B1%95Kubernetes-API/ExtendKubernetesAPI.png)
+
+
+
 如图所示，用户对集群的请求首先到apiserver内部的Aggregator（聚合器），然后再到实际的apiserver模块。
 上面提到的三种扩展方式，可以在图中清晰看到
 
@@ -106,7 +110,7 @@ Events:       <none>
 ### 高级主题
 
 #### Validation（验证）
-#####功能状态： Kubernetes v1.12 beta
+##### 功能状态： Kubernetes v1.12 beta
 
 可以通过 [OpenAPI v3 schema](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#schemaObject)验证自定义对象是否符合标准 。
 
@@ -224,7 +228,7 @@ crontab.stable.example.com/my-new-cron-object   1s
 
 ### 其他高级功能demo
 
-其他高级功能demo
+[其他高级功能demo](https://github.com/Aaron1989/CloudNativeNotes/tree/master/Kubernetes/24.%E4%BD%BF%E7%94%A8CRD%E6%89%A9%E5%B1%95Kubernetes-API/%E5%85%B6%E4%BB%96%E9%AB%98%E7%BA%A7%E5%8A%9F%E8%83%BDdemo)
 
 
 ### 附录：参考文档
