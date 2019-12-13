@@ -14,7 +14,7 @@ Taint（污点）和Toleration（容忍）可以作用于node和pod上，其目�
 ### 概念引入 
 
 ![taints](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/23.%E6%B1%A1%E7%82%B9%E5%92%8C%E5%AE%B9%E5%BF%8D%E5%BA%A6/taintsandtolerations.png)
-
+ 
 
 如图所示，node节点上分别有云、五角星、十字架这三个污点；Pod-A上有云和五角星的污点容忍度，Pod—B上则没有
 容忍度。
