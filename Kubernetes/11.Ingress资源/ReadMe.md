@@ -18,7 +18,7 @@ Ingress：
 
 **3.Ingress-Nginx部署和简单测试**
 
-1) 下载配置清单，修改images地址（被墙）：lizhenliang/nginx-ingress-controller:0.20.0
+1) 下载配置清单，修改images地址（被墙）：registry.aliyuncs.com/google_containers/nginx-ingress-controller:0.26.1
 ```bash
  wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/mandatory.yaml
 ```
