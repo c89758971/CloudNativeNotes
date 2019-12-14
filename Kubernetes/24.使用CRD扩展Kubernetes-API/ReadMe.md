@@ -225,7 +225,7 @@ replicaset.apps/ngx-new-cb79d555   1         1         1       3d4h
 NAME                                            AGE
 crontab.stable.example.com/my-new-cron-object   1s
 ```
-
+ 
 ### 其他高级功能demo
 
 [其他高级功能demo](https://github.com/Aaron1989/CloudNativeNotes/tree/master/Kubernetes/24.%E4%BD%BF%E7%94%A8CRD%E6%89%A9%E5%B1%95Kubernetes-API/%E5%85%B6%E4%BB%96%E9%AB%98%E7%BA%A7%E5%8A%9F%E8%83%BDdemo)
