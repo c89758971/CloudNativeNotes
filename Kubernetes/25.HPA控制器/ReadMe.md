@@ -8,6 +8,8 @@ service中的Pod个数自动调整呢？
 - HPA简介
 - HPA组件交互图
 - Before you begin
+- 实战-autoscaling/v1
+- 介绍-autoscaling/v2beta2
 
 
 ### 自动伸缩
@@ -72,10 +74,121 @@ containers:
                 - --kubelet-preferred-address-types=InternalIP
                 - --kubelet-insecure-tls
 ```
+
 否则会碰到如下报错信息：
 ```bash
 unable to fully collect metrics: [unable to fully scrape metrics from source kubelet_summary:mywork: unable to fetch metrics from Kubelet mywork (mywork): Get https://mywork:10250/stats/summary/: dial tcp: i/o timeout, unable to fully scrape metrics from source kubelet_summary:marktest: unable to fetch metrics from Kubelet marktest (marktest): Get https://marktest:10250/stats/summary/: dial tcp: i/o timeout]
 ```
+相应的，如果想集成prometheus的SD，需要在K8S基础资源中进行声明：
+```yaml
+      annotations:
+        # based on your Prometheus config above, this tells prometheus
+        # to scrape this pod for metrics on port 80 at "/metrics"
+        prometheus.io/scrape: "true"     #允许prometheus自动发现，并抓取数据
+        prometheus.io/port: "80"         #数据端口
+        prometheus.io/path: "/metrics"   #数据uri
+
+```
+### 实战-autoscaling/v1
+
+1) 创建压测服务myapp.yaml，并apply
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+  namespace: default
+  labels:
+    app: myapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: ikubernetes/myapp:v1
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 50m
+            memory: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-svc
+  labels:
+    app: myapp
+  namespace: default
+spec:
+  selector:
+    app: myapp
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  type: NodePort
+```
+2) 创建HPA控制器，并检查
+```bash
+[root@centos-1 chapter14]# kubectl autoscale deployment myapp --min=1 --max=5 --cpu-percent=1
+horizontalpodautoscaler.autoscaling/myapp autoscaled
+    
+[root@centos-1 chapter14]# kubectl get hpa
+NAME    REFERENCE          TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+myapp   Deployment/myapp   0%/1%     1         5         2          3s
+```
+
+3) 由于CPU利用率不足1%，pod已经进行了缩容
+```bash
+[root@centos-1 chapter14]# kubectl get pods
+NAME                     READY   STATUS    RESTARTS   AGE
+myapp-d48f86cd4-d8nt5    1/1     Running   0          21m
+
+```
+4) 这时，我们需要达到扩容的展示效果，需要在客户端启动压测命令
+```bash
+while true; do curl http://192.168.0.104:30502;sleep ...1.;done
+```
+
+5) 我们发现pod已经进行了扩容，虽然cpu利用率还是大于10，但是我们定义最大pod数量是5，所以就不会再扩容了，
+和预期效果一致。
+```bash
+[root@centos-1 chapter14]# kubectl top pod
+NAME                     CPU(cores)   MEMORY(bytes)   
+myapp-d48f86cd4-d8nt5    24m          2Mi             
+ngx-new-cb79d555-x822n   0m           3Mi  
+               
+[root@centos-1 chapter14]# kubectl top pod
+NAME                     CPU(cores)   MEMORY(bytes)   
+myapp-d48f86cd4-8xdts    5m           2Mi             
+myapp-d48f86cd4-bdlr2    5m           2Mi             
+myapp-d48f86cd4-d8nt5    5m           2Mi             
+myapp-d48f86cd4-mll6m    5m           2Mi             
+myapp-d48f86cd4-rlszf    5m           2Mi             
+ngx-new-cb79d555-x822n   0m           3Mi 
+                
+[root@centos-1 chapter14]# kubectl get hpa
+NAME    REFERENCE          TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+myapp   Deployment/myapp   10%/1%    1         5         5          4m8s
+```
+
+### 介绍-autoscaling/v2beta2
+
+autoscaling/v2beta2接口中提供了丰富的[custom metrics](Autoscaling on multiple metrics and custom metrics
+)，如Pod级别内建指标以及第三发可集成的指标。
+也可以参阅本页相关yaml附件，
+
 
 ### 附录：参考文档
 

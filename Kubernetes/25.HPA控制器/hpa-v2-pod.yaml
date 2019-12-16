@@ -1,0 +1,7 @@
+type: Pods
+pods:
+  metric:
+    name: packets-per-second
+  target:
+    type: AverageValue
+    averageValue: 1k
