@@ -15,25 +15,25 @@ service中的Pod个数自动调整呢？
 自动伸缩分为两种：水平伸缩和垂直伸缩。
 
 - 水平伸缩：
-    ```text
-    K8S基础资源级别的水平伸缩：
-        HPA（Horizontal Pod Autoscaling）：
-            autoscaling/v1：仅支持cpu采样
-            autoscaling/v2beta1：额外增加支持custom metrics（kubernetes1.6+）
-            autoscaling/v2beta2：额外增加支持external metrics，multiple metrics和metrics APIs（kubernetes1.6）
-    ```
-    ```text
-    K8S集群级别的水平伸缩：
-        CA（Cluster Autoscaler）：通过集成云计算的相关资源申请接口，达到集群级别的动态弹性伸缩效果。
-    
-    ```
+```text
+K8S基础资源级别的水平伸缩：
+HPA（Horizontal Pod Autoscaling）：
+    autoscaling/v1：仅支持cpu采样
+    autoscaling/v2beta1：额外增加支持custom metrics（kubernetes1.6+）
+    autoscaling/v2beta2：额外增加支持external metrics，multiple metrics和metrics APIs（kubernetes1.6）
+```
+```text
+K8S集群级别的水平伸缩：
+CA（Cluster Autoscaler）：通过集成云计算的相关资源申请接口，达到集群级别的动态弹性伸缩效果。
+
+```
 
 - [垂直伸缩](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/autoscaling/vertical-pod-autoscaler.md)
-    ```text
-        VPA（Vertical Pod AutoScaler）-垂直伸缩：提升单个Pod的request处理能力（还不成熟）
-        AR（Addon Resizer：垂直伸缩工具）：根据实际状态，弹性调整pod的request和limit
-    
-    ```    
+```text
+    VPA（Vertical Pod AutoScaler）-垂直伸缩：提升单个Pod的request处理能力（还不成熟）
+    AR（Addon Resizer：垂直伸缩工具）：根据实际状态，弹性调整pod的request和limit
+
+```    
 
 ### HPA简介
 
@@ -42,6 +42,8 @@ service中的Pod个数自动调整呢？
 
 
 ### HPA组件交互图
+
+![HPA组件交互图-1](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/25.HPA%E6%8E%A7%E5%88%B6%E5%99%A8/HPA.png)
 
 用户可以通过CMD，显示申明一个HPA控制器,然后HPA控制器根据指标自动调整RS/Deployment控制器指标，从而
 达到自动扩缩容Pod的效果。
@@ -56,7 +58,24 @@ kubectl autoscale deployment foo --min=2 --max=5 --cpu-percent=80
 - K8S集群version 1.2 or later
 - [metrics-server](https://github.com/kubernetes-sigs/metrics-server)/[Prometheus](https://github.com/coreos/prometheus-operator)
 
-
+metrics-server部署的时候需要注意修改~/deploy/对应版本下的/metrics-server-deployment.yaml,新增command
+```yaml
+containers:
+      - name: metrics-server
+        image: k8s.gcr.io/metrics-server-amd64:v0.3.3
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: tmp-dir
+          mountPath: /tmp
+        command:
+                - /metrics-server
+                - --kubelet-preferred-address-types=InternalIP
+                - --kubelet-insecure-tls
+```
+否则会碰到如下报错信息：
+```bash
+unable to fully collect metrics: [unable to fully scrape metrics from source kubelet_summary:mywork: unable to fetch metrics from Kubelet mywork (mywork): Get https://mywork:10250/stats/summary/: dial tcp: i/o timeout, unable to fully scrape metrics from source kubelet_summary:marktest: unable to fetch metrics from Kubelet marktest (marktest): Get https://marktest:10250/stats/summary/: dial tcp: i/o timeout]
+```
 
 ### 附录：参考文档
 
