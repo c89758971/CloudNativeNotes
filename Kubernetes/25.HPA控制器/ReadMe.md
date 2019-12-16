@@ -185,8 +185,7 @@ myapp   Deployment/myapp   10%/1%    1         5         5          4m8s
 
 ### 介绍-autoscaling/v2beta2
 
-autoscaling/v2beta2接口中提供了丰富的[custom metrics](Autoscaling on multiple metrics and custom metrics
-)，如Pod级别内建指标以及第三发可集成的指标。
+autoscaling/v2beta2接口中提供了丰富的[custom metrics](https://v1-16.docs.kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/)，如Pod级别内建指标以及第三发可集成的指标。
 也可以参阅本页相关yaml附件，
 
 
