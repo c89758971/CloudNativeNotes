@@ -9,7 +9,7 @@ Cloud Native / 云原生。
 这是个人学习Cloud Native的笔记，暂定目录如下，请按需进行阅读:
 
 - Docker：已完成
-- Kubernetes：更新至25章节：HPA控制器
+- Kubernetes：更新至27章节：Helm使用进阶
 - Ceph：TBS
 - Istio：TBS
 - Enovy：TBS
