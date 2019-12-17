@@ -10,6 +10,7 @@ service中的Pod个数自动调整呢？
 - Before you begin
 - 实战-autoscaling/v1
 - 介绍-autoscaling/v2beta2
+- 附录：参考文档
 
 
 ### 自动伸缩
