@@ -19,7 +19,17 @@ Cloud Native / 云原生。
     
     
         
-### 附录
+### 附录-镜像站点
+
+微软镜像地址：
+https://mirror.azure.cn/
+
+谷歌镜像地址：https://storage.googleapis.com
+
+我的镜像仓库：registry.cn-hangzhou.aliyuncs.com/aaron89/仓库名:[镜像版本号]
+
+
+### 附录-示例源码
 
 《Kubernetes进阶实战》一书中的配置清单示例源码：
 
