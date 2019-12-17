@@ -72,7 +72,7 @@ helm repo update | helm仓库更新
 helm inspect readme stable/jenkins | charts使用说明
 helm install stable/redis | charts部署，可配合--dry-run
 helm list release | release 版本查看
-helm delete  <charts-name> | 卸载charts
+helm delete  redis-release-1 | 卸载名为redis-release-1的charts
 ### 附录：参考文档
 
 * helm
