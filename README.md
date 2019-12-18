@@ -4,7 +4,7 @@
 
 Cloud Native / 云原生。
 
-### 访问方式
+### 阅读指引
 
 这是个人学习Cloud Native的笔记，暂定目录如下，请按需进行阅读:
 
@@ -22,7 +22,7 @@ Cloud Native / 云原生。
 ### 附录-镜像站点
 
 微软镜像地址：
-https://mirror.azure.cn/
+https://mirror.azure.cn
 
 谷歌镜像地址：https://storage.googleapis.com
 
