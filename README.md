@@ -8,7 +8,7 @@ Cloud Native / 云原生。
 
 这是个人梳理的Cloud Native专题，暂定目录如下，请按需进行阅读:
 
-- Docker：已完成
+- Docker：已完成，共三章
 - Kubernetes：更新至27章节：Helm使用进阶
 - Ceph：TBS
 - Istio：TBS
