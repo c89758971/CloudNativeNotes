@@ -24,11 +24,11 @@
 
 ### 环境准备
 
-主机名 | ip | 组件 | 角色
----- | ----- | ----- | -----
-k8s-etcd-mater01.shared | 192.168.0.111 | etcd:3.3.11 | Master
-k8s-etcd-mater02.shared | 192.168.0.112 | etcd:3.3.11 | Master
-k8s-etcd-mater03.shared | 192.168.0.113 | etcd:3.3.11 | Master
+主机名 | ip | 组件 | 角色 | 操作系统
+---- | ----- | ----- | ----- | -----
+k8s-etcd-mater01.shared | 192.168.0.111 | etcd:3.3.11 | Master | Centos6.2
+k8s-etcd-mater02.shared | 192.168.0.112 | etcd:3.3.11 | Master | Centos6.2
+k8s-etcd-mater03.shared | 192.168.0.113 | etcd:3.3.11 | Master | Centos6.2
 
 hosts信息和时间同步（略）:
 ```bash
