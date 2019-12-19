@@ -24,11 +24,11 @@
 
 ### 环境准备
 
-主机名 | ip | 组件
----- | ----- | ----- 
-k8s-etcd-mater01.shared | 192.168.0.111 | etcd:3.3.11
-k8s-etcd-mater02.shared | 192.168.0.112 | etcd:3.3.11
-k8s-etcd-mater03.shared | 192.168.0.113 | etcd:3.3.11
+主机名 | ip | 组件 | 角色
+---- | ----- | ----- | -----
+k8s-etcd-mater01.shared | 192.168.0.111 | etcd:3.3.11 | Master
+k8s-etcd-mater02.shared | 192.168.0.112 | etcd:3.3.11 | Master
+k8s-etcd-mater03.shared | 192.168.0.113 | etcd:3.3.11 | Master
 
 hosts信息和时间同步（略）:
 ```bash
@@ -87,7 +87,7 @@ ETCD_LISTEN_PEER_URLS="http://192.168.0.111:2380"  #集群内相互通信地址
 ETCD_LISTEN_CLIENT_URLS="http://192.168.0.111:2379" #客户端访问地址
 #ETCD_MAX_SNAPSHOTS="5"
 #ETCD_MAX_WALS="5"
-ETCD_NAME="etcd01"          
+ETCD_NAME="etcd01"           #本节点etcd名
 #ETCD_SNAPSHOT_COUNT="100000"
 #ETCD_HEARTBEAT_INTERVAL="100"
 #ETCD_ELECTION_TIMEOUT="1000"
