@@ -62,7 +62,16 @@ vi /etc/selinux/config
 vim  /etc/fstab 
 注释 /dev/mapper/VolGroup-lv_swap swap 行
 ```
+更新nss curl libcurl（否则git clone会报错）
+```bash
+yum update -y nss curl libcurl
+```
 ### etcd集群部署
+
+文件 | 路径 | 说明
+---- | ----- | ----- 
+etcd.conf | /etc/etcd/ | 配置文件 
+
 
 Master端：
 1) 安装3.3.11的etcd
@@ -120,3 +129,4 @@ b3504381e8ba3cb: name=etcd02 peerURLs=http://etcd02:2380 clientURLs=http://etcd0
 b8b747c74aaea686: name=etcd01 peerURLs=http://etcd01:2380 clientURLs=http://etcd01:2379 isLeader=false
 f572fdfc5cb68406: name=etcd03 peerURLs=http://etcd03:2380 clientURLs=http://etcd03:2379 isLeader=true
 ```
+
