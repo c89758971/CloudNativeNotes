@@ -6,6 +6,7 @@
 - 高可用架构
 - 环境准备
 - etcd集群部署
+- Docker环境准备
 - K8S-Master配置
 
 ### 高可用设计原则
@@ -25,11 +26,18 @@
 
 ### 环境准备
 
+组件 | 版本 
+---- | ----- 
+etcd | 3.3.11
+dockerce | 19.03.5 
+
 主机名 | ip | 组件 | 角色 | 操作系统
 ---- | ----- | ----- | ----- | -----
 k8s-etcd-mater01.shared | 192.168.0.111 | etcd:3.3.11 | Master | Centos6.2
 k8s-etcd-mater02.shared | 192.168.0.112 | etcd:3.3.11 | Master | Centos6.2
 k8s-etcd-mater03.shared | 192.168.0.113 | etcd:3.3.11 | Master | Centos6.2
+
+
 
 hosts信息和时间同步（略）:
 ```bash
@@ -230,6 +238,10 @@ member c4eb31a06cd36dd7 is healthy: got healthy result from https://etcd01.ilinu
 cluster is healthy
 
 ```
+### Docker环境准备
+
+安装步骤请参考[使用Kubeadm部署k8s集群]('https://github.com/Aaron1989/CloudNativeNotes/tree/master/Kubernetes/3.%E4%BD%BF%E7%94%A8Kubeadm%E9%83%A8%E7%BD%B2k8s%E9%9B%86%E7%BE%A4')中的前五步即可
+
 
 ### K8S-Master配置
 
