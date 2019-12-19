@@ -2,12 +2,13 @@
 
 本次采用二进制文件方式部署高可用k8s集群
 
-- 高可用原则
+- 高可用设计原则
 - 高可用架构
 - 环境准备
 - etcd集群部署
+- K8S-Master配置
 
-### 高可用原则
+### 高可用设计原则
 ```text
 生产环境：
     高可用etcd集群（需定期备份），建立3、5或7个节点（奇数个节点）
@@ -32,9 +33,9 @@ k8s-etcd-mater03.shared | 192.168.0.113 | etcd:3.3.11 | Master | Centos6.2
 
 hosts信息和时间同步（略）:
 ```bash
-192.168.0.111   k8s-etcd-mater01.shared   master01 etcd01 etcd01.ilinux.io
-192.168.0.112   k8s-etcd-mater02.shared   master02 etcd02 etcd02.ilinux.io
-192.168.0.113   k8s-etcd-mater03.shared   master03 etcd03 etcd03.ilinux.io
+192.168.0.111   k8s-etcd-mater01.shared   k8s-master01 etcd01 etcd01.ilinux.io k8s-master01.ilinux.io
+192.168.0.112   k8s-etcd-mater02.shared   k8s-master02 etcd02 etcd02.ilinux.io k8s-master02.ilinux.io
+192.168.0.113   k8s-etcd-mater03.shared   k8s-master03 etcd03 etcd03.ilinux.io k8s-master03.ilinux.io
 ```
 关闭防火墙：
 ```bash
@@ -136,9 +137,9 @@ b8b747c74aaea686: name=etcd01 peerURLs=http://etcd01:2380 clientURLs=http://etcd
 f572fdfc5cb68406: name=etcd03 peerURLs=http://etcd03:2380 clientURLs=http://etcd03:2379 isLeader=true
 ```
 
-6) 将etcd-cert-generator目录git clone到本地，然后使用bash gencerts.sh etcd生成etcd证书，默认域名是ilinux.io，可自行填写，然后回车
+6) 将cert-generator目录git clone到本地，然后使用bash gencerts.sh etcd生成etcd证书，默认域名是ilinux.io，可自行填写，然后回车
 ```bash
-[root@k8s-etcd-mater01 k8s-certs-generator]# bash gencerts.sh etcd
+[root@k8s-etcd-mater01 cert-generator]# bash gencerts.sh etcd
 Enter Domain Name [ilinux.io]: 
 
 ```
@@ -228,4 +229,138 @@ member 433f227ff9ad65cd is healthy: got healthy result from https://etcd02.ilinu
 member c4eb31a06cd36dd7 is healthy: got healthy result from https://etcd01.ilinux.io:2379
 cluster is healthy
 
+```
+
+### K8S-Master配置
+
+1) 生成必要的证书和密钥，包括访问etcd集群时用到的客户端证书和私钥
+```bash
+#生成证书
+cd /root/cert-generator
+    
+#生成k8s相关证书
+[root@k8s-etcd-mater01 k8s-certs-generator]# bash gencerts.sh k8s
+Enter Domain Name [ilinux.io]:                    #不需要动，需要和etcd配置时保持一致
+Enter Kubernetes Cluster Name [kubernetes]:       #可自定义
+Enter the IP Address in default namespace 
+  of the Kubernetes API Server[10.96.0.1]:        #不需要改
+Enter Master servers name[master01 master02 master03]: k8s-master01 k8s-master02 k8s-master03      
+                                                  #master名，与Domain Name拼接
+
+```
+
+2) 所需证书已经全部生成并归档
+```bash
+[root@k8s-etcd-mater01 k8s-certs-generator]# tree kubernetes/
+kubernetes/
+├── CA
+│   ├── ca.crt
+│   └── ca.key
+├── front-proxy
+│   ├── front-proxy-ca.crt
+│   ├── front-proxy-ca.key
+│   ├── front-proxy-client.crt
+│   └── front-proxy-client.key
+├── ingress
+│   ├── ingress-server.crt
+│   ├── ingress-server.key
+│   └── patches
+│       └── ingress-tls.patch
+├── k8s-master01
+│   ├── auth
+│   │   ├── admin.conf
+│   │   ├── controller-manager.conf
+│   │   └── scheduler.conf
+│   ├── pki
+│   │   ├── apiserver.crt
+│   │   ├── apiserver-etcd-client.crt
+│   │   ├── apiserver-etcd-client.key
+│   │   ├── apiserver.key
+│   │   ├── apiserver-kubelet-client.crt
+│   │   ├── apiserver-kubelet-client.key
+│   │   ├── ca.crt
+│   │   ├── ca.key
+│   │   ├── front-proxy-ca.crt
+│   │   ├── front-proxy-ca.key
+│   │   ├── front-proxy-client.crt
+│   │   ├── front-proxy-client.key
+│   │   ├── kube-controller-manager.crt
+│   │   ├── kube-controller-manager.key
+│   │   ├── kube-scheduler.crt
+│   │   ├── kube-scheduler.key
+│   │   ├── sa.key
+│   │   └── sa.pub
+│   └── token.csv
+├── k8s-master02
+│   ├── auth
+│   │   ├── admin.conf
+│   │   ├── controller-manager.conf
+│   │   └── scheduler.conf
+│   ├── pki
+│   │   ├── apiserver.crt
+│   │   ├── apiserver-etcd-client.crt
+│   │   ├── apiserver-etcd-client.key
+│   │   ├── apiserver.key
+│   │   ├── apiserver-kubelet-client.crt
+│   │   ├── apiserver-kubelet-client.key
+│   │   ├── ca.crt
+│   │   ├── ca.key
+│   │   ├── front-proxy-ca.crt
+│   │   ├── front-proxy-ca.key
+│   │   ├── front-proxy-client.crt
+│   │   ├── front-proxy-client.key
+│   │   ├── kube-controller-manager.crt
+│   │   ├── kube-controller-manager.key
+│   │   ├── kube-scheduler.crt
+│   │   ├── kube-scheduler.key
+│   │   ├── sa.key
+│   │   └── sa.pub
+│   └── token.csv
+├── k8s-master03
+│   ├── auth
+│   │   ├── admin.conf
+│   │   ├── controller-manager.conf
+│   │   └── scheduler.conf
+│   ├── pki
+│   │   ├── apiserver.crt
+│   │   ├── apiserver-etcd-client.crt
+│   │   ├── apiserver-etcd-client.key
+│   │   ├── apiserver.key
+│   │   ├── apiserver-kubelet-client.crt
+│   │   ├── apiserver-kubelet-client.key
+│   │   ├── ca.crt
+│   │   ├── ca.key
+│   │   ├── front-proxy-ca.crt
+│   │   ├── front-proxy-ca.key
+│   │   ├── front-proxy-client.crt
+│   │   ├── front-proxy-client.key
+│   │   ├── kube-controller-manager.crt
+│   │   ├── kube-controller-manager.key
+│   │   ├── kube-scheduler.crt
+│   │   ├── kube-scheduler.key
+│   │   ├── sa.key
+│   │   └── sa.pub
+│   └── token.csv
+└── kubelet
+    ├── auth
+    │   ├── bootstrap.conf
+    │   └── kube-proxy.conf
+    └── pki
+        ├── ca.crt
+        ├── kube-proxy.crt
+        └── kube-proxy.key
+
+```
+
+3) 将证书分发至各节点
+```bash
+#各节点
+mkdir /etc/kubernetes
+    
+#本节点操作
+cp -r kubernetes/k8s-master01/* /etc/kubernetes/
+    
+#其他节点
+scp -rp kubernetes/k8s-master02/* k8s-master02:/etc/kubernetes/
+scp -rp kubernetes/k8s-master03/* k8s-master03:/etc/kubernetes/        
 ```
