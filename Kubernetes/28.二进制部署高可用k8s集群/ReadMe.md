@@ -71,7 +71,13 @@ yum update -y nss curl libcurl
 文件 | 路径 | 说明
 ---- | ----- | ----- 
 etcd.conf | /etc/etcd/ | 配置文件 
+pki/* | /etc/etcd/ | 证书文件
+k8s.etcd | /var/lib/etcd/ | 数据文件，需定期备份 
 
+Tips：
+```text
+下面展示如何从0->http集群->https集群的建设全过程，如果打算https一步到位，可跳过4和5两个步骤进行配置。
+```
 
 Master端：
 1) 安装3.3.11的etcd
@@ -130,3 +136,96 @@ b8b747c74aaea686: name=etcd01 peerURLs=http://etcd01:2380 clientURLs=http://etcd
 f572fdfc5cb68406: name=etcd03 peerURLs=http://etcd03:2380 clientURLs=http://etcd03:2379 isLeader=true
 ```
 
+6) 将etcd-cert-generator目录git clone到本地，然后使用bash gencerts.sh etcd生成etcd证书，默认域名是ilinux.io，可自行填写，然后回车
+```bash
+[root@k8s-etcd-mater01 k8s-certs-generator]# bash gencerts.sh etcd
+Enter Domain Name [ilinux.io]: 
+
+```
+
+7) 证书生成并归档结果如下：
+```bash
+[root@k8s-etcd-mater01 k8s-certs-generator]# tree etcd
+etcd
+├── patches
+│   └── etcd-client-cert.patch        
+└── pki
+    ├── apiserver-etcd-client.crt     #让apiserver作为客户端与etcd集群通信的证书     
+    ├── apiserver-etcd-client.key     #让apiserver作为客户端与etcd集群通信的证书
+    ├── ca.crt                        #etcd https测试功能是否成功的证书
+    ├── ca.key                        #etcd https测试功能是否成功的证书
+    ├── client.crt               #客户端证书,apiserver也可以用这一个
+    ├── client.key               #客户端私钥,apiserver也可以用这一个
+    ├── peer.crt                 #etcd集群对等通信证书  
+    ├── peer.key                 #etcd集群对等通信私钥  
+    ├── server.crt               #服务端证书
+    └── server.key               #服务端私钥
+
+```
+
+8) 证书分发至各Master节点的/etc/etcd/目录下
+```bash
+cd etcd
+#本机
+cp -rp pki/ /etc/etcd/ -a
+    
+#各节点
+scp -rp pki/ etcd02:/etc/etcd/
+scp -rp pki/ etcd03:/etc/etcd/
+```
+9) 修改各Master节点的/etc/etcd/etcd.conf配置文件中的Security段落
+```yaml
+#[Security]
+ETCD_CERT_FILE="/etc/etcd/pki/server.crt"
+ETCD_KEY_FILE="/etc/etcd/pki/server.key"
+ETCD_CLIENT_CERT_AUTH="true"                        #服务端必须验证客户端证书 
+ETCD_TRUSTED_CA_FILE="/etc/etcd/pki/ca.crt"
+#ETCD_AUTO_TLS="false"
+ETCD_PEER_CERT_FILE="/etc/etcd/pki/peer.crt"
+ETCD_PEER_KEY_FILE="/etc/etcd/pki/peer.key"
+ETCD_PEER_CLIENT_CERT_AUTH="true"                    #集群间必须相互验证证书
+ETCD_PEER_TRUSTED_CA_FILE="/etc/etcd/pki/ca.crt"
+#ETCD_PEER_AUTO_TLS="false"
+```
+10) 将第三步修改的http全改成https，ETCD_DATA_DIR修改成新地址，ETCD_NAME="etcd03.ilinux.io"修改成和ca域名设置时的Domain Name保持一致，最后修改ETCD_INITIAL_CLUSTER_TOKEN="k8s-etcd-cluster",完成配置文件可参阅etcd/etcd.conf
+```yaml
+[Member]
+ETCD_DATA_DIR="/var/lib/etcd/k8s.etcd"
+ETCD_LISTEN_PEER_URLS="https://192.168.0.113:2380"
+ETCD_LISTEN_CLIENT_URLS="https://192.168.0.113:2379"
+ETCD_NAME="etcd03.ilinux.io"
+  
+#[Clustering]
+ETCD_INITIAL_ADVERTISE_PEER_URLS="https://etcd03.ilinux.io:2380"
+ETCD_ADVERTISE_CLIENT_URLS="https://etcd03.ilinux.io:2379"
+ETCD_INITIAL_CLUSTER="etcd01.ilinux.io=https://etcd01.ilinux.io:2380,etcd02.ilinux.io=https://etcd02.ilinux.io:2380,etcd03.ilinux.io=https://etcd03.ilinux.io:2380"
+ETCD_INITIAL_CLUSTER_TOKEN="k8s-etcd-cluster"
+  
+#[Security]
+ETCD_CERT_FILE="/etc/etcd/pki/server.crt"
+ETCD_KEY_FILE="/etc/etcd/pki/server.key"
+ETCD_CLIENT_CERT_AUTH="true"                 #服务端必须验证客户端证书
+ETCD_TRUSTED_CA_FILE="/etc/etcd/pki/ca.crt"
+ETCD_PEER_CERT_FILE="/etc/etcd/pki/peer.crt"
+ETCD_PEER_KEY_FILE="/etc/etcd/pki/peer.key"
+ETCD_PEER_CLIENT_CERT_AUTH="true"             #集群间必须相互验证证书
+ETCD_PEER_TRUSTED_CA_FILE="/etc/etcd/pki/ca.crt"
+
+```
+
+11) 全部停止并重启etcd，并用之前生成功能测试的ca客户端证书进行访问，至此etcd https集群已经部署完成
+```bash
+#全停止
+systemctl stop etcd
+    
+#全启动
+systemctl start etcd
+    
+#使用证书查看集群状态    
+[root@k8s-etcd-mater01 etcd]# etcdctl --endpoints='https://etcd01.ilinux.io:2379' --cert-file=/etc/etcd/pki/client.crt --key-file=/etc/etcd/pki/client.key --ca-file=/etc/etcd/pki/ca.crt cluster-health
+member 1f22dc5568642e6f is healthy: got healthy result from https://etcd03.ilinux.io:2379
+member 433f227ff9ad65cd is healthy: got healthy result from https://etcd02.ilinux.io:2379
+member c4eb31a06cd36dd7 is healthy: got healthy result from https://etcd01.ilinux.io:2379
+cluster is healthy
+
+```
