@@ -37,16 +37,27 @@ yum remove docker \
 # yum-utils 提供了 yum-config-manager 实用程
 # 并且 devicemapper 存储驱动需要 device-mapper-persistent-data 和 lvm2
 yum install -y yum-utils device-mapper-persistent-data lvm2
+    
+# 2.更新xfsprogs
+yum update xfsprogs
+    
  
-# 2.使用以下命令设置稳定存储库。
+# 3.使用以下命令设置源
+#官方源
 yum-config-manager \
 --add-repo \
 https://download.docker.com/linux/centos/docker-ce.repo
+     
+#阿里源（建议使用）
+yum-config-manager \
+--add-repo \
+https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
  
-# 3.安装Docker CE
+ 
+# 4.安装Docker CE
 yum install -y docker-ce    
  
-#或者安装指定版本
+# 4.或者安装指定版本
 yum list docker-ce --showduplicates | sort -r
 yum install -y docker-ce-17.12.1.ce-1.el7.centos
 ```
