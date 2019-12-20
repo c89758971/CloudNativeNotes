@@ -1,6 +1,8 @@
 # 二进制部署高可用k8s集群
 
-本次采用二进制文件方式部署高可用k8s集群
+本次采用二进制文件方式部署https高可用k8s集群，集群规模可支撑254个节点（默认子网掩码长度：24位）
+如果需要调整，请修改/etc/kubernetes/controller-manager中的"--node-cidr-mask-size=24"字段
+
 
 - 高可用设计原则
 - 高可用架构
@@ -28,6 +30,7 @@
 
 组件 | 版本 
 ---- | ----- 
+kubernetes | v1.13.4
 etcd | 3.3.11
 dockerce | 19.03.5 
 
@@ -135,6 +138,7 @@ ETCD_INITIAL_CLUSTER="etcd01=http://etcd01:2380,etcd02=http://etcd02:2380,etcd03
 4) 逆序依次启动etcd
 ```bash
 systemctl start etcd
+systemctl enable etcd
 ```
 
 5) 此时高可用etcd集群已经部署完成（但是内部通信是http，非安全协议）
@@ -375,4 +379,99 @@ cp -r kubernetes/k8s-master01/* /etc/kubernetes/
 #其他节点
 scp -rp kubernetes/k8s-master02/* k8s-master02:/etc/kubernetes/
 scp -rp kubernetes/k8s-master03/* k8s-master03:/etc/kubernetes/        
+```
+
+4) 获取v1.13.4二进制k8s文件，并解压缩至/usr/local
+```bash
+#获取镜像
+docker pull registry.cn-hangzhou.aliyuncs.com/aaron89/k8s_bin:v1.13.4
+    
+#解压二进制文件    
+docker run --rm -d --name temp registry.cn-hangzhou.aliyuncs.com/aaron89/k8s_bin:v1.13.4 sleep 10
+docker cp temp:/kubernetes-server-linux-amd64.tar.gz .
+tar xf kubernetes-server-linux-amd64.tar.gz  -C /usr/local/
+```
+
+5) 将我提供的配置文件cp到对应路径
+```bash
+cp etc/kubernetes/* /etc/kubernetes/
+cp usr/lib/systemd/system/* /usr/lib/systemd/system
+```
+
+6) 修改apiserver配置文件中的KUBE_ETCD_SERVERS，另外config文件中的日志级别是0(Debug)，先不动,为了测试
+```bash
+KUBE_ETCD_SERVERS="--etcd-servers=https://etcd01.ilinux.io:2379,https://etcd02.ilinux.io:2379,https://etcd03.ilinux.io:2379"
+
+```
+7) 创建kube用户、kubernetes运行目录和权限
+```bash
+useradd -r kube
+mkdir /var/run/kubernetes
+chown kube.kube /var/run/kubernetes/
+```
+
+8) 启动apiserver，并查看status是否正常.至此apiserver已经成功启动，连接etcd集群和相关证书
+```bash
+systemctl daemon-reload
+systemctl start kube-apiserver
+systemctl enable kube-apiserver
+systemctl status kube-apiserver
+```
+
+9) 配置kubectl，并使用kubectl config view查看配置是否正常
+```bash
+mkdir ~/.kube
+ln -sv /usr/local/kubernetes/server/bin/kubectl /usr/bin/
+cp /etc/kubernetes/auth/admin.conf ~/.kube/config
+    
+#kubectl config view   
+[root@k8s-etcd-mater01 auth]# kubectl config view
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: DATA+OMITTED
+    server: https://k8s-master01.ilinux.io:6443
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    user: k8s-admin
+  name: k8s-admin@kubernetes
+current-context: k8s-admin@kubernetes
+kind: Config
+preferences: {}
+users:
+- name: k8s-admin
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
+```
+
+10) 使用get nodes命令，如果没error就说明一切正常！
+```bash
+[root@k8s-etcd-mater01 auth]# kubectl get nodes
+No resources found.
+
+```
+
+11) 创建ClusterRoleBinding，将/etc/kubernetes/token.csv(引导token)中创建用户或者用户组（二选一即可）绑定至内建的
+允许引导令牌功能的clusterrole：system:node-bootstrapper上。这里我使用的是system:bootstrapper用户。
+```bash
+# token.csv说明：用户（system:bootstrapper），组（system:bootstrappers）
+b21f94.fbff38f94cfd0713,"system:bootstrapper",10001,"system:bootstrappers"
+    
+#授权        
+kubectl create clusterrolebinding system:bootstrapper --user=system:bootstrapper --clusterrole=system:node-bootstrapper
+```
+12) 启动kube-controller-manager和kube-scheduler
+```bash
+#controller-manager
+systemctl start kube-controller-manager
+systemctl enable kube-controller-manager
+systemctl status kube-controller-manager
+    
+#scheduler    
+systemctl start kube-scheduler
+systemctl enable kube-scheduler    
+systemctl status kube-scheduler
 ```
