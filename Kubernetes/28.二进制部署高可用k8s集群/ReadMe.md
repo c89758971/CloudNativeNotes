@@ -1,7 +1,7 @@
 # 二进制部署高可用k8s集群
 
-本次采用二进制文件方式部署https高可用k8s集群，集群规模可支撑254个节点
-如果需要调整，请自行修改/etc/kubernetes/controller-manager中的"--node-cidr-mask-size=24"字段
+本次采用二进制文件方式部署https高可用k8s集群，集群规模可支撑254个节点。
+如果需要调整，请自行修改/etc/kubernetes/controller-manager中的"--node-cidr-mask-size=24"字段。
 
 
 - 高可用设计原则
