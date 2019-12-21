@@ -273,12 +273,14 @@ cluster is healthy
 .* | /etc/kubernetes | master端实际配置文件
 auth/* | /etc/kubernetes | auth证书文件
 pki/* | /etc/kubernetes | pki证书文件
+token.csv | /etc/kubernetes | 引导令牌文件
+token.csv | /root/k8s-certs-generator/kubernetes/k8s-master01 | 引导令牌文件(备用)
 .*  | /root/k8s-certs-generator/kubernetes | 证书生成的路径（备用）
 .*  | /usr/local/kubernetes/server/bin | 二进制启动文件
 kube-apiserver.service | /usr/lib/systemd/system | apiserver的启动配置文件
 kube-controller-manager.service | /usr/lib/systemd/system | controller-manager的启动配置文件
 kube-scheduler.service | /usr/lib/systemd/system | scheduler的启动配置文件
-.*  | /var/run/kubernetes/ | k8s运行目录
+.*  | /var/run/kubernetes | k8s运行目录
 
 
 1) 生成必要的证书和密钥，包括访问etcd集群时用到的客户端证书和私钥
@@ -521,6 +523,20 @@ etcd-2               Healthy   {"health":"true"}
 ```
 
 ### Node配置
+
+文件 | 路径 | 说明
+---- | ----- | ----- 
+.* | /etc/kubernetes | node端实际配置文件
+auth/* | /etc/kubernetes | auth证书文件
+pki/* | /etc/kubernetes | pki证书文件
+kubelet  | /usr/local/kubernetes/node/bin | kubelet二进制启动文件
+kube-proxy  | /usr/local/kubernetes/node/bin | kube-proxy二进制启动文件
+kubelet | /var/lib/ | kubelet的配置文件
+kube-proxy | /var/lib/ | kube-proxy的配置文件
+kubelet.service | /usr/lib/systemd/system | kubelet的service文件
+kube-proxy.service | /usr/lib/systemd/system | kube-proxy的service文件
+.*  | /opt/cni/bin | cni运行文件
+ipvs.modules | /etc/sysconfig/modules/ipvs.modules | ipvs脚本
 
 你需要自行将环境准备环节和dockerce环境初始化好
 1) 准备配置文件和证书
