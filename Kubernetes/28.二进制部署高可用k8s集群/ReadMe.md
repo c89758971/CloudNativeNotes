@@ -9,7 +9,8 @@
 - 环境准备
 - etcd集群部署
 - Docker环境准备
-- K8S-Master配置
+- Master配置
+- Node配置
 
 ### 高可用设计原则
 ```text
@@ -33,21 +34,32 @@
 kubernetes | v1.13.4
 etcd | 3.3.11
 dockerce | 19.03.5 
+cni | v0.8.1
 
 主机名 | ip | 组件 | 角色 | 操作系统
 ---- | ----- | ----- | ----- | -----
 k8s-etcd-mater01.shared | 192.168.0.111 | etcd:3.3.11 | Master | Centos6.2
 k8s-etcd-mater02.shared | 192.168.0.112 | etcd:3.3.11 | Master | Centos6.2
 k8s-etcd-mater03.shared | 192.168.0.113 | etcd:3.3.11 | Master | Centos6.2
+k8s-node01.shared | 192.168.0.114 | | Node | Centos6.2
 
 
 
 hosts信息和时间同步（略）:
 ```bash
-192.168.0.111   k8s-etcd-mater01.shared   k8s-master01 etcd01 etcd01.ilinux.io k8s-master01.ilinux.io
+192.168.0.111   k8s-etcd-mater01.shared   k8s-master01 etcd01 etcd01.ilinux.io k8s-master01.ilinux.io kubernetes-api.ilinux.io
 192.168.0.112   k8s-etcd-mater02.shared   k8s-master02 etcd02 etcd02.ilinux.io k8s-master02.ilinux.io
 192.168.0.113   k8s-etcd-mater03.shared   k8s-master03 etcd03 etcd03.ilinux.io k8s-master03.ilinux.io
+192.168.0.114   k8s-node01.shared
 ```
+注意：kubernetes-api.ilinux.io为node节点连接集群的地址，需要用vip或者多个A记录。
+配置文件位置如下：
+```bash
+#master：
+/root/k8s-certs-generator/kubernetes/kubelet/auth/bootstrap.conf和kube-proxy.conf
+
+```
+
 关闭防火墙：
 ```bash
 systemctl stop firewalld.service
@@ -247,7 +259,7 @@ cluster is healthy
 安装步骤请参考[使用Kubeadm部署k8s集群]('https://github.com/Aaron1989/CloudNativeNotes/tree/master/Kubernetes/3.%E4%BD%BF%E7%94%A8Kubeadm%E9%83%A8%E7%BD%B2k8s%E9%9B%86%E7%BE%A4')中的前五步即可
 
 
-### K8S-Master配置
+### Master配置
 
 1) 生成必要的证书和密钥，包括访问etcd集群时用到的客户端证书和私钥
 ```bash
@@ -474,4 +486,104 @@ systemctl status kube-controller-manager
 systemctl start kube-scheduler
 systemctl enable kube-scheduler    
 systemctl status kube-scheduler
+```
+
+13) 此时单台master已经配置完毕
+```bash
+[root@k8s-etcd-mater01 kubernetes]# kubectl get cs
+NAME                 STATUS    MESSAGE             ERROR
+scheduler            Healthy   ok                  
+controller-manager   Healthy   ok                  
+etcd-1               Healthy   {"health":"true"}   
+etcd-0               Healthy   {"health":"true"}   
+etcd-2               Healthy   {"health":"true"}   
+
+```
+
+### Node配置
+
+你需要自行将环境准备环节和dockerce环境初始化好
+1) 准备配置文件和证书
+```bash
+#将本章提供的kube-proxy和kubelet整个目录复制到/var/lib/下面
+cp -rp kube-proxy/ /var/lib/
+cp -rp kubelet/ /var/lib/
+        
+#将本章提供的kubernetes/目录整个复制到/etc下
+cp -rp kubernetes/ /etc/  
+    
+#将Master端生成的kubelet证书分发至node节点的/etc/kubernetes/下     
+cd ~/k8s-certs-generator/kubernetes/kubelet/
+scp -r * k8s-node01.shared:/etc/kubernetes/
+```
+
+2) 下载cni插件，并放到/opt/cni/bin目录下
+```bash
+wget https://github.com/containernetworking/plugins/releases/download/v0.8.1/cni-plugins-linux-amd64-v0.8.1.tgz
+mkdir -p /opt/cni/bin
+tar xf cni-plugins-linux-amd64-v0.8.1.tgz  -C /opt/cni/bin/
+```
+
+3) 准备kublet和kubeproxy的service文件
+```bash
+#将本章提供的node/unit-files/*放到/usr/lib/systemd/system目录
+scp node/unit-files/* k8s-node01.shared:/usr/lib/systemd/system
+```
+
+4) 创建bin目录，并从master端分发kubelet和kubeproxy的二进制文件
+```bash
+mkdir -p /usr/local/kubernetes/node/bin/
+    
+#在拉取过k8s二进制代码的master节点上操作    
+scp /usr/local/kubernetes/server/bin/kube{let,-proxy} k8s-node01.shared:/usr/local/kubernetes/node/bin/
+```
+5) 启动kubelet
+```bash
+systemctl start  kubelet
+systemctl enable  kubelet
+systemctl status  kubelet
+```
+6) master端确认加入集群的请求
+```bash
+#查询请求
+[root@k8s-etcd-mater01 auth]# kubectl get csr
+NAME                                                   AGE     REQUESTOR             CONDITION
+node-csr-O1ThCQzmKSWv7aUvCBJLF0U2A-FJY73d3l9ui2Zdf74   5m48s   system:bootstrapper   Pending
+    
+#签署请求
+[root@k8s-etcd-mater01 auth]# kubectl certificate approve node-csr-O1ThCQzmKSWv7aUvCBJLF0U2A-FJY73d3l9ui2Zdf74
+certificatesigningrequest.certificates.k8s.io/node-csr-O1ThCQzmKSWv7aUvCBJLF0U2A-FJY73d3l9ui2Zdf74 approved
+    
+# node已经加入，但是还没ready
+[root@k8s-etcd-mater01 auth]# kubectl get nodes
+NAME                STATUS     ROLES    AGE     VERSION
+k8s-node01.shared   NotReady   <none>   2m44s   v1.13.4
+    
+```
+
+7) 启用ipvs内核模块
+创建内核模块载入相关的脚本文件/etc/sysconfig/modules/ipvs.modules，设定自动载入的内核模块。文件内容如下：
+```bash
+#!/bin/bash
+ipvs_mods_dir="/usr/lib/modules/$(uname -r)/kernel/net/netfilter/ipvs"
+for i in $(ls $ipvs_mods_dir | grep -o "^[^.]*"); do
+    /sbin/modinfo -F filename $i  &> /dev/null
+    if [ $? -eq 0 ]; then
+        /sbin/modprobe $i
+    fi
+done
+    
+# 赋权、运行并检查    
+chmod +x /etc/sysconfig/modules/ipvs.modules
+/etc/sysconfig/modules/ipvs.modules
+lsmod |grep ip_vs
+```
+
+8) 启动kube-proxy
+```bash
+[root@k8s-node01 kubernetes]# systemctl  start kube-proxy
+[root@k8s-node01 kubernetes]# systemctl  enable kube-proxy
+Created symlink from /etc/systemd/system/multi-user.target.wants/kube-proxy.service to /usr/lib/systemd/system/kube-proxy.service.
+[root@k8s-node01 kubernetes]# systemctl  status kube-proxy
+
 ```
