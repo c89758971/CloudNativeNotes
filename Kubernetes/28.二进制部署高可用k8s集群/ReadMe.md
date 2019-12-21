@@ -1,6 +1,7 @@
 # 二进制部署高可用k8s集群
 
-本次采用二进制文件方式部署https高可用k8s集群，集群规模可支撑254个节点。
+本次采用二进制文件方式部署https高可用k8s集群，所有涉及的配置文件和镜像均已提供，无需翻墙。
+另外，默认集群规模可支撑254个节点。
 如果需要调整，请自行修改/etc/kubernetes/controller-manager中的"--node-cidr-mask-size=24"字段。
 
 
@@ -35,13 +36,14 @@ kubernetes | v1.13.4
 etcd | 3.3.11
 dockerce | 19.03.5 
 cni | v0.8.1
+OS | Centos6.2
 
-主机名 | ip | 组件 | 角色 | 操作系统
----- | ----- | ----- | ----- | -----
-k8s-etcd-mater01.shared | 192.168.0.111 | etcd/apiserver/controller-manager/scheduler | Master | Centos6.2
-k8s-etcd-mater02.shared | 192.168.0.112 | etcd/apiserver/controller-manager/scheduler | Master | Centos6.2
-k8s-etcd-mater03.shared | 192.168.0.113 | etcd/apiserver/controller-manager/scheduler | Master | Centos6.2
-k8s-node01.shared | 192.168.0.114 | kubelet/kube-proxy | Node | Centos6.2
+主机名 | ip | 组件 | 角色 
+---- | ----- | ----- | ----- 
+k8s-etcd-mater01.shared | 192.168.0.111 | etcd/apiserver/controller-manager/scheduler | Master 
+k8s-etcd-mater02.shared | 192.168.0.112 | etcd/apiserver/controller-manager/scheduler | Master 
+k8s-etcd-mater03.shared | 192.168.0.113 | etcd/apiserver/controller-manager/scheduler | Master 
+k8s-node01.shared | 192.168.0.114 | kubelet/kube-proxy | Node 
 
 
 
@@ -589,4 +591,30 @@ lsmod |grep ip_vs
 Created symlink from /etc/systemd/system/multi-user.target.wants/kube-proxy.service to /usr/lib/systemd/system/kube-proxy.service.
 [root@k8s-node01 kubernetes]# systemctl  status kube-proxy
 
+```
+
+9) 拉取flannel所需镜像
+```bash
+#node节点
+docker pull registry.cn-hangzhou.aliyuncs.com/aaron89/flannel:v0.11.0-amd64	
+docker tag registry.cn-hangzhou.aliyuncs.com/aaron89/flannel:v0.11.0-amd64	  quay.io/coreos/flannel:v0.11.0-amd64
+
+docker pull registry.cn-hangzhou.aliyuncs.com/aaron89/pause:3.1
+docker tag registry.cn-hangzhou.aliyuncs.com/aaron89/pause:3.1 k8s.gcr.io/pause:3.1    
+```
+
+10) master端apply flannel插件
+```bash
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+```
+
+11) 此时flannel的pod已经成功运行，而且node的状态也已经是ready了
+```bash
+[root@k8s-etcd-mater01 ~]# kubectl get pod -n kube-system -o wide
+NAME                          READY   STATUS    RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
+kube-flannel-ds-amd64-cj8rh   1/1     Running   0          37m   192.168.0.114   k8s-node01.shared   <none>           <none>
+    
+[root@k8s-etcd-mater01 ~]# kubectl get node
+NAME                STATUS   ROLES    AGE   VERSION
+k8s-node01.shared   Ready    <none>   93m   v1.13.4    
 ```
