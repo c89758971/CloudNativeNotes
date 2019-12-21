@@ -1,0 +1,5 @@
+###
+# kubernetes proxy config
+
+# Add your own!
+KUBE_PROXY_ARGS="--config=/var/lib/kube-proxy/config.yaml"

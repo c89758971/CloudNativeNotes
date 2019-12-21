@@ -1,0 +1,14 @@
+###
+# kubernetes kubelet config
+
+# The address for the info server to serve on (set to 0.0.0.0 or "" for all interfaces)
+KUBELET_ADDRESS="--address=0.0.0.0"
+
+# The port for the info server to serve on
+# KUBELET_PORT="--port=10250"
+
+# Add your own!
+KUBELET_ARGS="--network-plugin=cni \
+    --config=/var/lib/kubelet/config.yaml \
+    --kubeconfig=/etc/kubernetes/auth/kubelet.conf \
+    --bootstrap-kubeconfig=/etc/kubernetes/auth/bootstrap.conf"
