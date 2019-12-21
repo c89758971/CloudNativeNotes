@@ -104,6 +104,7 @@ yum update -y nss curl libcurl
 ---- | ----- | ----- 
 etcd.conf | /etc/etcd/ | 配置文件 
 pki/* | /etc/etcd/ | 证书文件
+pki/* | /root/k8s-certs-generator/etcd | 证书生成的路径（备用）
 k8s.etcd | /var/lib/etcd/ | 数据文件，需定期备份 
 
 Tips：
@@ -265,6 +266,20 @@ cluster is healthy
 
 
 ### Master配置
+
+
+文件 | 路径 | 说明
+---- | ----- | ----- 
+* | /etc/kubernetes | master端实际配置文件
+auth/* | /etc/kubernetes | auth证书文件
+pki/* | /etc/kubernetes | pki证书文件
+* | /root/k8s-certs-generator/kubernetes | 证书生成的路径（备用）
+* | /usr/local/kubernetes/server/bin | 二进制启动文件
+kube-apiserver.service | /usr/lib/systemd/system | apiserver的启动配置文件
+kube-controller-manager.service | /usr/lib/systemd/system | controller-manager的启动配置文件
+kube-scheduler.service | /usr/lib/systemd/system | scheduler的启动配置文件
+* | /var/run/kubernetes/ | k8s运行目录
+
 
 1) 生成必要的证书和密钥，包括访问etcd集群时用到的客户端证书和私钥
 ```bash
