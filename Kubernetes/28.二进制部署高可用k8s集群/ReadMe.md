@@ -6,9 +6,9 @@
 
 - 高可用设计原则
 - 高可用架构
-- 环境准备
-- etcd集群部署
+- 基础环境准备
 - Docker环境准备
+- Etcd集群部署
 - Master配置
 - Node配置
 
@@ -27,7 +27,7 @@
 
 ![高可用架构-1](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/k8s-ha.png)
 
-### 环境准备
+### 基础环境准备
 
 组件 | 版本 
 ---- | ----- 
@@ -90,7 +90,13 @@ vim  /etc/fstab
 ```bash
 yum update -y nss curl libcurl
 ```
-### etcd集群部署
+
+### Docker环境准备
+
+安装步骤请参考[使用Kubeadm部署k8s集群]('https://github.com/Aaron1989/CloudNativeNotes/tree/master/Kubernetes/3.%E4%BD%BF%E7%94%A8Kubeadm%E9%83%A8%E7%BD%B2k8s%E9%9B%86%E7%BE%A4')中的前五步即可
+
+
+### Etcd集群部署
 
 文件 | 路径 | 说明
 ---- | ----- | ----- 
@@ -254,9 +260,6 @@ member c4eb31a06cd36dd7 is healthy: got healthy result from https://etcd01.ilinu
 cluster is healthy
 
 ```
-### Docker环境准备
-
-安装步骤请参考[使用Kubeadm部署k8s集群]('https://github.com/Aaron1989/CloudNativeNotes/tree/master/Kubernetes/3.%E4%BD%BF%E7%94%A8Kubeadm%E9%83%A8%E7%BD%B2k8s%E9%9B%86%E7%BE%A4')中的前五步即可
 
 
 ### Master配置
