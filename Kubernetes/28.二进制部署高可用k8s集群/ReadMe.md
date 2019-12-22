@@ -689,8 +689,12 @@ k8s-node01.shared   Ready    <none>   22h   v1.13.4
 
 ```
 
-4) 注意："https://kubernetes-api.ilinux.io:6443"是node节点连接高可用集群的地址，需要用vip或者多个A记录进行冗余。暂时就通过hosts解析在mater01上。
-    
+4) 集群的高可用链接地址，需要用vip或者多个A记录进行冗余。本章暂时就通过hosts解析在mater01上。
+
+高可用集群接入地址：
+```bash
+https://kubernetes-api.ilinux.io:6443
+```    
 配置文件位置如下：
 ```bash
 #master：
