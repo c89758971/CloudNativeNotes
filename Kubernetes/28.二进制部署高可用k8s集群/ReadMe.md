@@ -12,6 +12,11 @@
 - Etcd集群部署
 - Master配置
 - Node配置
+- 组件高可用扩展-apiserver
+- 组件高可用扩展-controller-manager
+- 组件高可用扩展-scheduler
+- CoreDns部署
+- 集群高可用测试
 
 ### 高可用设计原则
 ```text
@@ -40,26 +45,19 @@ OS | Centos6.2
 
 主机名 | ip | 组件 | 角色 
 ---- | ----- | ----- | ----- 
-k8s-etcd-mater01.shared | 192.168.0.111 | etcd/apiserver/controller-manager/scheduler | Master 
-k8s-etcd-mater02.shared | 192.168.0.112 | etcd/apiserver/controller-manager/scheduler | Master 
-k8s-etcd-mater03.shared | 192.168.0.113 | etcd/apiserver/controller-manager/scheduler | Master 
+k8s-etcd-master01.shared | 192.168.0.111 | etcd/apiserver/controller-manager/scheduler | Master 
+k8s-etcd-master02.shared | 192.168.0.112 | etcd/apiserver/controller-manager/scheduler | Master 
+k8s-etcd-master03.shared | 192.168.0.113 | etcd/apiserver/controller-manager/scheduler | Master 
 k8s-node01.shared | 192.168.0.114 | kubelet/kube-proxy | Node 
 
 
 
 hosts信息和时间同步（略）:
 ```bash
-192.168.0.111   k8s-etcd-mater01.shared   k8s-master01 etcd01 etcd01.ilinux.io k8s-master01.ilinux.io kubernetes-api.ilinux.io
-192.168.0.112   k8s-etcd-mater02.shared   k8s-master02 etcd02 etcd02.ilinux.io k8s-master02.ilinux.io
-192.168.0.113   k8s-etcd-mater03.shared   k8s-master03 etcd03 etcd03.ilinux.io k8s-master03.ilinux.io
+192.168.0.111   k8s-etcd-master01.shared   k8s-master01 etcd01 etcd01.ilinux.io k8s-master01.ilinux.io kubernetes-api.ilinux.io
+192.168.0.112   k8s-etcd-master02.shared   k8s-master02 etcd02 etcd02.ilinux.io k8s-master02.ilinux.io
+192.168.0.113   k8s-etcd-master03.shared   k8s-master03 etcd03 etcd03.ilinux.io k8s-master03.ilinux.io
 192.168.0.114   k8s-node01.shared
-```
-注意：kubernetes-api.ilinux.io为node节点连接集群的地址，需要用vip或者多个A记录。
-配置文件位置如下：
-```bash
-#master：
-/root/k8s-certs-generator/kubernetes/kubelet/auth/bootstrap.conf和kube-proxy.conf
-
 ```
 
 关闭防火墙：
@@ -164,7 +162,7 @@ systemctl enable etcd
 
 5) 此时高可用etcd集群已经部署完成（但是内部通信是http，非安全协议）
 ```bash
-[root@k8s-etcd-mater02 /]# etcdctl --endpoints='http://etcd01:2379' member list
+[root@k8s-etcd-master02 /]# etcdctl --endpoints='http://etcd01:2379' member list
 b3504381e8ba3cb: name=etcd02 peerURLs=http://etcd02:2380 clientURLs=http://etcd02:2379 isLeader=false
 b8b747c74aaea686: name=etcd01 peerURLs=http://etcd01:2380 clientURLs=http://etcd01:2379 isLeader=false
 f572fdfc5cb68406: name=etcd03 peerURLs=http://etcd03:2380 clientURLs=http://etcd03:2379 isLeader=true
@@ -172,14 +170,14 @@ f572fdfc5cb68406: name=etcd03 peerURLs=http://etcd03:2380 clientURLs=http://etcd
 
 6) 将cert-generator目录git clone到本地，然后使用bash gencerts.sh etcd生成etcd证书，默认域名是ilinux.io，可自行填写，然后回车
 ```bash
-[root@k8s-etcd-mater01 cert-generator]# bash gencerts.sh etcd
+[root@k8s-etcd-master01 cert-generator]# bash gencerts.sh etcd
 Enter Domain Name [ilinux.io]: 
 
 ```
 
 7) 证书生成并归档结果如下：
 ```bash
-[root@k8s-etcd-mater01 k8s-certs-generator]# tree etcd
+[root@k8s-etcd-master01 k8s-certs-generator]# tree etcd
 etcd
 ├── patches
 │   └── etcd-client-cert.patch        
@@ -256,7 +254,7 @@ systemctl stop etcd
 systemctl start etcd
     
 #使用证书查看集群状态    
-[root@k8s-etcd-mater01 etcd]# etcdctl --endpoints='https://etcd01.ilinux.io:2379' --cert-file=/etc/etcd/pki/client.crt --key-file=/etc/etcd/pki/client.key --ca-file=/etc/etcd/pki/ca.crt cluster-health
+[root@k8s-etcd-master01 etcd]# etcdctl --endpoints='https://etcd01.ilinux.io:2379' --cert-file=/etc/etcd/pki/client.crt --key-file=/etc/etcd/pki/client.key --ca-file=/etc/etcd/pki/ca.crt cluster-health
 member 1f22dc5568642e6f is healthy: got healthy result from https://etcd03.ilinux.io:2379
 member 433f227ff9ad65cd is healthy: got healthy result from https://etcd02.ilinux.io:2379
 member c4eb31a06cd36dd7 is healthy: got healthy result from https://etcd01.ilinux.io:2379
@@ -289,7 +287,7 @@ kube-scheduler.service | /usr/lib/systemd/system | scheduler的启动配置文�
 cd /root/cert-generator
     
 #生成k8s相关证书
-[root@k8s-etcd-mater01 k8s-certs-generator]# bash gencerts.sh k8s
+[root@k8s-etcd-master01 k8s-certs-generator]# bash gencerts.sh k8s
 Enter Domain Name [ilinux.io]:                    #不需要动，需要和etcd配置时保持一致
 Enter Kubernetes Cluster Name [kubernetes]:       #可自定义
 Enter the IP Address in default namespace 
@@ -301,7 +299,7 @@ Enter Master servers name[master01 master02 master03]: k8s-master01 k8s-master02
 
 2) 所需证书已经全部生成并归档
 ```bash
-[root@k8s-etcd-mater01 k8s-certs-generator]# tree kubernetes/
+[root@k8s-etcd-master01 k8s-certs-generator]# tree kubernetes/
 kubernetes/
 ├── CA
 │   ├── ca.crt
@@ -415,7 +413,7 @@ scp -rp kubernetes/k8s-master02/* k8s-master02:/etc/kubernetes/
 scp -rp kubernetes/k8s-master03/* k8s-master03:/etc/kubernetes/        
 ```
 
-4) 获取v1.13.4二进制k8s文件，并解压缩至/usr/local
+4) 获取v1.13.4二进制k8s文件，解压缩至/usr/local,并分发至其余master节点一份
 ```bash
 #获取镜像
 docker pull registry.cn-hangzhou.aliyuncs.com/aaron89/k8s_bin:v1.13.4
@@ -424,12 +422,24 @@ docker pull registry.cn-hangzhou.aliyuncs.com/aaron89/k8s_bin:v1.13.4
 docker run --rm -d --name temp registry.cn-hangzhou.aliyuncs.com/aaron89/k8s_bin:v1.13.4 sleep 10
 docker cp temp:/kubernetes-server-linux-amd64.tar.gz .
 tar xf kubernetes-server-linux-amd64.tar.gz  -C /usr/local/
+    
+#分发二进制文件
+scp kubernetes-server-linux-amd64.tar.gz k8s-etcd-master02.shared:~
+scp kubernetes-server-linux-amd64.tar.gz k8s-etcd-master03.shared:~
 ```
 
 5) 将我提供的配置文件cp到对应路径
 ```bash
+#本节点
 cp etc/kubernetes/* /etc/kubernetes/
 cp usr/lib/systemd/system/* /usr/lib/systemd/system
+    
+#各节点
+scp etc/kubernetes/* k8s-master02:/etc/kubernetes/
+scp usr/lib/systemd/system/* k8s-master02:/usr/lib/systemd/system
+    
+scp etc/kubernetes/* k8s-master03:/etc/kubernetes/
+scp usr/lib/systemd/system/* k8s-master03:/usr/lib/systemd/system    
 ```
 
 6) 修改apiserver配置文件中的KUBE_ETCD_SERVERS，另外config文件中的日志级别是0(Debug)，先不动,为了测试
@@ -459,7 +469,7 @@ ln -sv /usr/local/kubernetes/server/bin/kubectl /usr/bin/
 cp /etc/kubernetes/auth/admin.conf ~/.kube/config
     
 #kubectl config view   
-[root@k8s-etcd-mater01 auth]# kubectl config view
+[root@k8s-etcd-master01 auth]# kubectl config view
 apiVersion: v1
 clusters:
 - cluster:
@@ -483,7 +493,7 @@ users:
 
 10) 使用get nodes命令，如果没error就说明一切正常！
 ```bash
-[root@k8s-etcd-mater01 auth]# kubectl get nodes
+[root@k8s-etcd-master01 auth]# kubectl get nodes
 No resources found.
 
 ```
@@ -512,7 +522,7 @@ systemctl status kube-scheduler
 
 13) 此时单台master已经配置完毕
 ```bash
-[root@k8s-etcd-mater01 kubernetes]# kubectl get cs
+[root@k8s-etcd-master01 kubernetes]# kubectl get cs
 NAME                 STATUS    MESSAGE             ERROR
 scheduler            Healthy   ok                  
 controller-manager   Healthy   ok                  
@@ -582,16 +592,16 @@ systemctl status  kubelet
 6) master端确认加入集群的请求
 ```bash
 #查询请求
-[root@k8s-etcd-mater01 auth]# kubectl get csr
+[root@k8s-etcd-master01 auth]# kubectl get csr
 NAME                                                   AGE     REQUESTOR             CONDITION
 node-csr-O1ThCQzmKSWv7aUvCBJLF0U2A-FJY73d3l9ui2Zdf74   5m48s   system:bootstrapper   Pending
     
 #签署请求
-[root@k8s-etcd-mater01 auth]# kubectl certificate approve node-csr-O1ThCQzmKSWv7aUvCBJLF0U2A-FJY73d3l9ui2Zdf74
+[root@k8s-etcd-master01 auth]# kubectl certificate approve node-csr-O1ThCQzmKSWv7aUvCBJLF0U2A-FJY73d3l9ui2Zdf74
 certificatesigningrequest.certificates.k8s.io/node-csr-O1ThCQzmKSWv7aUvCBJLF0U2A-FJY73d3l9ui2Zdf74 approved
     
 # node已经加入，但是还没ready
-[root@k8s-etcd-mater01 auth]# kubectl get nodes
+[root@k8s-etcd-master01 auth]# kubectl get nodes
 NAME                STATUS     ROLES    AGE     VERSION
 k8s-node01.shared   NotReady   <none>   2m44s   v1.13.4
     
@@ -641,11 +651,156 @@ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documen
 
 11) 此时flannel的pod已经成功运行，而且node的状态也已经是ready了
 ```bash
-[root@k8s-etcd-mater01 ~]# kubectl get pod -n kube-system -o wide
+[root@k8s-etcd-master01 ~]# kubectl get pod -n kube-system -o wide
 NAME                          READY   STATUS    RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
 kube-flannel-ds-amd64-cj8rh   1/1     Running   0          37m   192.168.0.114   k8s-node01.shared   <none>           <none>
     
-[root@k8s-etcd-mater01 ~]# kubectl get node
+[root@k8s-etcd-master01 ~]# kubectl get node
 NAME                STATUS   ROLES    AGE   VERSION
 k8s-node01.shared   Ready    <none>   93m   v1.13.4    
 ```
+
+
+### 组件高可用扩展-apiserver
+#### 其余master节点
+1) 创建kube用户、kubernetes运行目录和权限
+```bash
+useradd -r kube
+mkdir /var/run/kubernetes
+chown kube.kube /var/run/kubernetes/
+```
+2) 启动apiserver，并查看status是否正常.至此apiserver已经成功启动，连接etcd集群和相关证书 
+```bash
+systemctl daemon-reload
+systemctl start kube-apiserver
+systemctl enable kube-apiserver
+systemctl status kube-apiserver
+```
+3) 配置kubectl(可选)
+```bash
+mkdir ~/.kube
+ln -sv /usr/local/kubernetes/server/bin/kubectl /usr/bin/
+cp /etc/kubernetes/auth/admin.conf ~/.kube/config
+    
+#使用kubelet命令查看
+[root@k8s-etcd-master02 kubernetes]# kubectl get node
+NAME                STATUS   ROLES    AGE   VERSION
+k8s-node01.shared   Ready    <none>   22h   v1.13.4
+
+```
+
+4) 注意：https://kubernetes-api.ilinux.io:6443为node节点连接高可用集群的地址，需要用vip或者多个A记录进行冗余
+配置文件位置如下：
+```bash
+#master：
+/root/k8s-certs-generator/kubernetes/kubelet/auth/bootstrap.conf和kube-proxy.conf
+    
+#node:
+/etc/kubernetes/auth/bootstrap.conf和kube-proxy.conf
+```
+
+### 组件高可用扩展-controller-manager
+#### 其余master节点
+```bash
+systemctl start kube-controller-manager
+systemctl enable kube-controller-manager
+systemctl status kube-controller-manager
+```
+### 组件高可用扩展-scheduler
+#### 其余master节点
+```bash
+systemctl start kube-scheduler
+systemctl enable kube-scheduler
+systemctl status kube-scheduler
+```
+
+### CoreDns部署
+
+1)Master01上进行操作
+```bash
+docker pull registry.cn-hangzhou.aliyuncs.com/aaron89/coredns:1.6.6
+docker tag registry.cn-hangzhou.aliyuncs.com/aaron89/coredns:1.6.6 coredns/coredns:1.6.6
+wget https://raw.githubusercontent.com/coredns/deployment/master/kubernetes/coredns.yaml.sed
+wget https://raw.githubusercontent.com/coredns/deployment/master/kubernetes/deploy.sh
+bash deploy.sh -i 10.96.0.10 -r "10.96.0.0/12" -s -t coredns.yaml.sed | kubectl apply -f -
+```
+
+### 集群高可用测试
+#### Etcd高可用测试
+
+```bash
+#现在etcd02是leader节点
+[root@k8s-etcd-master01 unit-files]# etcdctl --endpoints='https://etcd01.ilinux.io:2379' --cert-file=/etc/etcd/pki/client.crt --key-file=/etc/etcd/pki/client.key --ca-file=/etc/etcd/pki/ca.crt member list
+1f22dc5568642e6f: name=etcd03.ilinux.io peerURLs=https://etcd03.ilinux.io:2380 clientURLs=https://etcd03.ilinux.io:2379 isLeader=false
+433f227ff9ad65cd: name=etcd02.ilinux.io peerURLs=https://etcd02.ilinux.io:2380 clientURLs=https://etcd02.ilinux.io:2379 isLeader=true
+c4eb31a06cd36dd7: name=etcd01.ilinux.io peerURLs=https://etcd01.ilinux.io:2380 clientURLs=https://etcd01.ilinux.io:2379 isLeader=false
+    
+#在etcd02上关闭etcd    
+systemctl stop etcd
+    
+#此时已经进行重新选举etcd03成了leader
+[root@k8s-etcd-master01 unit-files]# etcdctl --endpoints='https://etcd01.ilinux.io:2379' --cert-file=/etc/etcd/pki/client.crt --key-file=/etc/etcd/pki/client.key --ca-file=/etc/etcd/pki/ca.crt member list
+1f22dc5568642e6f: name=etcd03.ilinux.io peerURLs=https://etcd03.ilinux.io:2380 clientURLs=https://etcd03.ilinux.io:2379 isLeader=true
+433f227ff9ad65cd: name=etcd02.ilinux.io peerURLs=https://etcd02.ilinux.io:2380 clientURLs=https://etcd02.ilinux.io:2379 isLeader=false
+c4eb31a06cd36dd7: name=etcd01.ilinux.io peerURLs=https://etcd01.ilinux.io:2380 clientURLs=https://etcd01.ilinux.io:2379 isLeader=false
+    
+#此时集群状态是degraded降级，且k8s集群功能正常，表示etcd集群高可用验证成功
+[root@k8s-etcd-master01 unit-files]# etcdctl --endpoints='https://etcd01.ilinux.io:2379' --cert-file=/etc/etcd/pki/client.crt --key-file=/etc/etcd/pki/client.key --ca-file=/etc/etcd/pki/ca.crt cluster-health
+member 1f22dc5568642e6f is healthy: got healthy result from https://etcd03.ilinux.io:2379
+failed to check the health of member 433f227ff9ad65cd on https://etcd02.ilinux.io:2379: Get https://etcd02.ilinux.io:2379/health: dial tcp 192.168.0.112:2379: connect: connection refused
+member 433f227ff9ad65cd is unreachable: [https://etcd02.ilinux.io:2379] are all unreachable
+member c4eb31a06cd36dd7 is healthy: got healthy result from https://etcd01.ilinux.io:2379
+cluster is degraded
+    
+#[root@k8s-etcd-master01 unit-files]# kubectl get node
+NAME                STATUS   ROLES    AGE   VERSION
+k8s-node01.shared   Ready    <none>   22h   v1.13.4
+    
+#最后我们回复etcd02节点，发现集群状态已经恢复成healthy
+[root@k8s-etcd-master01 unit-files]# etcdctl --endpoints='https://etcd01.ilinux.io:2379' --cert-file=/etc/etcd/pki/client.crt --key-file=/etc/etcd/pki/client.key --ca-file=/etc/etcd/pki/ca.crt cluster-health
+member 1f22dc5568642e6f is healthy: got healthy result from https://etcd03.ilinux.io:2379
+member 433f227ff9ad65cd is healthy: got healthy result from https://etcd02.ilinux.io:2379
+member c4eb31a06cd36dd7 is healthy: got healthy result from https://etcd01.ilinux.io:2379
+cluster is healthy
+        
+```
+
+#### kube-controller-manager高可用测试
+```bash
+#当前controller-manager使用的是吗master01的组件（一定要注意：这是主备模式的组件，有一个工作就行），并且探测周期为15秒
+[root@k8s-etcd-master02 kubernetes]# kubectl get endpoints -n kube-system kube-controller-manager -o yaml
+apiVersion: v1
+kind: Endpoints
+metadata:
+  annotations:
+    control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"k8s-etcd-master01.shared_25338479-2400-11ea-ac38-001c425c73bc","leaseDurationSeconds":15,"acquireTime":"2019-12-22T09:30:00Z","renewTime":"2019-12-22T11:07:15Z","leaderTransitions":3}'
+  creationTimestamp: "2019-12-20T13:26:28Z"
+  name: kube-controller-manager
+  namespace: kube-system
+  resourceVersion: "35332"
+  selfLink: /api/v1/namespaces/kube-system/endpoints/kube-controller-manager
+  uid: 54417b97-232c-11ea-a207-001c425c73bc
+    
+#关闭master01的controller-manager
+systemctl stop kube-controller-manager
+    
+#此时我们发现controller-manager已经切换至k8s-etcd-master02，且一切功能正常
+[root@k8s-etcd-master02 kubernetes]# kubectl get endpoints -n kube-system kube-controller-manager -o yaml
+apiVersion: v1
+kind: Endpoints
+metadata:
+  annotations:
+    control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"k8s-etcd-master02.shared_f16dffb2-24a7-11ea-89b4-001c42662fdd","leaseDurationSeconds":15,"acquireTime":"2019-12-22T11:11:01Z","renewTime":"2019-12-22T11:12:27Z","leaderTransitions":4}'
+  creationTimestamp: "2019-12-20T13:26:28Z"
+  name: kube-controller-manager
+  namespace: kube-system
+  resourceVersion: "35880"
+  selfLink: /api/v1/namespaces/kube-system/endpoints/kube-controller-manager
+  uid: 54417b97-232c-11ea-a207-001c425c73bc
+    
+#最后我们恢复master01的controller-manager,controller-manager使用的还是k8s-etcd-master02，和预期一致，测试成功
+systemctl start kube-controller-manager    
+```
+
+#### kube-scheduler高可用测试
+同上，不再单独演示
