@@ -16,7 +16,7 @@ Ingress：
 
 **3.Ingress代理逻辑**
 
-![ingress架构图](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/11.Ingress%E8%B5%84%E6%BA%90/ingress-congroller-nodeport.png)
+![ingress架构图](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Kubernetes/ingress-controller-nodeport.png)
 
 
 **4.Ingress-Nginx部署和简单测试**
