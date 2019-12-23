@@ -12,7 +12,7 @@ Ingress：
 ```
 **2.ingress controllers对比**
 
-![ingress技术栈](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/11.Ingress%E8%B5%84%E6%BA%90/ingresscontrollers.png)
+![ingress技术栈](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Kubernetes/ingresscontrollers.png)
 
 **3.Ingress代理逻辑**
 
