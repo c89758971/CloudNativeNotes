@@ -730,6 +730,36 @@ wget https://raw.githubusercontent.com/coredns/deployment/master/kubernetes/depl
 bash deploy.sh -i 10.96.0.10 -r "10.96.0.0/12" -s -t coredns.yaml.sed | kubectl apply -f -
 ```
 
+2) 解析测试
+```bash
+#初始化pod
+cat<<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+  namespace: default
+spec:
+  containers:
+  - name: busybox
+    image: busybox:1.28
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Always
+EOF
+    
+#测试
+[root@k8s-etcd-mater01 ~]# kubectl exec -ti busybox -- nslookup kubernetes
+Server:    10.96.0.10
+Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+    
+Name:      kubernetes
+Address 1: 10.96.0.1 kubernetes.default.svc.cluster.local
+    
+```
+
 ### 集群高可用测试
 #### Etcd高可用测试
 
