@@ -8,7 +8,7 @@
 **1.调度流程**
 
 
-![调度流程](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/21.%E8%B0%83%E5%BA%A6%E5%99%A8%E4%B8%8E%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6/k8s-scheduler.png)
+![调度流程](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Kubernetes/%E8%B0%83%E5%BA%A6%E6%B5%81%E7%A8%8B%E5%9B%BE.png)
 
 
 
