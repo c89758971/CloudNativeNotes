@@ -21,7 +21,7 @@
 ### 扩展架构图
 
 
-![扩展架构图](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/24.%E4%BD%BF%E7%94%A8CRD%E6%89%A9%E5%B1%95Kubernetes-API/ExtendKubernetesAPI.png)
+![扩展架构图](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Kubernetes/CRD.png)
 
 
 
