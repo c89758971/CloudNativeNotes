@@ -6,7 +6,7 @@
     
 **1.高级调度说明**
 
-![高级调度](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/22.%E9%AB%98%E7%BA%A7%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6/pod-affinity-demo.png)
+![高级调度](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Kubernetes/podaffinity.png)
 
 
 ```yaml
