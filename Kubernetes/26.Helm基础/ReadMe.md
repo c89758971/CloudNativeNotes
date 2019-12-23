@@ -9,7 +9,7 @@ Helm是一种管理Charts的工具，而charts则是打包预配置Kubernetes基
 
 ### 概念介绍
 
-![helm](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/26.Helm%E5%9F%BA%E7%A1%80/helm.png)
+![helm](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Kubernetes/helm.png)
 
 
 各组件说明：
