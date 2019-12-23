@@ -10,13 +10,14 @@ Ingress：
     只定义流量转发和调度的通用格式的配置信息
 
 ```
+**2.ingress controllers对比**
 
-**2.Ingress代理逻辑**
+**3.Ingress代理逻辑**
 
 ![ingress架构图](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/11.Ingress%E8%B5%84%E6%BA%90/ingress-congroller-nodeport.png)
 
 
-**3.Ingress-Nginx部署和简单测试**
+**4.Ingress-Nginx部署和简单测试**
 
 1) 下载配置清单，修改images地址（被墙）：registry.aliyuncs.com/google_containers/nginx-ingress-controller:0.26.1
 ```bash
@@ -278,7 +279,7 @@ Vary: Accept-Encoding
 
 ```
 
-**4.相关文档**
+**5.相关文档**
 
 Ingress-nginx:
 https://github.com/kubernetes/ingress-nginx
