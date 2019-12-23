@@ -23,7 +23,7 @@
 
 **2.核心参数讲解**
 
-![networkploicy](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/20.Network-Policy/networkpolicy.png)
+![networkploicy](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Kubernetes/networkpolicy.png)
 
 
 ```text
