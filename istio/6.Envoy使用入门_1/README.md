@@ -17,16 +17,16 @@ Envoy使用C++开发，并以Bazel为构建系统，如果你想尝试直接编�
 
 ### 环境构建
 
-1) 于[dockerhub]("https://hub.docker.com/r/envoyproxy/envoy-alpine")搜索最新的envoy镜像，并pull下来
+1) 于[dockerhub](https://hub.docker.com/r/envoyproxy/envoy-alpine)搜索最新的envoy镜像，并pull下来
 ```bash
 docker pull envoyproxy/envoy-alpine:v1.11.1
 ```
 
 2) 创建工作目录envoy，并在目录中创建envoy.yaml配置文件和Dockerfile。
    
-   配置文件的语法规范请参考：[bootstrap]("https://www.envoyproxy.io/docs/envoy/latest/api-v2/bootstrap/bootstrap")
+   配置文件的语法规范请参考：[bootstrap](https://www.envoyproxy.io/docs/envoy/latest/api-v2/bootstrap/bootstrap)
     
-   所有内置过滤器请参考：[network_filters]("https://www.envoyproxy.io/docs/envoy/latest/configuration/listeners/network_filters/network_filters#config-network-filters")
+   所有内置过滤器请参考：[network_filters](https://www.envoyproxy.io/docs/envoy/latest/configuration/listeners/network_filters/network_filters#config-network-filters)
 ```bash
 mkdir envoy 
 cd envoy
