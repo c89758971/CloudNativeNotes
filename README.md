@@ -12,7 +12,6 @@ Cloud Native / 云原生。
 - Kubernetes：已完成，共28章
 - Ceph：更新至第1章：Ceph简介
 - Istio：更新至第6章：Envoy使用入门_1
-- Envoy：TBS
 
 ### 说明
 - 本专题内容可以任意转载，但请注明来源并提供链接，请勿用于商业出版。
