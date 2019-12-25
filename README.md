@@ -11,7 +11,7 @@ Cloud Native / 云原生。
 - Docker：已完成，共3章
 - Kubernetes：已完成，共28章
 - Ceph：更新至第1章：Ceph简介
-- Istio：更新至第5章：Envoy配置方式
+- Istio：更新至第6章：Envoy使用入门_1
 - Envoy：TBS
 
 ### 说明
