@@ -126,7 +126,7 @@ udp        0      0 127.0.0.11:47282        0.0.0.0:*                           
 Active UNIX domain sockets (only servers)
 Proto RefCnt Flags       Type       State         I-Node PID/Program name    Path
 ```
-
+ 
 4) 测试成功
 ```bash
 [root@k8s-etcd-mater01 tcpproxy]# curl 172.18.0.2/
