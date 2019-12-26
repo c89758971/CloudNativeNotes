@@ -1,6 +1,6 @@
 # Envoy使用入门_2
 本章节将通过docker-compose容器的方式，模拟Sidecar与主容器协作的方式，让你学习到其中的基础配置、
-并理解监听器（listener）和集群（Cluster）之间是如何协作的。
+并理解监听器（listener）和集群（Cluster）之间是如何通过ingress协作的。
 
  
 - Cluster简易静态配置
