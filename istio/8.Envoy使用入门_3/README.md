@@ -1,4 +1,4 @@
-# Envoy使用入门_2
+# Envoy使用入门_3
 本章节首先阐述L4过滤器http_connection_manager和egress代理配置说明，然后使用2个完善的例子，
 让你充分了解http_connection_manager于egress和ingress中的使用情况。
 
@@ -6,6 +6,8 @@
 - L4过滤器http_connection_manager
 - Egress代理配置示例
 - Egress实战
+- Ingress实战
+
 
 ### L4过滤器http_connection_manager
 
@@ -77,7 +79,7 @@ sysctl -w net.ipv4.ip_forward=1
 
 ![egress-1](https://github-aaron89.oss-cn-beijing.aliyuncs.com/istio/egress-http_connection_manager.png)
 
-你需要先读懂这种图，本小结准备用curl模拟Sidecar模式下egress的工作逻辑，并借用内建的filter(http_connection_manager)进行代理。
+你需要先读懂这张图，本小结准备用curl模拟Sidecar模式下egress的工作逻辑，并借用内建的filter(http_connection_manager)进行代理。
 
 1) 将egress目录下的配置文件拉取到本地，并使用docker-compose up。
     所有需要注意的地方，已经在配置文件中进行了注释
@@ -132,5 +134,82 @@ Hostname: a9273da1f539.             #webserver2
     
 curl -H "host: www.k8stest.com" 127.0.0.1/hostname
 Hostname: bdd457740567.            #webserver1
+
+```
+
+### Ingress实战
+
+1) 所有配置文件，请看ingress目录下（关键字段，我已经给了注释），此时你应该较容易看懂，
+然后使用docker-compose up
+```bash
+[root@k8s-etcd-mater01 ingress]# docker-compose up
+Creating network "ingress_envoymesh" with the default driver
+Creating ingress_mainserver_1 ... done
+Creating ingress_envoy_1      ... done
+Attaching to ingress_mainserver_1, ingress_envoy_1
+envoy_1       | [2019-12-26 14:28:31.246][1][info][main] [source/server/server.cc:238] initializing epoch 0 (hot restart version=11.104)
+envoy_1       | [2019-12-26 14:28:31.247][1][info][main] [source/server/server.cc:240] statically linked extensions:
+envoy_1       | [2019-12-26 14:28:31.247][1][info][main] [source/server/server.cc:242]   access_loggers: envoy.file_access_log,envoy.http_grpc_access_log
+envoy_1       | [2019-12-26 14:28:31.247][1][info][main] [source/server/server.cc:245]   filters.http: envoy.buffer,envoy.cors,envoy.csrf,envoy.ext_authz,envoy.fault,envoy.filters.http.dynamic_forward_proxy,envoy.filters.http.grpc_http1_reverse_bridge,envoy.filters.http.header_to_metadata,envoy.filters.http.jwt_authn,envoy.filters.http.original_src,envoy.filters.http.rbac,envoy.filters.http.tap,envoy.grpc_http1_bridge,envoy.grpc_json_transcoder,envoy.grpc_web,envoy.gzip,envoy.health_check,envoy.http_dynamo_filter,envoy.ip_tagging,envoy.lua,envoy.rate_limit,envoy.router,envoy.squash
+envoy_1       | [2019-12-26 14:28:31.247][1][info][main] [source/server/server.cc:248]   filters.listener: envoy.listener.original_dst,envoy.listener.original_src,envoy.listener.proxy_protocol,envoy.listener.tls_inspector
+envoy_1       | [2019-12-26 14:28:31.247][1][info][main] [source/server/server.cc:251]   filters.network: envoy.client_ssl_auth,envoy.echo,envoy.ext_authz,envoy.filters.network.dubbo_proxy,envoy.filters.network.mysql_proxy,envoy.filters.network.rbac,envoy.filters.network.sni_cluster,envoy.filters.network.thrift_proxy,envoy.filters.network.zookeeper_proxy,envoy.http_connection_manager,envoy.mongo_proxy,envoy.ratelimit,envoy.redis_proxy,envoy.tcp_proxy
+envoy_1       | [2019-12-26 14:28:31.247][1][info][main] [source/server/server.cc:253]   stat_sinks: envoy.dog_statsd,envoy.metrics_service,envoy.stat_sinks.hystrix,envoy.statsd
+envoy_1       | [2019-12-26 14:28:31.247][1][info][main] [source/server/server.cc:255]   tracers: envoy.dynamic.ot,envoy.lightstep,envoy.tracers.datadog,envoy.tracers.opencensus,envoy.zipkin
+envoy_1       | [2019-12-26 14:28:31.247][1][info][main] [source/server/server.cc:258]   transport_sockets.downstream: envoy.transport_sockets.alts,envoy.transport_sockets.tap,raw_buffer,tls
+envoy_1       | [2019-12-26 14:28:31.247][1][info][main] [source/server/server.cc:261]   transport_sockets.upstream: envoy.transport_sockets.alts,envoy.transport_sockets.tap,raw_buffer,tls
+envoy_1       | [2019-12-26 14:28:31.247][1][info][main] [source/server/server.cc:267] buffer implementation: old (libevent)
+envoy_1       | [2019-12-26 14:28:31.254][1][warning][main] [source/server/server.cc:327] No admin address given, so no admin HTTP server started.
+envoy_1       | [2019-12-26 14:28:31.256][1][info][main] [source/server/server.cc:432] runtime: layers:
+envoy_1       |   - name: base
+envoy_1       |     static_layer:
+envoy_1       |       {}
+envoy_1       |   - name: admin
+envoy_1       |     admin_layer:
+envoy_1       |       {}
+envoy_1       | [2019-12-26 14:28:31.256][1][warning][runtime] [source/common/runtime/runtime_impl.cc:497] Skipping unsupported runtime layer: name: "base"
+envoy_1       | static_layer {
+envoy_1       | }
+envoy_1       | 
+envoy_1       | [2019-12-26 14:28:31.256][1][info][config] [source/server/configuration_impl.cc:61] loading 0 static secret(s)
+envoy_1       | [2019-12-26 14:28:31.256][1][info][config] [source/server/configuration_impl.cc:67] loading 1 cluster(s)
+envoy_1       | [2019-12-26 14:28:31.261][1][info][upstream] [source/common/upstream/cluster_manager_impl.cc:148] cm init: all clusters initialized
+envoy_1       | [2019-12-26 14:28:31.261][1][info][config] [source/server/configuration_impl.cc:71] loading 1 listener(s)
+envoy_1       | [2019-12-26 14:28:31.263][1][info][config] [source/server/configuration_impl.cc:96] loading tracing configuration
+envoy_1       | [2019-12-26 14:28:31.263][1][info][config] [source/server/configuration_impl.cc:116] loading stats sink configuration
+envoy_1       | [2019-12-26 14:28:31.263][1][info][main] [source/server/server.cc:500] all clusters initialized. initializing init manager
+envoy_1       | [2019-12-26 14:28:31.263][1][info][config] [source/server/listener_manager_impl.cc:761] all dependencies initialized. starting workers
+envoy_1       | [2019-12-26 14:28:31.264][1][info][main] [source/server/server.cc:516] starting main dispatch loop
+
+```
+
+2) 进入ingress_envoy_1容器交互式接口，获知ip地址
+```bash
+[root@k8s-etcd-mater01 egress]# docker exec -it ingress_envoy_1 /bin/sh
+/ # ifconfig 
+eth0      Link encap:Ethernet  HWaddr 02:42:AC:14:00:02  
+          inet addr:172.20.0.2  Bcast:172.20.255.255  Mask:255.255.0.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:32 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:2 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:4528 (4.4 KiB)  TX bytes:180 (180.0 B)
+    
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+```
+
+3) 退出容器，使用curl命令，探测ingress_envoy_1容器的80端口；和预期一致，配置成功
+```bash
+[root@k8s-etcd-mater01 egress]# curl 172.20.0.2
+This is a website server by a Go HTTP server.
+    
+[root@k8s-etcd-mater01 egress]# curl 172.20.0.2/hostname
+Hostname: 43e46c0f245e.
 
 ```

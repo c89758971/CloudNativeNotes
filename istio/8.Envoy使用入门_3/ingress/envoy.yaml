@@ -1,0 +1,34 @@
+static_resources:
+  listeners:
+  - name: listener_0
+    address:
+      socket_address: { address: 0.0.0.0, port_value: 80}                   #ingress模式，用于接收外部请求，并起到反向代理的作用，将流量代理至业务容器
+    filter_chains:
+    - filters:
+      - name: envoy.http_connection_manager
+        config:
+          stat_prefix: ingress_tcp                                       #命名规范，egress和ingress的stat_prefix统计字段都需要标示自己名字
+          codec_type: AUTO                                                # 连接管理器使用的编解码器类型，可用值有AUTO、HTTP1和HTTP2；
+          route_config:
+            name: test_route
+            virtual_hosts:
+            - name: web_service_1                            #自定义名，仅用作virtual_hosts分组
+              domains: ["*"]
+              routes:
+              - match: { prefix: "/" }
+                route: { cluster: web_cluster_1 }
+          http_filters:
+          - name: envoy.router
+
+  clusters:
+  - name: web_cluster_1
+    connect_timeout: 0.25s
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: web_cluster_1
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address: { address: 127.0.0.1, port_value: 8081}
