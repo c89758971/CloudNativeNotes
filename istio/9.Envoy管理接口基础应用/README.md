@@ -30,3 +30,19 @@ uri | description | 备注
 /certs | print certs on machine | GET，列出已加载的所有TLS证书及相关的信息
 /clusters | upstream cluster status | GET，额外支持使用“GET /clusters?format=json”
 /config_dump | dump current Envoy configs (experimental) | GET，打印Envoy加载的各类配置信息
+/contention | dump current Envoy mutex contention stats (if enabled) | GET，互斥跟踪
+/cpuprofiler | enable/disable the CPU profiler | POST，启用或禁用cpuprofiler
+/healthcheck/fail | cause the server to fail health checks | POST，强制设定HTTP健康状态检查为失败
+/healthcheck/ok | cause the server to pass health checks | POST，强制设定HTTP健康状态检查为成功
+/heapprofiler | enable/disable the heap profiler | POST，启用或禁用heapprofiler
+/hot_restart_version | print the hot restart compatibility version | GET，打印热重启相关的信息
+/listeners | print listener addresses | GET，列出所有侦听器，支持使用“GET /listeners?format=json”
+/logging | query/change logging levels | POST，启用或禁用不同子组件上的不同日志记录级别
+/memory | print current allocation/heap usage | POST，打印当前内在分配信息，以字节为单位
+/quitquitquit | exit the server | POST，干净退出服务器
+/reset_counters | reset all counters to zero | POST，重置所有计数器
+/runtime | print runtime values | GET，以json格式输出所有运行时相关值
+/runtime_modify | modify runtime values | POST /runtime_modify?key1=value1&key2=value2，添加或修改在查询参数中传递的运行时值
+/server_info | print server version/status information | GET，打印当前Envoy Server的相关信息
+/stats| print server stats | 按需输出统计数据，例如GET /stats?filter=regex，另外还支持json和prometheus两种输出格式
+/stats/prometheus | print server stats in prometheus format | 输出prometheus格式的统计信息
