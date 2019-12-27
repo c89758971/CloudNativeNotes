@@ -1,5 +1,6 @@
 # Envoy管理接口基础应用
-Envoy内建了一个管理接口，它支持查询和修改操作，甚至有可能暴露私 有数据（例如统计数据、集群名称和证书信息等），因此非常有必要精心 编排其访问控制机制以避免非授权访问
+Envoy内建了一个管理接口，它支持查询和修改操作，甚至有可能暴露私有数据（例如统计数据、集群名称和证书信息等），
+因此非常有必要精心 编排其访问控制机制以避免非授权访问
  
 - admin核心字段
 - admin-path
@@ -17,11 +18,11 @@ admin:
       port_value: ...
 ```
 
-admin是另一个定级字段，和static_resources同级，你可以在[官方admin](https://www.envoyproxy.io/docs/envoy/latest/api-v2/admin/admin)中找到最详细的api配置说明
+admin是另一个顶级字段，和static_resources同级，你可以在[官方admin](https://www.envoyproxy.io/docs/envoy/latest/api-v2/admin/admin)中找到最详细的api配置说明
 
 ### admin-path
 
-envoy的admin管理接口中，也内置了很多/path，不同的path可能会分别接受不同的GET或 POST请求。你可以通过GET /help：打印所有可用选项：
+envoy的admin管理接口中，也内置了很多/path，不同的path可能会分别接受不同的GET或 POST请求。你可以通过GET /help打印所有可用选项：
 
 uri | description | 备注
 ---- | ----- | ----- 
