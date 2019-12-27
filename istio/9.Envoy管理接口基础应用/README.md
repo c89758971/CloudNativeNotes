@@ -25,7 +25,7 @@ admin是另一个定级字段，和static_resources同级，你可以在[admin](
 envoy的admin管理接口中，也内置了很多/path，不同的path可能会分别接受不同的GET或 POST请求。你可以通过GET /help：打印所有可用选项：
 
 uri | description | 备注
----- | ----- 
+---- | ----- | ----- 
 / | Admin home page | GET
 /certs | print certs on machine | GET，列出已加载的所有TLS证书及相关的信息
 /clusters | upstream cluster status | GET，额外支持使用“GET /clusters?format=json”
