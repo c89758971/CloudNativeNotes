@@ -3,8 +3,7 @@ Envoy内建了一个管理接口，它支持查询和修改操作，甚至有可
  
 - admin核心字段
 - admin-path
-- Egress实战
-- Ingress实战
+- admin实战
 
 ### admin核心字段
 ```yaml
@@ -18,7 +17,7 @@ admin:
       port_value: ...
 ```
 
-admin是另一个定级字段，和static_resources同级，你可以在[admin](https://www.envoyproxy.io/docs/envoy/latest/api-v2/admin/admin)中找到最详细的api配置说明
+admin是另一个定级字段，和static_resources同级，你可以在[官方admin](https://www.envoyproxy.io/docs/envoy/latest/api-v2/admin/admin)中找到最详细的api配置说明
 
 ### admin-path
 
@@ -46,3 +45,55 @@ uri | description | 备注
 /server_info | print server version/status information | GET，打印当前Envoy Server的相关信息
 /stats| print server stats | 按需输出统计数据，例如GET /stats?filter=regex，另外还支持json和prometheus两种输出格式
 /stats/prometheus | print server stats in prometheus format | 输出prometheus格式的统计信息
+
+### admin实战
+
+1)将envoy.yaml、Dockerfile-envoy和docker-compose.yaml拉下来，并docker-compose up。这三个代码和上一章节egress/中一摸一样，只是在envoy.yaml中增加了admin段配置
+```yaml
+admin:
+  access_log_path: /tmp/admin.log                              #统计信息的日志存放路径
+  address:
+    socket_address: { address: 127.0.0.1, port_value: 9901}         #需要使用未被分配的端口
+```
+
+2) 进入envoy的交互式接口，你可以发现可以访问到管理接口和上文提到的path信息了
+```bash
+/ # curl 127.0.0.1:9901/help
+admin commands are:
+  /: Admin home page
+  /certs: print certs on machine
+  /clusters: upstream cluster status
+  /config_dump: dump current Envoy configs (experimental)
+  /contention: dump current Envoy mutex contention stats (if enabled)
+  /cpuprofiler: enable/disable the CPU profiler
+  /healthcheck/fail: cause the server to fail health checks
+  /healthcheck/ok: cause the server to pass health checks
+  /heapprofiler: enable/disable the heap profiler
+  /help: print out list of admin commands
+  /hot_restart_version: print the hot restart compatibility version
+  /listeners: print listener info
+  /logging: query/change logging levels
+  /memory: print current allocation/heap usage
+  /quitquitquit: exit the server
+  /ready: print server state, return 200 if LIVE, otherwise return 503
+  /reset_counters: reset all counters to zero
+  /runtime: print runtime values
+  /runtime_modify: modify runtime values
+  /server_info: print server version/status information
+  /stats: print server stats
+  /stats/prometheus: print server stats in prometheus format
+
+```
+
+3) 你也可以在我们配置的容器路径（/tmp/admin.log）中查看到对应日志
+```bash
+[2019-12-27T12:51:55.172Z] "GET / HTTP/1.1" 200 - 0 5072 1 - "172.21.0.4" "curl/7.66.0" "-" "127.0.0.1:9901" "-"
+[2019-12-27T12:51:57.185Z] "GET / HTTP/1.1" 200 - 0 5072 0 - "172.21.0.4" "curl/7.66.0" "-" "127.0.0.1:9901" "-"
+[2019-12-27T12:52:00.106Z] "GET /help HTTP/1.1" 200 - 0 1056 0 - "172.21.0.4" "curl/7.66.0" "-" "127.0.0.1:9901" "-"
+[2019-12-27T12:55:05.962Z] "GET /clusters HTTP/1.1" 200 - 0 4712 0 - "172.21.0.4" "curl/7.66.0" "-" "127.0.0.1:9901" "-"
+[2019-12-27T12:55:22.523Z] "GET //stats/prometheus HTTP/1.1" 404 - 0 1070 0 - "172.21.0.4" "curl/7.66.0" "-" "127.0.0.1:9901" "-"
+[2019-12-27T12:55:33.173Z] "GET /stats HTTP/1.1" 200 - 0 22191 0 - "172.21.0.4" "curl/7.66.0" "-" "127.0.0.1:9901" "-"
+[2019-12-27T12:55:43.750Z] "GET /help HTTP/1.1" 200 - 0 1056 0 - "172.21.0.4" "curl/7.66.0" "-" "127.0.0.1:9901" "-"
+[2019-12-27T12:55:51.948Z] "GET /listeners HTTP/1.1" 200 - 0 25 0 - "172.21.0.4" "curl/7.66.0" "-" "127.0.0.1:9901" "-"
+[2019-12-27T12:56:23.638Z] "GET /server_info HTTP/1.1" 200 - 0 891 0 - "172.21.0.4" "curl/7.66.0" "-" "127.0.0.1:9901" "-"
+```

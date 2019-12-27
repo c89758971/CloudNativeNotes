@@ -1,0 +1,40 @@
+version: '3.3'
+services:
+  envoy:
+    build:
+      context: .
+      dockerfile: Dockerfile-envoy                          #重新build镜像，新增curl命令，方便之后从业务容器中进行测试
+    volumes:
+    -  ./envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      envoymesh:
+        aliases:
+        - envoy
+    depends_on:
+    - webserver1
+    - webserver2
+
+  webserver1:
+    image: ikubernetes/mini-http-server:v0.3
+    networks:
+      envoymesh:
+        aliases:
+        - webserver1
+        - webserver
+        - myservice1
+    expose:
+    - "8081"
+
+  webserver2:
+    image: ikubernetes/mini-http-server:v0.3
+    networks:
+      envoymesh:
+        aliases:
+        - webserver2
+        - webserver
+        - myservice2
+    expose:
+    - "8081"
+
+networks:
+  envoymesh: {}

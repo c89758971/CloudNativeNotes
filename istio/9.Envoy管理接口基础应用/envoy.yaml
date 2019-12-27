@@ -1,0 +1,79 @@
+admin:
+  access_log_path: /tmp/admin.log                              #统计信息的日志存放路径
+  address:
+    socket_address: { address: 127.0.0.1, port_value: 9901}         #需要使用未被分配的端口
+
+static_resources:
+  listeners:
+  - name: listener_0
+    address:
+      socket_address: { address: 127.0.0.1, port_value: 80}                   #egress模式，用于接收主容器连接，所以是127.0.0.1
+    filter_chains:
+    - filters:
+      - name: envoy.http_connection_manager
+        config:
+          stat_prefix: egress_tcp                                       #命名规范，egress和ingress的stat_prefix统计字段都需要标示自己名字
+          codec_type: AUTO                                                # 连接管理器使用的编解码器类型，可用值有AUTO、HTTP1和HTTP2；
+          route_config:
+            name: test_route
+            virtual_hosts:
+            - name: web_service_1                            #自定义名，仅用作virtual_hosts分组
+              domains: ["*.ik8s.io", "ik8s.io"]
+              routes:
+              - match: { prefix: "/" }
+                route: { cluster: web_cluster_1 }
+            - name: web_service_2                           #自定义名，仅用作virtual_hosts分组
+              domains: ["*.k8scast.cn", "k8scast.cn"]
+              routes:
+              - match: { prefix: "/" }
+                route: { cluster: web_cluster_2 }
+            - name: web_service_3                           #自定义名，仅用作virtual_hosts分组
+              domains: ["*.k8sall.cn", "k8sall.cn"]
+              routes:
+              - match: { prefix: "/" }
+                route: { cluster: web_cluster_3 }
+            - name: web_service_4                           #自定义名，仅用作virtual_hosts分组
+              domains: ["*.k8stest.com", "k8stest.com"]
+              routes:
+              - match: { prefix: "/" }
+                redirect:
+                  host_redirect: "www.ik8s.io"
+          http_filters:
+          - name: envoy.router
+
+  clusters:
+  - name: web_cluster_1
+    connect_timeout: 0.25s
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: web_cluster_1
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address: { address: myservice1, port_value: 8081}               #模拟Sidecar中egress模式的业务pod主进程，docker-compose中定义的myservice1
+
+  - name: web_cluster_2
+    connect_timeout: 0.25s
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: web_cluster_2
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address: { address: myservice2, port_value: 8081}               #模拟Sidecar中egress模式的业务pod主进程，docker-compose中定义的myservice2
+
+  - name: web_cluster_3
+    connect_timeout: 0.25s
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: web_cluster_3
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address: { address: webserver, port_value: 8081}               #模拟Sidecar中egress模式的业务pod主进程，docker-compose中定义的webserver
