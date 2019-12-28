@@ -1,6 +1,6 @@
 # 二进制部署高可用k8s集群
 
-本次采用二进制文件方式部署https高可用k8s集群，所有涉及的配置文件和镜像均已提供，无需翻墙。
+本次采用二进制文件方式部署https（证书有效期为10年）高可用k8s集群，所有涉及的配置文件和镜像均已提供，无需翻墙。
 另外，默认集群规模可支撑254个节点。
 如果需要调整，请自行修改/etc/kubernetes/controller-manager中的"--node-cidr-mask-size=24"字段。
 
@@ -17,6 +17,7 @@
 - 组件高可用扩展-scheduler
 - CoreDns部署
 - 集群高可用测试
+- 证书过期时间
 
 ### 高可用设计原则
 ```text
@@ -839,3 +840,66 @@ systemctl start kube-controller-manager
 
 #### kube-scheduler高可用测试
 同上，不再单独演示
+
+### 证书过期时间
+
+最后，我要说一下kubernetes默认证书1年，本章提供证书已经改为10年，你已经不需要调整；当然也可以通过修改源码的方式，修改kubernetes默认证书时间
+1) 拉取源码
+```bash
+cd /data && git clone https://github.com/kubernetes/kubernetes.git
+
+```
+
+2) 切换到指定版本，以V1.12.3为例
+```bash
+git checkout -b remotes/origin/release-1.12  v1.12.3
+```
+3) 安装go环境
+```bash
+cd /data/soft && wget https://dl.google.com/go/go1.11.2.linux-amd64.tar.gz
+tar zxvf go1.11.2.linux-amd64.tar.gz  -C /usr/local 
+    
+#编辑/etc/profile文件添加如下：
+    
+#go setting
+export GOROOT=/usr/local/go
+export GOPATH=/usr/local/gopath
+export PATH=$PATH:$GOROOT/bin
+    
+source /etc/profile 生效
+    
+#验证：
+
+go version
+go version go1.11.2 linux/amd64
+
+```
+4) 修改源码：
+/data/kubernetes/staging/src/k8s.io/client-go/util/cert/cert.go
+```bash
+112  NotAfter:     time.Now().Add(duration365d * 10).UTC(),
+187  NotAfter:  validFrom.Add(maxAge *10),
+215  NotAfter:  validFrom.Add(maxAge * 10),
+    
+原来1年 ； * 10 表示10年 
+    
+```
+
+5) 编译：
+```bash
+cd /data/kubernetes/ && make WHAT=cmd/kubeadm
+```
+
+6) 查看证书过期时间
+```bash
+cd /etc/kubernetes/pki
+    
+openssl x509 -in front-proxy-client.crt   -noout -text  |grep Not
+            Not Before: Nov 28 09:07:02 2018 GMT
+            Not After : Nov 25 09:07:03 2028 GMT
+    
+openssl x509 -in apiserver.crt   -noout -text  |grep Not
+            Not Before: Nov 28 09:07:04 2018 GMT
+            Not After : Nov 25 09:07:04 2028 GMT
+
+```
