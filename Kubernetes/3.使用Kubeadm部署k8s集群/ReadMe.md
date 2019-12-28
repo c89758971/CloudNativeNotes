@@ -1,5 +1,7 @@
 # 使用Kubeadm部署k8s集群
 kubeadm是一个提供了"kubeadm init"和"kubeadm join"最佳实践命令，且用于快速构建一个kubernetes集群的工具，你可以使用此工具快速构建一个kubernetes学习环境。
+通过本章节的学习，你将能够使用kubeadm工具，成功构建出一个基础的kubernetes集群环境。
+
 
 - 环境准备
 - Hosts文件准备
