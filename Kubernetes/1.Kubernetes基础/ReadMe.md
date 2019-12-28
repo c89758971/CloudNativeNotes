@@ -1,4 +1,4 @@
-### 1.Kubernetes基础
+# 1.Kubernetes基础
 本章主要让我们初步了解到Kubernetes的主要组件有哪些，以及其协作关系是怎么样的。
 
 - 架构图
