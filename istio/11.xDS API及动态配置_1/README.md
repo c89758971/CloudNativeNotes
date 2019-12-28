@@ -4,6 +4,7 @@
 - xDS API概述
 - Envoy动态配置
 - 配置源
+- Resource Types
 
 
 ### xDS API概述
@@ -30,4 +31,24 @@ Envoy对xDS API的管理由后端服务器实现，包括LDS、CDS、RDS、EDS�
 注意：
 ```text
 Delta GRPC是envoy自1.12.0版本依赖的一个新功能，支持增量added/changed/removed，你可以在https://www.envoyproxy.io/docs/envoy/latest/api-docs/xds_protocol#xds-protocol-delta找到相关详细的描述
+```
+
+### Resource Types
+
+每个xDS API都与某特定的资源类型相关，xDS API和资源类型之间是1:1 的关系，其对应关系如下：
+
+配置资源 | 资源类型
+---- | ----- 
+LDS | [envoy.api.v2.Listener](https://www.envoyproxy.io/docs/envoy/latest/api-v2/api/v2/lds.proto#envoy-api-msg-listener)
+RDS | [envoy.api.v2.RouteConfiguration](https://www.envoyproxy.io/docs/envoy/latest/api-v2/api/v2/rds.proto#envoy-api-msg-routeconfiguration)
+ScopedRouteConfiguration | [envoy.api.v2.ScopedRouteConfiguration](https://www.envoyproxy.io/docs/envoy/latest/api-v2/api/v2/srds.proto#envoy-api-msg-scopedrouteconfiguration)
+route.VirtualHost | [envoy.api.v2.route.VirtualHost](https://www.envoyproxy.io/docs/envoy/latest/api-v2/api/v2/route/route.proto#envoy-api-msg-route-virtualhost)
+CDS | [envoy.api.v2.Cluster](https://www.envoyproxy.io/docs/envoy/latest/api-v2/api/v2/cds.proto#envoy-api-msg-cluster)
+EDS | [envoy.api.v2.ClusterLoadAssignment](https://www.envoyproxy.io/docs/envoy/latest/api-v2/api/v2/eds.proto#envoy-api-msg-clusterloadassignment)
+SDS | [envoy.api.v2.Auth.Secret](https://www.envoyproxy.io/docs/envoy/latest/api-v2/api/v2/auth/cert.proto#envoy-api-msg-auth-secret)
+RTDS | [envoy.service.discovery.v2.Runtime](https://www.envoyproxy.io/docs/envoy/latest/api-v2/service/discovery/v2/rtds.proto#envoy-api-msg-service-discovery-v2-runtime)
+
+URL类型采用type.googleapis.com/<resource type>形式，例如EDS对应于:
+```text
+type.googleapis.com/envoy.api.v2.ClusterLoadAssignment
 ```
