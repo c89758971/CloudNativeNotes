@@ -11,7 +11,7 @@ Cloud Native / 云原生。
 - Docker：已完成，共3章
 - Kubernetes：已完成，共28章
 - Ceph：更新至第1章：Ceph简介
-- Istio：更新至第10章：Envoy综合示例_FrontProxy
+- Istio：更新至第12章：xDS API及动态配置_2
 - Prometheus：已完成，共1章
 
 ### 说明
