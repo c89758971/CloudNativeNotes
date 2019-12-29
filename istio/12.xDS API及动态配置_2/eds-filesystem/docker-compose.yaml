@@ -3,7 +3,7 @@ services:
 
   envoy:
     build:
-      context: ../
+      context: .
       dockerfile: Dockerfile
     networks:
       envoymesh:
