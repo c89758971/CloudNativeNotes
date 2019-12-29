@@ -3,7 +3,7 @@ services:
 
   front-envoy:
     build:
-      context: ../
+      context: .
       dockerfile: Dockerfile-frontenvoy
     volumes:
       - ./front-envoy.yaml:/etc/front-envoy.yaml
@@ -18,7 +18,7 @@ services:
 
   service1:
     build:
-      context: ../
+      context: .
       dockerfile: Dockerfile-service
     volumes:
       - ./service-envoy.yaml:/etc/service-envoy.yaml
@@ -33,7 +33,7 @@ services:
 
   service2:
     build:
-      context: ../
+      context: .
       dockerfile: Dockerfile-service
     volumes:
       - ./service-envoy.yaml:/etc/service-envoy.yaml
