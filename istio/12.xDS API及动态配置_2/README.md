@@ -290,7 +290,9 @@ Hostname: 687143741fc6.
 
 ### 基于文件系统订阅的配置-CDS
 
-1) 编辑envoy.yaml，将集群配置修改为动态资源
+1) 编辑envoy.yaml，将集群配置修改为动态资源。
+
+    注意：dynamic_resources为定级字段！！！
 ```bash
 dynamic_resources:
     cds_config:
