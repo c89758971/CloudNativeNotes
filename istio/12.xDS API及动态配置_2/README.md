@@ -1,9 +1,12 @@
 # xDS API及动态配置_2
-基于文件系统订阅，为Envoy提供动态配置的最简单方法；通过本章节的学习，你可以充分了解到基于文件系统订阅的概念、配置难点以及于EDS使用中的实战配置。
+基于文件系统订阅，为Envoy提供动态配置的最简单方法；通过本章节的学习，你可以充分了解到基于文件系统订阅的概念、配置难点、EDS、CDS使用中的实战配置，包括单应用和多应用的结合。
  
 - 基于文件系统订阅的概念
-- 基于文件系统订阅的配置
-- 基于文件系统订阅的实战
+- 基于文件系统订阅的配置-EDS
+- 基于文件系统订阅的实战-EDS
+- 基于文件系统订阅的配置-CDS
+- 基于文件系统订阅的实战-CDS+STRICT_DNS
+- 基于文件系统订阅的实战-CDS+EDS
 
 ### 基于文件系统订阅的概念
 
@@ -18,7 +21,7 @@ protobufs，JSON，YAML和proto文本
 - 除了统计计数器和日志以外，没有任何机制可用于文件系统订阅ACK/NACK更新
 - 最简单的提供动态配置的方法，仅方便学习，不适合生产环境使用。其手动修改环节较多，和动态的挑战场景不符。
 
-### 基于文件系统订阅的配置
+### 基于文件系统订阅的配置-EDS
 
 以EDS为例，Cluster为静态定义，其各Endpoint通过EDS动态发现：
 
@@ -62,7 +65,7 @@ protobufs，JSON，YAML和proto文本
 1) 基于文件订阅的配置是基于inotify监听的
 2) 配置文件的更新 需要增加"version_info": "1"字段的值
 
-### 基于文件系统订阅的实战
+### 基于文件系统订阅的实战-EDS
 
 1) 首先将eds-filesystem/目录下的文件clone到本地，然后使用docker-compose up命令启动。你需要注意的是：
 - envoy.yaml中，node级别的id和cluster字段必须指定
@@ -284,3 +287,123 @@ Hostname: 8887eef2b2e7.
 Hostname: 687143741fc6.
 ```
 此时，我相信你已经对EDS基于文件系统订阅的动态配置已经有了一定的了解了。
+
+### 基于文件系统订阅的配置-CDS
+
+1) 编辑envoy.yaml，将集群配置修改为动态资源
+```bash
+dynamic_resources:
+    cds_config:
+        path: "cds.conf"
+```
+2) 定义cds.conf (/etc/envoy/cds.conf) 配置文件，配置Discovery Response应答配置
+```bash
+{
+	"version_info": "0",
+	"resources": [{
+		"@type": "type.googleapis.com/envoy.api.v2.Cluster",
+		"name": "targetCluster",
+		"connect_timeout": "0.25s",
+		"lb_policy": "ROUND_ROBIN",
+		"type": "EDS",
+		"eds_cluster_config": {
+			"service_name": "webcluster1",
+			"eds_config": {
+				"path": "/etc/envoy/eds.conf"
+			}
+		}
+	}]
+}	
+```
+
+### 基于文件系统订阅的实战-CDS+STRICT_DNS
+
+本小节通过CDS+STRICT_DNS的方式，向你展示CDS基于文件系统订阅的配置变更自动化
+1) 首先将cds-filesystem/目录下的文件clone到本地，然后使用docker-compose up命令启动三个容器。你需要注意的是：
+- envoy.yaml中的dynamic_resources段是定级字段；
+- compose文件中描述的2个业务容器的别名aliases：myserver，在cds.conf中通过"type": "STRICT_DNS"的方式，结合socket_address指定的。
+```bash
+docker-compose up
+```
+
+2) 进入cds-filesystem_envoy_1容器的交互式接口，并查看cluster的管理接口，发现CDS+STRICT_DNS的方式已经成功加载，并能获取cluster接口的配置
+```bash
+/etc/envoy # curl 127.0.0.1:9901/clusters
+webcluster1::default_priority::max_connections::1024
+webcluster1::default_priority::max_pending_requests::1024
+webcluster1::default_priority::max_requests::1024
+webcluster1::default_priority::max_retries::3
+webcluster1::high_priority::max_connections::1024
+webcluster1::high_priority::max_pending_requests::1024
+webcluster1::high_priority::max_requests::1024
+webcluster1::high_priority::max_retries::3
+webcluster1::added_via_api::true
+webcluster1::172.31.0.4:8081::cx_active::0
+webcluster1::172.31.0.4:8081::cx_connect_fail::0
+webcluster1::172.31.0.4:8081::cx_total::0
+webcluster1::172.31.0.4:8081::rq_active::0
+webcluster1::172.31.0.4:8081::rq_error::0
+webcluster1::172.31.0.4:8081::rq_success::0
+webcluster1::172.31.0.4:8081::rq_timeout::0
+webcluster1::172.31.0.4:8081::rq_total::0
+webcluster1::172.31.0.4:8081::hostname::myserver
+webcluster1::172.31.0.4:8081::health_flags::healthy
+webcluster1::172.31.0.4:8081::weight::1
+webcluster1::172.31.0.4:8081::region::
+webcluster1::172.31.0.4:8081::zone::
+webcluster1::172.31.0.4:8081::sub_zone::
+webcluster1::172.31.0.4:8081::canary::false
+webcluster1::172.31.0.4:8081::priority::0
+webcluster1::172.31.0.4:8081::success_rate::-1
+webcluster1::172.31.0.4:8081::local_origin_success_rate::-1
+webcluster1::172.31.0.3:8081::cx_active::0
+webcluster1::172.31.0.3:8081::cx_connect_fail::0
+webcluster1::172.31.0.3:8081::cx_total::0
+webcluster1::172.31.0.3:8081::rq_active::0
+webcluster1::172.31.0.3:8081::rq_error::0
+webcluster1::172.31.0.3:8081::rq_success::0
+webcluster1::172.31.0.3:8081::rq_timeout::0
+webcluster1::172.31.0.3:8081::rq_total::0
+webcluster1::172.31.0.3:8081::hostname::myserver
+webcluster1::172.31.0.3:8081::health_flags::healthy
+webcluster1::172.31.0.3:8081::weight::1
+webcluster1::172.31.0.3:8081::region::
+webcluster1::172.31.0.3:8081::zone::
+webcluster1::172.31.0.3:8081::sub_zone::
+webcluster1::172.31.0.3:8081::canary::false
+webcluster1::172.31.0.3:8081::priority::0
+webcluster1::172.31.0.3:8081::success_rate::-1
+webcluster1::172.31.0.3:8081::local_origin_success_rate::-1
+    
+#访问实际业务容器
+/etc/envoy # curl 127.0.0.1/hostname
+Hostname: 76519a85b890.
+/etc/envoy # curl 127.0.0.1/hostname
+Hostname: ce52256a9f45.
+    
+```
+
+### 基于文件系统订阅的实战-CDS+EDS
+
+如果上面的操作你已经成功完成。那么文件已经有了，现在要做的只是让配置生效，接下来你要做的是：
+1) 将cds.conf.v2文件的内容覆盖cds.conf，并更新"version_info": "0"字段；
+2) 更新eds.conf文件，将2个业务容器的ip填写进去，同时要保证更新"version_info": "0"字段；
+3) 通过mv命令，触发inotify机制：cds.conf和eds.conf；
+4) 最后通过config_dump检查配置清单，因为如果你操作正确的化，cluster配置和上一小节是一摸一样的，无法判断。所以我们要去看配置，确认读取的是STRICT_DNS还是EDS！！！
+```bash
+/etc/envoy # curl 127.0.0.1:9901/config_dump
+  {
+   "@type": "type.googleapis.com/envoy.admin.v2alpha.ClustersConfigDump",
+   "version_info": "0",
+   "dynamic_active_clusters": [
+    {
+     "version_info": "0",
+     "cluster": {
+      "name": "webcluster1",
+      "type": "EDS",                  #cds配置此时读取的是EDS，测试完成
+      "eds_cluster_config": {
+       "eds_config": {
+        "path": "/etc/envoy/eds.conf"
+       },
+
+```
