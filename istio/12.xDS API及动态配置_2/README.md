@@ -34,32 +34,24 @@ protobufs，JSON，YAML和proto文本
 文件的配置需要以json格式给出：
 ```json
 {
-	"version_info": "1",
-	"resources": [{
-		"@type": "type.googleapis.com/envoy.api.v2.ClusterLoadAssignment",
-		"cluster_name": "webcluster1",
-		"endpoints": [{
-			"lb_endpoints": [{
-					"endpoint": {
-						"address": {
-							"socket_address": {
-								"address": "172.17.0.3",
-								"port_value": 80
-							}
-						}
-					}
-				},
-				{
-					"endpoint": {
-						"address": {
-							"socket_address": {
-								"address": "172.17.0.4",
-								"port_value": 80
-							}
-						}
-					}
-				}
-			]
+"version_info": "1",
+"resources": [{
+  "@type": "type.googleapis.com/envoy.api.v2.ClusterLoadAssignment",
+  "cluster_name": "webcluster1",
+  "endpoints": [{
+    "lb_endpoints": [{
+      "endpoint": {
+        "address": {
+          "socket_address": {
+            "address": "172.17.0.3",
+            "port_value": 80}}}},
+      {
+      "endpoint": {
+        "address": {
+          "socket_address": {
+            "address": "172.17.0.3",
+            "port_value": 80}}}
+			}]
 		}]
 	}]
 
@@ -68,4 +60,4 @@ protobufs，JSON，YAML和proto文本
 
 你需要注意的是：
 1) 基于文件订阅的配置是基于inotify监听的
-2) 配置文件的更新 需要增加"version_info": "1"字段
+2) 配置文件的更新 需要增加"version_info": "1"字段的值
