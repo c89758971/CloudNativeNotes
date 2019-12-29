@@ -1,0 +1,43 @@
+node:
+  id: envoy_001
+  cluster: testcluster
+
+admin:
+  access_log_path: /tmp/admin_access.log
+  address:
+    socket_address: { address: 127.0.0.1, port_value: 9901 }
+
+static_resources:
+  listeners:
+  - name: listener_http
+    address:
+      socket_address: { address: 127.0.0.1, port_value: 80}
+    filter_chains:
+    - filters:
+      - name: envoy.http_connection_manager
+        config:
+          codec_type: AUTO
+          stat_prefix: egress_http
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: backend
+              domains:
+              - "*"
+              routes:
+              - match:
+                  prefix: "/"
+                route:
+                  cluster: webcluster1
+          http_filters:
+          - name: envoy.router
+
+  clusters:
+  - name: webcluster1
+    connect_timeout: 0.25s
+    lb_policy: round_robin
+    type: EDS
+    eds_cluster_config:
+      service_name: webcluster1
+      eds_config:
+       path: '/etc/envoy/eds.conf'                 #envoy容器内的文件订阅地址

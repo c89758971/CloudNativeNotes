@@ -61,3 +61,226 @@ protobufs，JSON，YAML和proto文本
 你需要注意的是：
 1) 基于文件订阅的配置是基于inotify监听的
 2) 配置文件的更新 需要增加"version_info": "1"字段的值
+
+### 基于文件系统订阅的实战
+
+1) 首先将eds-filesystem/目录下的文件clone到本地，然后使用docker-compose up命令启动。你需要注意的是：
+- envoy.yaml中，node级别的id和cluster字段必须指定
+- 不建议在docker compose里使用volume挂载的方式，否则不方便触发inotify机制，需要手动告知envoy更新配置文件
+- eds.conf只是一个配置模版，里面的ip是不对的，你需要稍后自己去更改，体验和测试自动更新
+- 本实例采用egress模式，这时你应该很容易就可以发现
+```bash
+docker-compose up
+    
+#启动信息    
+envoy_1       | [2019-12-29 12:02:05.235][1][warning][runtime] [source/common/runtime/runtime_impl.cc:497] Skipping unsupported runtime layer: name: "base"
+envoy_1       | static_layer {
+envoy_1       | }
+envoy_1       | 
+envoy_1       | [2019-12-29 12:02:05.235][1][info][config] [source/server/configuration_impl.cc:61] loading 0 static secret(s)
+envoy_1       | [2019-12-29 12:02:05.235][1][info][config] [source/server/configuration_impl.cc:67] loading 1 cluster(s)
+envoy_1       | [2019-12-29 12:02:05.236][1][info][upstream] [source/common/upstream/cluster_manager_impl.cc:124] cm init: initializing secondary clusters
+webserver1_1  | Listening on http://0.0.0.0:8081
+envoy_1       | [2019-12-29 12:02:05.237][1][info][upstream] [source/common/upstream/cluster_manager_impl.cc:148] cm init: all clusters initialized
+envoy_1       | [2019-12-29 12:02:05.237][1][info][config] [source/server/configuration_impl.cc:71] loading 1 listener(s)
+envoy_1       | [2019-12-29 12:02:05.239][1][info][config] [source/server/configuration_impl.cc:96] loading tracing configuration
+envoy_1       | [2019-12-29 12:02:05.239][1][info][config] [source/server/configuration_impl.cc:116] loading stats sink configuration
+envoy_1       | [2019-12-29 12:02:05.239][1][info][main] [source/server/server.cc:500] all clusters initialized. initializing init manager
+envoy_1       | [2019-12-29 12:02:05.239][1][info][config] [source/server/listener_manager_impl.cc:761] all dependencies initialized. starting workers
+envoy_1       | [2019-12-29 12:02:05.240][1][info][main] [source/server/server.cc:516] starting main dispatch loop
+webserver2_1  | Listening on http://0.0.0.0:8081    
+```
+
+2) 接下来，我们进入eds-filesystem_envoy_1容器的交互式接口，通过admin接口查看当前culsters的配置信息，检查eds.conf的内容是否成功读取
+```bash
+[root@k8s-etcd-mater01 eds-filesystem]# docker exec -it eds-filesystem_envoy_1 /bin/sh
+    
+/etc/envoy # curl 127.0.0.1:9901/listeners
+listener_http::127.0.0.1:80
+/etc/envoy # curl 127.0.0.1:9901/clusters
+webcluster1::default_priority::max_connections::1024
+webcluster1::default_priority::max_pending_requests::1024
+webcluster1::default_priority::max_requests::1024
+webcluster1::default_priority::max_retries::3
+webcluster1::high_priority::max_connections::1024
+webcluster1::high_priority::max_pending_requests::1024
+webcluster1::high_priority::max_requests::1024
+webcluster1::high_priority::max_retries::3
+webcluster1::added_via_api::false
+webcluster1::172.17.0.3:8081::cx_active::0
+webcluster1::172.17.0.3:8081::cx_connect_fail::0
+webcluster1::172.17.0.3:8081::cx_total::0
+webcluster1::172.17.0.3:8081::rq_active::0
+webcluster1::172.17.0.3:8081::rq_error::0
+webcluster1::172.17.0.3:8081::rq_success::0
+webcluster1::172.17.0.3:8081::rq_timeout::0
+webcluster1::172.17.0.3:8081::rq_total::0
+webcluster1::172.17.0.3:8081::hostname::
+webcluster1::172.17.0.3:8081::health_flags::healthy
+webcluster1::172.17.0.3:8081::weight::1
+webcluster1::172.17.0.3:8081::region::
+webcluster1::172.17.0.3:8081::zone::
+webcluster1::172.17.0.3:8081::sub_zone::
+webcluster1::172.17.0.3:8081::canary::false
+webcluster1::172.17.0.3:8081::priority::0
+webcluster1::172.17.0.3:8081::success_rate::-1
+webcluster1::172.17.0.3:8081::local_origin_success_rate::-1
+    
+```
+
+3) 此时我们envoy.yaml中cluster段里的type:EDS配置已经生效，接下来我们要获取一个业务容器的ip更新进来（/etc/envoy/eds.conf）
+```bash
+#业务容器的ip信息
+eds-filesystem_webserver1_1：172.23.0.3
+eds-filesystem_webserver2_1：172.23.0.4
+    
+#首先将eds-filesystem_webserver1_1：172.23.0.3进行更新，你需要时刻记住，基于文件系统订阅的热更新是基于inotify的，我们修改好/etc/envoy/eds.conf文件后，需要触发inotify
+#文件更新
+/etc/envoy # cat eds.conf 
+{
+  "version_info": "1",
+  "resources": [{
+    "@type": "type.googleapis.com/envoy.api.v2.ClusterLoadAssignment",
+    "cluster_name": "webcluster1",
+    "endpoints": [{
+      "lb_endpoints": [{
+        "endpoint": {
+          "address": {
+            "socket_address": {
+              "address": "172.23.0.3",
+              "port_value": 8081
+            }
+          }
+        }
+      }]
+    }]
+  }]
+}
+    
+#触发inotify    
+/etc/envoy # mv eds.conf eds.conf.tmp && mv eds.conf.tmp eds.conf
+        
+#检查当前配置，已经成功读取        
+/etc/envoy # curl 127.0.0.1:9901/clusters
+webcluster1::default_priority::max_connections::1024
+webcluster1::default_priority::max_pending_requests::1024
+webcluster1::default_priority::max_requests::1024
+webcluster1::default_priority::max_retries::3
+webcluster1::high_priority::max_connections::1024
+webcluster1::high_priority::max_pending_requests::1024
+webcluster1::high_priority::max_requests::1024
+webcluster1::high_priority::max_retries::3
+webcluster1::added_via_api::false
+webcluster1::172.23.0.3:8081::cx_active::0
+webcluster1::172.23.0.3:8081::cx_connect_fail::0
+webcluster1::172.23.0.3:8081::cx_total::0
+webcluster1::172.23.0.3:8081::rq_active::0
+webcluster1::172.23.0.3:8081::rq_error::0
+webcluster1::172.23.0.3:8081::rq_success::0
+webcluster1::172.23.0.3:8081::rq_timeout::0
+webcluster1::172.23.0.3:8081::rq_total::0
+webcluster1::172.23.0.3:8081::hostname::
+webcluster1::172.23.0.3:8081::health_flags::healthy
+webcluster1::172.23.0.3:8081::weight::1
+webcluster1::172.23.0.3:8081::region::
+webcluster1::172.23.0.3:8081::zone::
+webcluster1::172.23.0.3:8081::sub_zone::
+webcluster1::172.23.0.3:8081::canary::false
+webcluster1::172.23.0.3:8081::priority::0
+webcluster1::172.23.0.3:8081::success_rate::-1
+webcluster1::172.23.0.3:8081::local_origin_success_rate::-1
+
+```
+
+4) 最后我们把另一个业务ip更新进去就行了，具体操作如下所示：
+```bash
+#eds.conf
+{
+  "version_info": "10",
+  "resources": [{
+    "@type": "type.googleapis.com/envoy.api.v2.ClusterLoadAssignment",
+    "cluster_name": "webcluster1",
+    "endpoints": [{
+      "lb_endpoints": [{
+        "endpoint": {
+          "address": {
+            "socket_address": {
+              "address": "172.23.0.3",
+              "port_value": 8081
+            }
+          }
+        }},
+        {"endpoint": {
+          "address": {
+            "socket_address": {
+              "address": "172.23.0.4",
+              "port_value": 8081
+            }
+          }
+        }
+      }]
+    }]
+  }]
+}
+    
+    
+#检查管理接口，你可以发现业务2的ip也已经热加载进来了
+/etc/envoy # mv eds.conf eds.conf.tmp && mv eds.conf.tmp eds.conf
+/etc/envoy # curl 127.0.0.1:9901/clusters
+webcluster1::default_priority::max_connections::1024
+webcluster1::default_priority::max_pending_requests::1024
+webcluster1::default_priority::max_requests::1024
+webcluster1::default_priority::max_retries::3
+webcluster1::high_priority::max_connections::1024
+webcluster1::high_priority::max_pending_requests::1024
+webcluster1::high_priority::max_requests::1024
+webcluster1::high_priority::max_retries::3
+webcluster1::added_via_api::false
+webcluster1::172.23.0.3:8081::cx_active::0
+webcluster1::172.23.0.3:8081::cx_connect_fail::0
+webcluster1::172.23.0.3:8081::cx_total::3
+webcluster1::172.23.0.3:8081::rq_active::0
+webcluster1::172.23.0.3:8081::rq_error::0
+webcluster1::172.23.0.3:8081::rq_success::6
+webcluster1::172.23.0.3:8081::rq_timeout::0
+webcluster1::172.23.0.3:8081::rq_total::6
+webcluster1::172.23.0.3:8081::hostname::
+webcluster1::172.23.0.3:8081::health_flags::healthy
+webcluster1::172.23.0.3:8081::weight::1
+webcluster1::172.23.0.3:8081::region::
+webcluster1::172.23.0.3:8081::zone::
+webcluster1::172.23.0.3:8081::sub_zone::
+webcluster1::172.23.0.3:8081::canary::false
+webcluster1::172.23.0.3:8081::priority::0
+webcluster1::172.23.0.3:8081::success_rate::-1
+webcluster1::172.23.0.3:8081::local_origin_success_rate::-1
+webcluster1::172.23.0.4:8081::cx_active::0
+webcluster1::172.23.0.4:8081::cx_connect_fail::0
+webcluster1::172.23.0.4:8081::cx_total::0
+webcluster1::172.23.0.4:8081::rq_active::0
+webcluster1::172.23.0.4:8081::rq_error::0
+webcluster1::172.23.0.4:8081::rq_success::0
+webcluster1::172.23.0.4:8081::rq_timeout::0
+webcluster1::172.23.0.4:8081::rq_total::0
+webcluster1::172.23.0.4:8081::hostname::
+webcluster1::172.23.0.4:8081::health_flags::healthy
+webcluster1::172.23.0.4:8081::weight::1
+webcluster1::172.23.0.4:8081::region::
+webcluster1::172.23.0.4:8081::zone::
+webcluster1::172.23.0.4:8081::sub_zone::
+webcluster1::172.23.0.4:8081::canary::false
+webcluster1::172.23.0.4:8081::priority::0
+webcluster1::172.23.0.4:8081::success_rate::-1
+webcluster1::172.23.0.4:8081::local_origin_success_rate::-1
+    
+#最后我们也可以通过实际访问，来进行检验。
+/etc/envoy # curl 127.0.0.1/hostname
+Hostname: 8887eef2b2e7.
+/etc/envoy # curl 127.0.0.1/hostname
+Hostname: 687143741fc6.
+/etc/envoy # curl 127.0.0.1/hostname
+Hostname: 8887eef2b2e7.
+/etc/envoy # curl 127.0.0.1/hostname
+Hostname: 687143741fc6.
+```
+此时，我相信你已经对EDS基于文件系统订阅的动态配置已经有了一定的了解了。
