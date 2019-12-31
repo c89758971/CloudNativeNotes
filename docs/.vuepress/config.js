@@ -15,7 +15,7 @@ module.exports = {
             { text: 'Ceph', link: '/Ceph/1.简介/' },
             { text: 'Prometheus', link: '/Prometheus/' }
         ],
-        sidebarDepth : 3,
+        sidebarDepth : 5,
         sidebar: [
             {
             title: "Docker篇",
@@ -34,7 +34,10 @@ module.exports = {
               ["/Kubernetes/2.Kubernetes基础和部署说明/",'Kubernetes基础和部署说明'],
               ["/Kubernetes/3.使用Kubeadm部署k8s集群/",'使用Kubeadm部署k8s集群'],
               ["/Kubernetes/4.Kubernetes快速入门/",'Kubernetes快速入门'],
-              ["/Kubernetes/5.Pod资源清单配置基础/",'Pod资源清单配置基础']
+              ["/Kubernetes/5.Pod资源清单配置基础/",'Pod资源清单配置基础'],
+              ["/Kubernetes/6.Pod资源管理/",'Pod资源管理'],
+              ["/Kubernetes/7.Pod控制器-Deployment/",'Pod控制器-Deployment'],
+              ["/Kubernetes/8.Pod控制器-DaemonSet/",'Pod控制器-DaemonSet']
             ]
             },
             {

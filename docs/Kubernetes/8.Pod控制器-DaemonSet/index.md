@@ -1,10 +1,10 @@
-**1.概要**
+## 1.概要
 ```text
     运行数量=node节点数量
     每个符合条件的node节点上有且只有一个Pod
 ```
 
-**2.命令**
+## 2.命令补充
 ```bash
 #查看DaemonSet
 [root@centos-1 mainfasts]#        kubectl get ds -A
@@ -18,8 +18,8 @@ kube-system   kube-proxy                3         3         3       3           
 
 ```
 
-**3.实验**
-1) 编辑filebeat-daemonset.yaml
+## 3.实战配置
+1) 编辑`filebeat-daemonset.yaml`
 ```yaml
 apiVersion: apps/v1
 kind: DaemonSet
@@ -48,7 +48,7 @@ spec:
         logcollecting: "on"               #自定义标签          
 ```
 
-2) 载入yaml，并观察。发现由于自定义标签的定义，没有符合的node节点，所有pod没有生成
+2) 载入`yaml`，并观察。发现由于自定义标签的定义，没有符合的`node`节点，所有`pod`没有生成
 ```bash
 [root@centos-1 mainfasts]# kubectl apply -f filebeat-daemonset.yaml  
 daemonset.apps/filebeat-ds created
@@ -63,7 +63,7 @@ NAME          DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR
 filebeat-ds   0         0         0       0            0           logcollecting=on   8s
 
 ```
-3) 给node01节点打标签，并发现pod已经开始调度至对应节点
+3) 给`node01`节点打标签，并发现`pod`已经开始调度至对应节点
 ```bash
 [root@centos-1 mainfasts]# kubectl label node centos-2.shared logcollecting="on" --overwrite
 node/centos-2.shared labeled
@@ -87,7 +87,7 @@ centos-3.shared   Ready    <none>   4d    v1.16.3   beta.kubernetes.io/arch=amd6
  kubectl label node centos-2.shared logcollceting-
 ``` 
 
-**4.知识点补充**
+## 4.知识点补充
 ```bash
 [root@centos-1 mainfasts]# kubectl describe node centos-1.shared
 Name:               centos-1.shared
