@@ -12,6 +12,7 @@ module.exports = {
             { text: 'Home', link: '/' },
             { text: 'Docker', link: '/Docker/1.Dockerfile使用总结/' },
             { text: 'Kubernetes', link: '/Kubernetes/1.Kubernetes基础/' },
+            { text: 'Istio', link: '/istio/1.Service Mesh简介/' },
             { text: 'Ceph', link: '/Ceph/1.简介/' },
             { text: 'Prometheus', link: '/Prometheus/' }
         ],
@@ -58,6 +59,16 @@ module.exports = {
               ["/Kubernetes/26.Helm基础/",'Helm基础'],
               ["/Kubernetes/27.Helm使用进阶/",'Helm使用进阶'],
               ["/Kubernetes/28.二进制部署高可用k8s集群/",'二进制部署高可用k8s集群阶']
+            ]
+            },
+            {
+            title: "istio篇",
+            collapsable: false,
+            children: [
+              ["/istio/1.Service Mesh简介/",'Service Mesh简介'],
+              ["/istio/2.微服务和服务治理基础/",'微服务和服务治理基础'],
+              ["/istio/3.Envoy基础/",'Envoy基础'],
+              ["/istio/4.Envoy部署类型/",'Envoy部署类型']
             ]
             },
             {

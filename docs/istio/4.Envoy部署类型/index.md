@@ -8,11 +8,11 @@ Envoy通常用于以容器编排系统为底层环境的服务网格中，并以
 - 部署类型：双向代理
 
 
-### 部署类型
+## 1.部署类型
 
 ![部署类型](https://github-aaron89.oss-cn-beijing.aliyuncs.com/istio/deploymenttypes.png)
 
-图中展示了Envoy常见的部署类型，其中：
+图中展示了`Envoy`常见的部署类型，其中：
 ```text
 Front Proxy:
     用于接受南北流量，并将流量代理至服务网格中的Ingress Listener
@@ -26,29 +26,29 @@ Egress Listener：
          
 ```
 
-### 部署类型：仅服务间
+## 2.部署类型：仅服务间
 
 仅服务间的部署类型主要解决envoy中东西流量的情况，主要分为Ingress和Egress
 
-#### Ingress
+### 1.Ingress
 
 ![Ingress](https://github-aaron89.oss-cn-beijing.aliyuncs.com/istio/ingress.png)
 
-#### Egress
+### 2.Egress
 
 ![Egress](https://github-aaron89.oss-cn-beijing.aliyuncs.com/istio/Egress.png)
 
 注意：
-业务本身并不直接向外部发送请求，他并不关心集群外的网络拓扑情况，而是直接将请求发送至Sidecar模式的Egress组件
+业务本身并不直接向外部发送请求，他并不关心集群外的网络拓扑情况，而是直接将请求发送至`Sidecar`模式的Egress组件
 
 
-### 部署类型：仅服务间外加前端代理
+## 3.部署类型：仅服务间外加前端代理
 
 ![frontproxy](https://github-aaron89.oss-cn-beijing.aliyuncs.com/istio/frontproxy.png)
-上面已经提到过，最外部增加frontproxy，用于解决集群南北流量问题
+上面已经提到过，最外部增加`frontproxy`，用于解决集群南北流量问题
 
 
-### 部署类型：双向代理
+## 4.部署类型：双向代理
 
 ![doubleproxy](https://github-aaron89.oss-cn-beijing.aliyuncs.com/istio/doubleproxy.png)
 
