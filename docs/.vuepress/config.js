@@ -10,7 +10,8 @@ module.exports = {
         repoLabel: 'My GitHub',
         nav: [
             { text: 'Home', link: '/' },
-            { text: 'Ceph', link: '/Ceph/1.简介/' }
+            { text: 'Ceph', link: '/Ceph/1.简介/' },
+            { text: 'Prometheus', link: '/Prometheus/' }
         ],
         sidebarDepth : 3,
         sidebar: [
@@ -19,6 +20,13 @@ module.exports = {
             collapsable: false,
             children: [
               ["/Ceph/1.简介/",'综述']
+            ]
+            },
+            {
+            title: "Prometheus篇",
+            collapsable: false,
+            children: [
+              ["/Prometheus/",'综述']
             ]
             }
         ]

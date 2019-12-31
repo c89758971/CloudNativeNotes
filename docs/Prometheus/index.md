@@ -1,13 +1,13 @@
 # Prometheus
-云原生体系下，你可以使用operator、helm、kube三种方式进行更好的管理prometheus。
-本章节仅使用了最简单的yaml的方式进行部署，为了支撑Istio章节的演示说明所需。
-你也可以把这些yaml封装成helm的charts进行管理。
+云原生体系下，你可以使用`operator`、`helm`、`kube`三种方式进行更好的管理`prometheus`。
+本章节仅使用了最简单的yaml的方式进行部署，为了支撑`Istio`章节的演示说明所需。
+你也可以把这些`yaml`封装成helm的charts进行管理
  
 - Prometheus、Grafana部署
 - Grafana配置
 
 
-### Prometheus、Grafana部署
+## 1.Prometheus、Grafana部署
 
 组件 |  访问地址
 ---- | ----- 
@@ -16,10 +16,10 @@ grafana | 192.168.0.114:31759/login
 grafana-ingress | k8s.grafana:31759/login
 
 
-本小节除了提供常规的NodePort访问类型外，还提供了ingress配置，如果想使用ingress访问，你需要提前集成好ingress-controllers，
+本小节除了提供常规的NodePort访问类型外，还提供了`ingress`配置，如果想使用`ingress`访问，你需要提前集成好`ingress-controllers`，
 具体配置详见：[Kubernetes/11.ingress资源](https://github.com/Aaron1989/CloudNativeNotes/tree/master/Kubernetes/11.Ingress%E8%B5%84%E6%BA%90)
 
-1) 部署方式，请按照本章节提供的配置文件，按一下顺序apply就行，默认配置的ns在kube-system
+1) 部署方式，请按照本章节提供的配置文件，按一下顺序`apply`就行，默认配置的`ns`在`kube-system`
 ```bash
 #安装node-exporter
 kubectl apply -f  node-exporter.yaml 
@@ -63,10 +63,10 @@ http://192.168.0.114:31759/login
 http://k8s.grafana:31759/login    
 ```
 
-### Grafana配置
+## 2.Grafana配置
 
-1) 配置prometheus数据源，并设置成default（略）
-2) 导入dashboard面板，配置模版的序号为315
+1) 配置`prometheus数`据源，并设置成default（略）
+2) 导入`dashboard`面板，配置模版的序号为`315`
 ![grafana-dashboard-import](https://github-aaron89.oss-cn-beijing.aliyuncs.com/istio/grafana-dashboard-import.png)
 3) 此时一个基础且较完善的k8s集群监控图也已经出来了
 ![grafana-dashboard](https://github-aaron89.oss-cn-beijing.aliyuncs.com/istio/grafana-dashboard.png)
