@@ -2,7 +2,7 @@ version: '3.3'
 services:
   envoy:
     build:
-      context: .
+      context: ""
       dockerfile: Dockerfile-envoy                          #重新build镜像，新增curl命令，方便之后从业务容器中进行测试
     volumes:
     -  ./envoy.yaml:/etc/envoy/envoy.yaml

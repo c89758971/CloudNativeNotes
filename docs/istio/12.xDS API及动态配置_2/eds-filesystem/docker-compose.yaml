@@ -3,7 +3,7 @@ services:
 
   envoy:
     build:
-      context: .
+      context: ""
       dockerfile: Dockerfile
     networks:
       envoymesh:
@@ -11,7 +11,8 @@ services:
           - envoy
     expose:
       - "80"
-      - "9901"
+    ports:
+      - "8080:80"
 
   webserver1:
     image: ikubernetes/mini-http-server:v0.3
@@ -19,7 +20,6 @@ services:
       envoymesh:
         aliases:
           - webserver1
-          - myserver
     expose:
       - "8081"
     depends_on:
@@ -31,7 +31,6 @@ services:
       envoymesh:
         aliases:
           - webserver2
-          - myserver
     expose:
       - "8081"
     depends_on:
