@@ -1,4 +1,4 @@
-**1.资源对象的配置格式**
+## 1.资源对象的配置格式
 
     kind：定义资源类型，例如deployment、service等
     apiVersion：定义调用的api版本，所支持的版本可以通过kubectl  api-resources查看 
@@ -6,7 +6,7 @@
     spec：用于定义用户期望的状态，不同的资源类型
     Status：记录活动对象的当前状态信息，由k8s系统自行维护，对用户来说为只读字段
 
-**2.类型**
+## 2.资源对象的类型
 ```text
 陈述式：
     kubectl create -f xx.yaml
@@ -15,7 +15,7 @@
     kubectl apply -f xx.yaml
 ```
 
-**3.命令**
+## 3.命令补充
 ```bash
 #相关资源的命令查询：
 kubectl explain pods(.spec.tolerations….)
@@ -31,13 +31,13 @@ Docker:
 
 ```
 
-**4.集群内部网络被外部访问的三种办法**
+## 4.三种网络代理方式
 
     Service，申明NodePort类型
     hostPort
     hostNetwork：共享宿主机的网络名称空间
 
-**5.文档**
+## 5.参考文档
 
 reference文档：https://kubernetes.io/docs/reference/using-api/api-overview/
 

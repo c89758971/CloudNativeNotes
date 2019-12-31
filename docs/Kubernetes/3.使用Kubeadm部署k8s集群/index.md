@@ -1,6 +1,6 @@
 # 使用Kubeadm部署k8s集群
-kubeadm是一个提供了"kubeadm init"和"kubeadm join"最佳实践命令，且用于快速构建一个kubernetes集群的工具，你可以使用此工具快速构建一个kubernetes学习环境。
-通过本章节的学习，你将能够使用kubeadm工具，成功构建出一个基础的kubernetes集群环境。
+kubeadm是一个提供了`kubeadm init`和`kubeadm join`最佳实践命令，且用于快速构建一个kubernetes集群的工具，你可以使用此工具快速构建一个kubernetes学习环境。
+通过本章节的学习，你将能够使用kubeadm工具，成功构建出一个基础的kubernetes集群环境
 
 
 - 环境准备
@@ -10,7 +10,7 @@ kubeadm是一个提供了"kubeadm init"和"kubeadm join"最佳实践命令，且
 - 使用Kubeadm部署k8s集群
 - 参考文档
 
-### 环境准备
+## 1.环境准备
 
 ip | 主机名 | 角色 |操作系统 
 ---- | ----- | ----- | ----- 
@@ -18,7 +18,7 @@ ip | 主机名 | 角色 |操作系统
 192.168.0.108 | centos-2.shared node01 | Node | Centos6.4
 192.168.0.109 | centos-3.shared node01 | Node | Centos6.4
 
-### Hosts文件准备
+## 2.Hosts文件准备
 
 ```bash
 192.168.0.104 centos-1.shared master
@@ -26,9 +26,9 @@ ip | 主机名 | 角色 |操作系统
 192.168.0.109 centos-3.shared node02
 ```
 
-### Docker环境配置
+## 3.Docker环境配置
 
-1) 关闭系统默认防火墙和SELINUX
+1) 关闭系统默认防火墙和`SELINUX`
 ```bash
 setenforce 0
 sed -i -r "/^SELINUX=/c SELINUX=disabled" /etc/selinux/config
@@ -38,7 +38,7 @@ which systemctl && systemctl stop iptables || service iptables stop
 which systemctl && systemctl disable iptables || chkconfig iptables off
 ```
 
-2) 卸载旧版本Docker
+2) 卸载旧版本`Docker`
 ```bash
 yum remove docker \
             docker-client \
@@ -55,7 +55,7 @@ yum remove docker \
             docker-ee
 ```
 
-3) 安装DockerCE
+3) 安装`DockerCE`
 ```bash
 # 1.安装所需的包
 # yum-utils 提供了 yum-config-manager 实用程
@@ -86,7 +86,7 @@ yum list docker-ce --showduplicates | sort -r
 yum install -y docker-ce-17.12.1.ce-1.el7.centos
 ```
 
-4) 启动Docker并设置开机运行
+4) 启动`Docker`并设置开机运行
 ```bash
 systemctl start docker
 systemctl enable docker
@@ -108,7 +108,7 @@ EOF
 sysctl --system
 ```
 
-### 其他准备工作
+## 4.其他准备工作
 
 1) 关闭防火墙
 ```bash
@@ -118,7 +118,7 @@ systemctl disable firewalld.service
 systemctl disable iptables.service
 ```
 
-2) 禁用SELINUX
+2) 禁用`SELINUX`
 ```bash
 #临时关闭：
 setenforce 0            
@@ -128,7 +128,7 @@ vim /etc/selinux/config
 SELINUX=disabled
 ```
 
-3) 禁用swap设备（影响性能，k8s集群初始化会报错）
+3) 禁用`swap`设备（影响性能，`k8s`集群初始化会报错）
 ```bash
 #临时禁用
 swapoff  -a
@@ -138,7 +138,7 @@ Vim  /etc/fstab
 注释 /dev/mapper/VolGroup-lv_swap swap 所在的行
 ```
 
-4) 启用ipvs内核模块 创建内核模块载入相关的脚本文件/etc/sysconfig/modules/ipvs.modules，设定自动载入的内核模块。文件内容如下(用到再配置也可以)
+4) 启用`ipvs`内核模块 创建内核模块载入相关的脚本文件`/etc/sysconfig/modules/ipvs.modules`，设定自动载入的内核模块。文件内容如下(用到再配置也可以)
 ```bash
 #!/bin/bash
 ipvs_mods_dir="/usr/lib/modules/$(uname -r)/kernel/net/netfilter/ipvs"
@@ -155,7 +155,7 @@ chmod +x /etc/sysconfig/modules/ipvs.modules
 lsmod |grep ip_vs
 ```
 
-5) docker文件配置（docker unit file： /usr/lib/systemd/system/docker.service）
+5) `docker`文件配置（docker unit file： `/usr/lib/systemd/system/docker.service`）
 ```bash
 ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
 ExecStartPost=/usr/sbin/iptables -P FPRWARD ACCEPT
@@ -171,7 +171,7 @@ systemctl restart docker
 docker info
 ```
 
-### 使用Kubeadm部署k8s集群
+## 5.使用Kubeadm部署k8s集群
 
 1) 首先安装k8s相关软件包。
 [阿里云镜像仓库](https://mirrors.aliyun.com/)配置如下所示： 
@@ -202,7 +202,7 @@ kubernetes-master.x86_64                    1.5.2-0.7.git269f928.el7   extras
 kubernetes-node.x86_64                      1.5.2-0.7.git269f928.el7   extras 
 ```
 
-3) 使用yum安装kubeadm 、kubectl和kubelet
+3) 使用`yum`安装`kubeadm` 、`kubectl`和`kubelet`
 ```bash
     yum install kubeadm  kubectl kubelet
 
@@ -216,14 +216,14 @@ kubernetes-node.x86_64                      1.5.2-0.7.git269f928.el7   extras
 /usr/bin/kubelet
 /usr/lib/systemd/system/kubelet.service
 ```
-5) 配置kubelet,swap处于启用状态时，不要报错(如果上面配置了关闭swap，可省略)
+5) 配置`kubelet`,`swap`处于启用状态时，不要报错(如果上面配置了关闭`swap`，可省略)
 ```bash
      vim /etc/sysconfig/kubelet
      KUBELET_EXTRA_ARG="--fail-swap-on=false”
 
 ```
     
-6) 初始化集群(Master节点)
+6) 初始化集群(`Master`节点)
 ```bash
 #集群镜像获取
 https://www.jianshu.com/p/8bc61078bded
@@ -254,7 +254,7 @@ kubectl get pods -n kube-system
 kubectl get nodes
 ```
 7) Node节点
-* 从主节点复制repo配置到对应node节点上：
+* 从主节点复制`repo`配置到对应`node`节点上：
 ```bash
 scp k8s.repo node01:/etc/yum.repos.d/
 scp /etc/sysconfig/kubelet  node01:/etc/sysconfig
@@ -264,26 +264,26 @@ scp  /run/flannel/subnet.env node01: /run/flannel/subnet.env
 scp  /run/flannel/subnet.env node02: /run/flannel/subnet.env
 ```
              
-8) 在主节点打包node所需镜像，并scp到各node节点
+8) 在主节点打包`node`所需镜像，并`scp`到各`node`节点
 ```bash
 docker save -o k8s-node.tar k8s.gcr.io/coredns quay.io/coreos/flannel k8s.gcr.io/pause
 scp k8s-node.tar node01:/
 scp k8s-node.tar node02:/
 ```
          
-9) Node节点：
-* 加载镜像( coredns、 flannel、 pause)：
+9) `Node`节点：
+* 加载镜像( `coredns`、 `flannel`、 `pause`)：
    ```bash
     cd / && docker load —input k8s-node.tar
     yum install kubelet kubeadm    
     ``` 
-* 添加集群。注意这个token是第六步初始化集群给你的，用于node节点加入节点时候用的。
+* 添加集群。注意这个token是第六步初始化集群给你的，用于`node`节点加入节点时候用的。
     ```bash
     kubeadm join 192.168.0.104:6443 --token z9kmma.p8ak2ffytr7gjnsv \
     --discovery-token-ca-cert-hash sha256:82ee3a673e99fa8f46a8f515fa430819b595d532f3fcb21d9c3114f3394b4b0d 
     ```
          
-10) 部署完毕，并检查集群状态（Master），此时一个基础的kubernetes集群已经构建完成了。
+10) 部署完毕，并检查集群状态（`Master`），此时一个基础的kubernetes集群已经构建完成了。
 ```bash
 kubectl get nodes
 NAME              STATUS   ROLES    AGE   VERSION    
@@ -292,6 +292,6 @@ centos-2.shared   Ready    <none>   19m   v1.16.3
 centos-3.shared   Ready    <none>   18m   v1.16.3
 ```
      
-### 参考文档
+## 6.参考文档
 
 官方文档：https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/

@@ -30,7 +30,11 @@ module.exports = {
             title: "Kubernetes篇",
             collapsable: false,
             children: [
-              ["/Kubernetes/1.Kubernetes基础/",'Kubernetes基础']
+              ["/Kubernetes/1.Kubernetes基础/",'Kubernetes基础'],
+              ["/Kubernetes/2.Kubernetes基础和部署说明/",'Kubernetes基础和部署说明'],
+              ["/Kubernetes/3.使用Kubeadm部署k8s集群/",'使用Kubeadm部署k8s集群'],
+              ["/Kubernetes/4.Kubernetes快速入门/",'Kubernetes快速入门'],
+              ["/Kubernetes/5.Pod资源清单配置基础/",'Pod资源清单配置基础']
             ]
             },
             {
