@@ -1,16 +1,16 @@
-**综述：**
+## 1.综述
 1. 每一条指令都会生成一个新的镜像层
 2. 层数越多 越精细，复用性更高、增量更新、控制更精准
 3. 原则：
     * 每个指令只做专一的事情
-4. 忽略文件：.dockerignore文本文件（https://www.linuxea.com/2297.html）
+4. 忽略文件：`.dockerignore`文本文件（https://www.linuxea.com/2297.html）
 5. 打镜像命令：      
 
 ```bash
      docker  image build . -t myimg:v0.1
 
 ```
-6. 常用参数
+## 2.常用参数
 ```
     COPY：
         本地路径，支持正则
@@ -92,7 +92,7 @@
 ```        
 
 
-7. Dockerfile优化手段:
+## 3.Dockerfile优化手段
 ```
     容器能快速迭代
     使用.dockerignore文件
@@ -103,7 +103,7 @@
     构建镜像使用缓存
 ```
 
-8. Dockerfile例子
+## 4.Dockerfile例子
 ```
 FROM busybox:latest
 

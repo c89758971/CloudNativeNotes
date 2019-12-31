@@ -1,19 +1,4 @@
-**1.定义：容器编排工具**
-
-**2.文档地址：https://docs.docker.com/compose/**
-
-**3.参数说明：https://docs.docker.com/compose/compose-file/**
-
-```
-    部分说明：
-    Port：
-        - “<宿主机端口>：<容器端口>”
-    volumes:
-        - “<宿主机地址>：<容器地址>”
-
-```
-         
-**4.命令：（需要在对应工作目录执行）**
+## 1.常用命令
 ``` 
     后台运行：
         docker-compose up -d
@@ -23,7 +8,7 @@
         docker-compose run <容器名> env
 ```
    
-**5.官网入门应用：Flask**
+## 2.应用入门：Flask
 
 *Step 1: Setup*
 
@@ -62,7 +47,7 @@ def hello():
     return 'Hello World! I have been seen {} times.\n'.format(count)
 ```
 
-3. 创建Flask项目的requirements.txt文件：
+3. 创建Flask项目的`requirements.txt`文件：
 ```txt
 flask
 redis
@@ -71,8 +56,8 @@ redis
 *Step 2: Create a Dockerfile*
 
 In your project directory, create a file named Dockerfile and paste the following:
-1. 这一步，你需要编写一个用于打镜像的Dockerfile，这个镜像包含了python自身的依赖，以及Python应用所需的依赖。
-在你的项目目录中，创建一个Dockfile，并黏贴下面的代码：
+1. 这一步，你需要编写一个用于打镜像的`Dockerfile`，这个镜像包含了`python`自身的依赖，以及`Python`应用所需的依赖。
+在你的项目目录中，创建一个`Dockfile`，并黏贴下面的代码：
 ```bash
 FROM python:3.7-alpine
 WORKDIR /code
@@ -86,7 +71,7 @@ CMD ["flask", "run"]
 ```
 *Step 3: Define services in a Compose file*
 
-1. 创建docker-compose.yml文件：
+1. 创建`docker-compose.yml`文件：
 ```bash
 version: '3'
 services:
@@ -97,7 +82,7 @@ services:
   redis:
     image: "redis:alpine"
 ```
-其中定义了2个服务：web 和 redis
+其中定义了2个服务：`web` 和 `redis`
 
 *Step 4: Build and run your app with Compose*
 1. 使用docker-compose up启动容器：
@@ -122,12 +107,12 @@ redis_1  | 1:M 17 Aug 22:11:10.483 # WARNING you have Transparent Huge Pages (TH
 web_1    |  * Debugger PIN: 330-787-903
 redis_1  | 1:M 17 Aug 22:11:10.483 * Ready to accept connections
 ```
-2. 访问对应机器的5000端口进行测试：
+2. 访问对应机器的`5000`端口进行测试：
 
-![应用验证-1](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Docker/3.Docker%20Compose%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/compose-test-1.png)
+![应用验证-1](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Docker/compose-test-1.png)
 
 
-3. 使用docker image ls命令，进行查看：
+3. 使用`docker image ls`命令，进行查看：
 ```bash
 $ docker image ls
 REPOSITORY              TAG                 IMAGE ID            CREATED             SIZE
@@ -135,10 +120,10 @@ composetest_web         latest              e2c21aa48cc1        4 minutes ago   
 python                  3.4-alpine          84e6077c7ab6        7 days ago          82.5MB
 redis                   alpine              9d8fa9aa0e5b        3 weeks ago         27.5MB
 ```
-4. 停止应用：docker-compose down 或者ctrl+c
+4. 停止应用：`docker-compose down` 或者`ctrl+c`
 
 *Step 5: Edit the Compose file to add a bind mount*
-1. 编辑docker-compose.yml文件，新增volume配置：
+1. 编辑`docker-compose.yml`文件，新增`volume`配置：
 ```bash
 version: '3'
 services:
@@ -192,14 +177,14 @@ HOME=/root
 * 挂载情况测试和查看：当前目录和容器内的/code目录（不再赘述）
 
 *Step 7: Update the application*
-1. 编辑app.py文件，修改输出提示：
+1. 编辑`app.py`文件，修改输出提示：
 ```text
 return 'Hello from Docker! I have been seen {} times.\n'.format(count)
 ```
 
 2. 刷新浏览器，效果如下所示：
 
-![应用验证-2](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Docker/3.Docker%20Compose%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/compose-test-2.png)
+![应用验证-2](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Docker/compose-test-2.png)
 
 
 *Where to go next：*
@@ -218,3 +203,18 @@ return 'Hello from Docker! I have been seen {} times.\n'.format(count)
 * compose版本和参数使用说明：
 
     https://docs.docker.com/compose/compose-file/
+    
+## 3.附录-参考文档    
+
+官方文档：https://docs.docker.com/compose/
+
+参数说明文档：https://docs.docker.com/compose/compose-file/
+
+```
+    部分说明：
+    Port：
+        - “<宿主机端口>：<容器端口>”
+    volumes:
+        - “<宿主机地址>：<容器地址>”
+
+```

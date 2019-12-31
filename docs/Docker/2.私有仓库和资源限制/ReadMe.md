@@ -1,4 +1,4 @@
-**1.私有仓库**
+## 1.私有仓库
 ```
 名称：Harbor
 官网：https://goharbor.io/
@@ -6,7 +6,7 @@ Git：https://github.com/goharbor/harbor
 ```
     
    
-**2.资源限制：NameSpace -> CGroups**
+## 2.资源限制：NameSpace -> CGroups
 
 
 类型说明：
@@ -32,7 +32,7 @@ IO：
 ```
 
 
-**3.压测工具：docker-stress-ng**
+## 3.压测工具：docker-stress-ng
 
 ```
     拉取镜像：
@@ -60,7 +60,7 @@ docker run --name stress -it --rm -m 315m lorel/docker-stress-ng:latest stress -
 docker stats stress
 top
 ```
-![内存压测验证](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Docker/2.%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93%E5%92%8C%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6/memcheck.png)
+![内存压测验证](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Docker/memcheck.png)
 
 CPU压测方式：
 
@@ -76,4 +76,4 @@ docker run --name stress --rm --cpus 1.6 lorel/docker-stress-ng:latest stress --
 docker stats stress
 top
 ```
-![Cpu压测验证](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Docker/2.%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93%E5%92%8C%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6/cpucheck.png)
+![Cpu压测验证](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Docker/cpucheck.png)

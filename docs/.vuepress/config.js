@@ -10,11 +10,21 @@ module.exports = {
         repoLabel: 'My GitHub',
         nav: [
             { text: 'Home', link: '/' },
+            { text: 'Docker', link: '/Docker/1.Dockerfile使用总结' },
             { text: 'Ceph', link: '/Ceph/1.简介/' },
             { text: 'Prometheus', link: '/Prometheus/' }
         ],
         sidebarDepth : 3,
         sidebar: [
+            {
+            title: "Docker篇",
+            collapsable: false,
+            children: [
+              ["/Docker/1.Dockerfile使用总结/",'Dockerfile使用总结'],
+              ["/Docker/2.私有仓库和资源限制/",'私有仓库和资源限制'],
+              ["/Docker/3.Docker Compose基础应用/",'Docker Compose基础应用']
+            ]
+            },
             {
             title: "Ceph篇",
             collapsable: false,
