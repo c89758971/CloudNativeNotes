@@ -1,0 +1,25 @@
+{
+  "name": "CloudNativeNotes",
+  "version": "1.0.0",
+  "description": "### 内容介绍",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aaron1989/CloudNativeNotes.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Aaron1989/CloudNativeNotes/issues"
+  },
+  "homepage": "https://github.com/Aaron1989/CloudNativeNotes#readme",
+  "devDependencies": {
+    "vuepress": "^1.2.0"
+  }
+}
