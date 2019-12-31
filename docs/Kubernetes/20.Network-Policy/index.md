@@ -1,17 +1,4 @@
-**附录：参考文档**
-
-* 官方：
-
-    https://kubernetes.io/docs/concepts/services-networking/network-policies/
-* jimmysong：
-
-    https://jimmysong.io/kubernetes-handbook/concepts/network-policy.html
-    
-* Calico官网：
-    
-    https://docs.projectcalico.org/v3.10/getting-started/kubernetes/installation/flannel
-
-**1.应用场景**
+## 1.应用场景
 
 * 多租户隔离（名称空间级别、Pod级别）
 * K8S集群概念的安全组
@@ -21,7 +8,7 @@
     Network Policy 的作用对象是 Pod，也可以应用到 Namespace 和集群的 Ingress、Egress 流量。
     Network Policy 是作用在 L3/4 层的，即限制的是对 IP 地址和端口的访问，如果需要对应用层做访问限制需要使用如 Istio 这类 Service Mesh。
 
-**2.核心参数讲解**
+## 2.核心参数讲解
 
 ![networkploicy](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Kubernetes/networkpolicy.png)
 
@@ -37,17 +24,17 @@ egress（类似安全组的内外网出）：
     当对应区域有多条规则时，满足其一即可
 ```
 
-**3.Installing Calico for policy and flannel for networking**
+## 3.Installing Calico for policy and flannel for networking
    
    参考文档见附录
    
-1) 因为我们初始化集群配置flannel的时候用的是10.244.0.0/16，所以不需要调整calico的配置文件，直接下载下来，apply就好
+1) 因为我们初始化集群配置`flannel`的时候用的是`10.244.0.0/16`，所以不需要调整`calico`的配置文件，直接下载下来，`apply`就好
 ```bash
 curl https://docs.projectcalico.org/v3.10/manifests/canal.yaml -O
     
 kubectl apply -f canal.yaml
 ```
-2) 等相关pod运行成功之后，我们就可以编辑网络策略进行测试
+2) 等相关`pod`运行成功之后，我们就可以编辑网络策略进行测试
 ```bash
 [root@centos-1 chapter11]# kubectl get pod -n kube-system
 NAME                                      READY   STATUS            RESTARTS   AGE
@@ -56,7 +43,7 @@ canal-85l9r                               2/2     Running           0          2
 canal-mgfzd                               2/2     Running           0          22m
 ```
 
-**4.Newwork Policy**
+## 4.Newwork Policy
 
 1) 帮助命令
 ```bash
@@ -67,7 +54,7 @@ VERSION:  networking.k8s.io/v1
 
 
 
-2) 创建两个namespace，并分别运行pod，其中dev运行服务端，prod中运行客户端进行测试
+2) 创建两个`namespace`，并分别运行`pod`，其中`dev`运行服务端，`prod`中运行客户端进行测试
 ```bash
 #创建namespace
 [root@centos-1 chapter11]# kubectl create ns dev
@@ -82,7 +69,7 @@ deployment.apps/myapp created
 #部署客户端pod,pod.yaml，并apply
 kubectl apply -f pod.yaml -n prod
 ```
-3) 观察pod情况，并进客户端的交互式接口进行测试，发现pod通信是成功的
+3) 观察`pod`情况，并进客户端的交互式接口进行测试，发现`pod`通信是成功的
 ```bash
 [root@centos-1 chapter11]# kubectl get pod -n dev -o wide
 NAME                     READY   STATUS    RESTARTS   AGE     IP           NODE              NOMINATED NODE   READINESS GATES
@@ -102,7 +89,7 @@ PING 10.244.2.2 (10.244.2.2): 56 data bytes
 
 ```
 
-4) 这时候，我们编辑deny-all-ingress.yaml（拒绝所有入站流量，且dev内pod不能相互通信）,并apply
+4) 这时候，我们编辑`deny-all-ingress.yaml`（拒绝所有入站流量，且`dev`内`pod`不能相互通信）,并`apply`
 ```yaml
 apiVersion: networking.k8s.io/v1             #dev名称空间下的所有pod，不允许相互访问也不允许被外部访问
 kind: NetworkPolicy
@@ -117,7 +104,7 @@ spec:
   - Ingress                               #只控制入站流量，没具体定义，就表示一个都不放行
 ```
 
-5) 查看对应的netpol生成情况
+5) 查看对应的`netpol`生成情况
 ```bash
 [root@centos-1 chapter11]# kubectl get netpol -n dev
 NAME               POD-SELECTOR   AGE
@@ -142,7 +129,7 @@ Spec:
 ```
 
 6) 返回我们直接的交互式接口，测试发现，现在已经访问不到dev名称空间下面的资源了，和预期隔离配置一致
-（同理：dev内的pod也不能相互访问）
+（同理：`dev`内的`pod`也不能相互访问）
 ```bash
 / # wget -o - -q 10.244.2.2
 ^C
@@ -151,7 +138,7 @@ Spec:
 PING 10.244.2.2 (10.244.2.2): 56 data bytes
 
 ```
-7) 接下来我们需要开放ingress规则，使得他们能够访问,首先给prod的名称空间打标签，以便network policy能够用选择器选中
+7) 接下来我们需要开放`ingress`规则，使得他们能够访问,首先给`prod`的名称空间打标签，以便`network policy`能够用选择器选中
 ```bash
 [root@centos-1 chapter11]# kubectl label ns prod name=prod
 namespace/prod labeled
@@ -168,7 +155,7 @@ kubernetes-dashboard   Active   25h     <none>
 prod                   Active   19m     name=prod
 ```
 
-8) 新增dev-allow-prod-ingress配置文件，并apply
+8) 新增`dev-allow-prod-ingress`配置文件，并`apply`
 ```yaml
 apiVersion: networking.k8s.io/v1             #dev名称空间下的所有pod，不允许相互访问也不允许被外部访问
 kind: NetworkPolicy
@@ -207,7 +194,7 @@ Spec:
 
 ```
 
-10) 继续进程测试，发现此时已可以访问dev下的pod资源
+10) 继续进程测试，发现此时已可以访问`dev`下的`pod`资源
 ```bash
 [root@centos-1 chapter11]# kubectl exec -it client-pod -n prod -- /bin/sh
 / # ping 10.244.2.2
@@ -216,3 +203,16 @@ PING 10.244.2.2 (10.244.2.2): 56 data bytes
 64 bytes from 10.244.2.2: seq=1 ttl=63 time=0.091 ms
 
 ```
+
+## 5.参考文档
+
+* 官方：
+
+    https://kubernetes.io/docs/concepts/services-networking/network-policies/
+* jimmysong：
+
+    https://jimmysong.io/kubernetes-handbook/concepts/network-policy.html
+    
+* Calico官网：
+    
+    https://docs.projectcalico.org/v3.10/getting-started/kubernetes/installation/flannel

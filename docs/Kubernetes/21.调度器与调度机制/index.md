@@ -1,11 +1,4 @@
-**附录：参考文档**
-
-* 官方：
-
-    https://kubernetes.io/docs/concepts/scheduling/kube-scheduler/
-
-
-**1.调度流程**
+## 1.调度流程
 
 
 ![调度流程](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Kubernetes/%E8%B0%83%E5%BA%A6%E6%B5%81%E7%A8%8B%E5%9B%BE.png)
@@ -14,9 +7,9 @@
 
 如图所示，调度流程分为两大块：
 
-* Filtering
+### 1.Filtering
         
-  预选阶段，也称为predicate。会按照预选过滤器，首先把不符合要求的node节点直接剔除在外。
+  预选阶段，也称为`predicate`。会按照预选过滤器，首先把不符合要求的`node`节点直接剔除在外。
   
   所有过滤器：https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler/algorithm/predicates
   
@@ -26,9 +19,9 @@
       Pod之间的亲和性，表示是否愿意调度在一个区域（可以是node、机架、也可以是机房）
 
 
-* Scoring
+### 2.Scoring
 
-  打分阶段，也称为priority（优选阶段，哪个更优），通过优选函数对节点进行打分，从而决定调度策略。
+  打分阶段，也称为`priority`（优选阶段，哪个更优），通过优选函数对节点进行打分，从而决定调度策略。
   
   所有过滤器：https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler/algorithm/priorities
 
@@ -44,7 +37,7 @@
 
         如果条件都不满足，也会从中按照打分，“勉为其难”的选择一个进行调度
 
-**2.相关命令**
+## 2.相关命令
 ```bash
 [root@centos-1 chapter12]# kubectl explain pod.spec.affinity
 KIND:     Pod
@@ -70,7 +63,7 @@ FIELDS:
      in the same node, zone, etc. as some other pod(s)).
 ```
 
-**3.实际配置**
+## 3.实际配置
 
 可参考本页相关yaml文件，仅供参考
 
@@ -78,3 +71,9 @@ FIELDS:
 
 * key级别，是与关系（and）
 * matchExpressions级别是或关系（or）
+
+## 4.参考文档
+
+* 官方：
+
+    https://kubernetes.io/docs/concepts/scheduling/kube-scheduler/

@@ -47,7 +47,11 @@ module.exports = {
               ["/Kubernetes/15.StatefulSet资源/",'StatefulSet资源'],
               ["/Kubernetes/16.Kubernetes系统安全/",'Kubernetes系统安全'],
               ["/Kubernetes/17.Dashboard/",'Dashboard'],
-              ["/Kubernetes/18.准入控制器/",'准入控制器']
+              ["/Kubernetes/18.准入控制器/",'准入控制器'],
+              ["/Kubernetes/19.网络插件体系/",'网络插件体系'],
+              ["/Kubernetes/20.Network-Policy/",'Network-Policy'],
+              ["/Kubernetes/21.调度器与调度机制/",'调度器与调度机制'],
+              ["/Kubernetes/22.高级调度机制/",'高级调度机制']
             ]
             },
             {
