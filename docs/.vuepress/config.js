@@ -10,8 +10,8 @@ module.exports = {
         repoLabel: 'My GitHub',
         nav: [
             { text: 'Home', link: '/' },
-            { text: 'Docker', link: '/Docker/1.Dockerfile使用总结' },
-            { text: 'Kubernetes', link: '/Kubernetes/1.Kubernetes基础' },
+            { text: 'Docker', link: '/Docker/1.Dockerfile使用总结/' },
+            { text: 'Kubernetes', link: '/Kubernetes/1.Kubernetes基础/' },
             { text: 'Ceph', link: '/Ceph/1.简介/' },
             { text: 'Prometheus', link: '/Prometheus/' }
         ],
