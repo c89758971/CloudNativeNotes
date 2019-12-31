@@ -1,4 +1,4 @@
-**1.应用场景定义**
+## 1.应用场景定义
 
 * ConfigMap：保存非敏感配置
     
@@ -7,25 +7,25 @@
 
     https://kubernetes.io/docs/concepts/configuration/secret/
 
-**2.Secret类型**
+## 2.Secret类型
 
 *   docker-registry：创建一个给 Docker registry 使用的 secret
 *   generic：从本地 file, directory 或者 literal value 创建一个 secret
 *   tls：创建一个 TLS secret
 
-**3.以环境变量使用secrets**
+## 3.以环境变量方式载入secrets
 
-1) 创建所需的文件username.txt和password.txt
+1) 创建所需的文件`username.txt`和`password.txt`
 ```bash
 echo -n 'admin' > ./username.txt
 echo -n '1f2d1e2e67df' > ./password.txt
 ```
-2) 创建generic类型的secret
+2) 创建`generic`类型的`secret`
 ```bash
 kubectl create secret generic db-user-pass --from-file=./username.txt --from-file=./password.txt
 ```
 
-3) 观察secret情况
+3) 观察`secret`情况
 ```bash
 [root@centos-1 mainfasts]# kubectl get secrets/db-user-pass -o yaml
 apiVersion: v1
@@ -43,7 +43,7 @@ metadata:
 type: Opaque
 ```
 
-4) 使用base64解码配置文件中的对应信息，发现信息一致
+4) 使用`base64`解码配置文件中的对应信息，发现信息一致
 ```bash
 [root@centos-1 mainfasts]# echo YWRtaW4=|base64 -d
 admin
@@ -51,7 +51,7 @@ admin
 1f2d1e2e67df
 ```
 
-5) 编辑redis-secretenv-demo.yaml，并apply
+5) 编辑`redis-secretenv-demo.yaml`，并apply
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -75,7 +75,7 @@ spec:
   restartPolicy: Never
 ```
 
-6) 进入Pod交互式模式，观察secret变量载入情况
+6) 进入`Pod`交互式模式，观察`secret`变量载入情况
 ```bash
 [root@centos-1 secret]# kubectl exec -it secret-env-pod -- /bin/sh
 # printenv
@@ -101,9 +101,9 @@ PWD=/data
 
 ```
 
-**4.以存储卷方式载入**
+## 4.以存储卷方式载入secrets
 
-1) 编辑redis-secretfiles-volumes，并apply
+1) 编辑`redis-secretfiles-volumes`，并`apply`
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -129,7 +129,7 @@ spec:
 
 ```
 
-2) 进入pod交互式模式，发现/etc/secret-volume中已经生成对应的配置文件
+2) 进入`pod`交互式模式，发现`/etc/secret-volume`中已经生成对应的配置文件
 ```bash
 [root@centos-1 secret]# kubectl exec -it secret-dotfiles-pod -- /bin/sh
 # cd /etc/secret-volume

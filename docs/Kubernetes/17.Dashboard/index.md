@@ -1,4 +1,4 @@
-**1.Dashboard部署(K8s:v1.16.3)**
+## 1.Dashboard部署(K8s:v1.16.3)
 
 1) 创建证书
 ```text
@@ -22,7 +22,7 @@ kubectl create secret generic kubernetes-dashboard-certs --from-file=dashboard.k
 
 ```
 
-2) 下载并修改recommended.yaml
+2) 下载并修改`recommended.yaml`
 ```bash
 wget https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta5/aio/deploy/recommended.yaml
 ```
@@ -57,7 +57,7 @@ spec:
 #type: Opaque
 ```
 
-3) 安装Dashboard
+3) 安装`Dashboard`
 ```bash
 #安装
 kubectl apply -f  ~/recommended.yaml
@@ -68,7 +68,7 @@ kubectl get service -n kubernetes-dashboard  -o wide
 
 ```
 
-4) 创建Dashboard管理员账号dashboard-admin.yaml，并apply
+4) 创建`Dashboard`管理员账号`dashboard-admin.yaml`，并`apply`
 ```yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -79,7 +79,7 @@ metadata:
   namespace: kubernetes-dashboard
 
 ```
-5) 赋权dashboard-admin-bind-cluster-role.yaml，并apply
+5) 赋权`dashboard-admin-bind-cluster-role.yaml`，并`apply`
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -97,7 +97,7 @@ subjects:
   namespace: kubernetes-dashboard
 ```
 
-6) 复制token，并登录https://192.168.0.104:30008
+6) 复制`token`，并登录`https://192.168.0.104:30008`
 ```bash
 kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep dashboard-admin | awk '{print $1}')
 ```

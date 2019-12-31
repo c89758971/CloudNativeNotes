@@ -1,37 +1,47 @@
-**1.参考文档**
+## 1.介绍
 
-* https://jimmysong.io/kubernetes-handbook/concepts/admission-controller.html
+准入控制器（`Admission Controller`）位于`API Server`中，在对象被持久化之前，准入控制器拦截对`API Server`的请求，一般用来做身份验证和授权。其中包含两个特殊的控制器：`MutatingAdmissionWebhook`和`ValidatingAdmissionWebhook`
 
+### 1.变更（Mutating）准入控制
 
-**2.介绍**
+修改请求的对象
 
-准入控制器（Admission Controller）位于 API Server 中，在对象被持久化之前，准入控制器拦截对 API Server 的请求，一般用来做身份验证和授权。其中包含两个特殊的控制器：MutatingAdmissionWebhook 和 ValidatingAdmissionWebhook。
-* 变更（Mutating）准入控制：修改请求的对象
+### 2.验证（Validating）准入控制
 
-* 验证（Validating）准入控制：验证请求的对象
+验证请求的对象
 
 例如我会默认开启如下的准入控制器。
 ```bash
 --admission-control=ServiceAccount,NamespaceLifecycle,NamespaceExists,LimitRanger,ResourceQuota,MutatingAdmissionWebhook,ValidatingAdmissionWebhook
 ```
 
-**3.常用控制器**
+## 2.常用控制器
 
-* AlwaysPullImages：总是拉取远端镜像；好处：可以避免本地镜像被恶意入侵而篡改
+### 1.AlwaysPullImages
 
-* LimitRanger：此准入控制器将确保所有资源请求不会超过 namespace 的 LimitRange（定义Pod级别的资源限额，如cpu、mem）
+总是拉取远端镜像；
 
-* ResourceQuota：此准入控制器将观察传入请求并确保它不违反命名空间的ResourceQuota对象中列举的任何约束
-（定义名称空间级别的配额，如pod数量）
+好处：可以避免本地镜像被恶意入侵而篡改
 
-* PodSecurityPolicy：此准入控制器用于创建和修改pod，
-并根据请求的安全上下文和可用的Pod安全策略确定是否应该允许它。
+### 2.LimitRanger
+
+此准入控制器将确保所有资源请求不会超过`namespace`的`LimitRange`（定义Pod级别的资源限额，如cpu、mem）
+
+### 3.ResourceQuota
+
+此准入控制器将观察传入请求并确保它不违反命名空间的`ResourceQuota`对象中列举的任何约束
+（定义名称空间级别的配额，如`pod`数量）
+
+### 4.PodSecurityPolicy
+
+此准入控制器用于创建和修改`pod`，
+并根据请求的安全上下文和可用的`Pod`安全策略确定是否应该允许它。
  
-**4.配置参考**
+## 3.配置参考
 
-* LimitRanger
+### 1.LimitRanger
 
-1) 编辑limitrange-demo.yaml，并apply
+1) 编辑`limitrange-demo.yaml`，并`apply`
 ```yaml
 apiVersion: v1
 kind: LimitRange
@@ -68,9 +78,9 @@ Container   cpu       500m  2    1                1              4
 
 ```
 
-* ResourceQuota
+### 2.ResourceQuota
 
-1) 编辑配置文件resoucequota-demo.yaml，并apply
+1) 编辑配置文件`resoucequota-demo.yaml`，并`apply`
 ```yaml
 apiVersion: v1
 kind: ResourceQuota
@@ -111,6 +121,10 @@ requests.memory               0     1Gi
 
 ```
 
-* PodSecurityPolicy
+### 3.PodSecurityPolicy
 
-查看相关psp配置文件，仅供参考（未实测）
+查看相关psp配置文件，仅供参考（已提供，未实测）
+
+## 4.参考文档
+
+* https://jimmysong.io/kubernetes-handbook/concepts/admission-controller.html

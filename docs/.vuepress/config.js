@@ -42,7 +42,12 @@ module.exports = {
               ["/Kubernetes/10.Service资源管理/",'Service资源管理'],
               ["/Kubernetes/11.Ingress资源/",'Ingress资源'],
               ["/Kubernetes/12.Volume基础应用/",'Volume基础应用源'],
-              ["/Kubernetes/13.ConfigMap资源/",'ConfigMap资源']
+              ["/Kubernetes/13.ConfigMap资源/",'ConfigMap资源'],
+              ["/Kubernetes/14.Secret资源/",'Secret资源'],
+              ["/Kubernetes/15.StatefulSet资源/",'StatefulSet资源'],
+              ["/Kubernetes/16.Kubernetes系统安全/",'Kubernetes系统安全'],
+              ["/Kubernetes/17.Dashboard/",'Dashboard'],
+              ["/Kubernetes/18.准入控制器/",'准入控制器']
             ]
             },
             {
