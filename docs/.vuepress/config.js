@@ -11,6 +11,7 @@ module.exports = {
         nav: [
             { text: 'Home', link: '/' },
             { text: 'Docker', link: '/Docker/1.Dockerfile使用总结' },
+            { text: 'Kubernetes', link: '/Kubernetes/1.Kubernetes基础' },
             { text: 'Ceph', link: '/Ceph/1.简介/' },
             { text: 'Prometheus', link: '/Prometheus/' }
         ],
@@ -23,6 +24,13 @@ module.exports = {
               ["/Docker/1.Dockerfile使用总结/",'Dockerfile使用总结'],
               ["/Docker/2.私有仓库和资源限制/",'私有仓库和资源限制'],
               ["/Docker/3.Docker Compose基础应用/",'Docker Compose基础应用']
+            ]
+            },
+            {
+            title: "Kubernetes篇",
+            collapsable: false,
+            children: [
+              ["/Kubernetes/1.Kubernetes基础/",'Kubernetes基础']
             ]
             },
             {

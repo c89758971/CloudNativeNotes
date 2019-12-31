@@ -1,17 +1,18 @@
-# 1.Kubernetes基础
-本章主要让我们初步了解到Kubernetes的主要组件有哪些，以及其协作关系是怎么样的。
+# Kubernetes基础
+本章主要让我们初步了解到Kubernetes的主要组件有哪些，以及其协作关系是怎么样的
 
 - 架构图
 - 流程概述
 - 参考文档
 
 
-### 架构图
+## 1.架构图
 
 
-![应用验证-2](https://github.com/Aaron1989/CloudNativeNotes/blob/master/Kubernetes/1.Kubernetes%E5%9F%BA%E7%A1%80/Kubernetes-Components-1.png)
+![架构图-1](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Docker/Kubernetes-Components-1.png)
 
-#### Master节点：（又称为控制平面：control plane）
+### 1.Master节点
+又称为控制平面：control plane
     
   包括kube-apiserver、kube-scheduler、kube-controller-manager和etcd四个组件。
 ```text
@@ -32,7 +33,8 @@ etcd：
     官方文档：https://etcd.io/docs/v3.4.0/
 ```
 
-#### Node节点：（又称为数据平面：data plane）
+### 2.Node节点
+又称为数据平面：data plane
 
     包括kubelet、kube-proxy和Container Runtime三个组件。
 ```text
@@ -50,7 +52,7 @@ Container Runtime：
     
 ```
 
-#### Addons(附加组件) 
+### 3.Addons(附加组件) 
 
     使用Kubernetes resources (DaemonSet, Deployment, etc)增加集群功能；
     其中附加组件的namespace属于kube-system。  
@@ -61,7 +63,7 @@ DNS：
 Web UI (Dashboard)、Container Resource Monitoring和Cluster-level Logging
 ```
 
-### 流程概述
+## 2.流程概述
 
 Master： 
 
@@ -70,7 +72,7 @@ Node：
 
     kubelet也会watch APIserver的资源变动，并在符合的Node上，会通过kuberlet调用相关的docker引擎进行后续构建操作。
 
-### 参考文档
+## 3.参考文档
 
 
 官网：https://kubernetes.io
