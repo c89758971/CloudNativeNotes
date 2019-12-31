@@ -1,5 +1,5 @@
 # 简介
-所有 Ceph 存储集群的部署都始于部署一个个 Ceph 节点、网络和 Ceph 存储集群。 Ceph 存储集群至少需要一个 Ceph Monitor 和两个 OSD 守护进程。而运行 Ceph 文件系统客户端时，则必须要有元数据服务器（ Metadata Server ）
+所有 `Ceph` 存储集群的部署都始于部署一个个 `Ceph` 节点、网络和`Ceph`存储集群。 `Ceph` 存储集群至少需要一个`Ceph Monitor`和两个`OSD`守护进程。而运行`Ceph` 文件系统客户端时，则必须要有元数据服务器`Metadata Server`
 
 - 名词定义
 - 部署工具
