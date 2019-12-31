@@ -1,4 +1,4 @@
-**1.基础知识**
+## 1.基础知识
 ```text
 iptables和ipvs：4层
 ingress：7层 
@@ -10,30 +10,30 @@ Ingress：
     只定义流量转发和调度的通用格式的配置信息
 
 ```
-**2.ingress controllers对比**
+## 2.ingress controllers对比
 
 ![ingress技术栈](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Kubernetes/ingresscontrollers.png)
 
-**3.Ingress代理逻辑**
+## 3.Ingress代理逻辑
 
 ![ingress架构图](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Kubernetes/ingress-controller-nodeport.png)
 
 
-**4.Ingress-Nginx部署和简单测试**
+## 4.Ingress-Nginx部署和测试
 
-1) 下载配置清单，修改images地址（被墙）：registry.aliyuncs.com/google_containers/nginx-ingress-controller:0.26.1
+1) 下载配置清单，修改`images`地址（被墙）：`registry.aliyuncs.com/google_containers/nginx-ingress-controller:0.26.1`
 ```bash
  wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/mandatory.yaml
 ```
 
-2) 启动配置清单，并查看Pod是否运行
+2) 启动配置清单，并查看`Pod`是否运行
 ```bash
 [root@centos-1 chapter6]# kubectl get pods -n ingress-nginx
 NAME                                       READY   STATUS    RESTARTS   AGE
 nginx-ingress-controller-dc55d4998-zxnrd   1/1     Running   0          20m
 ```
 
-3) 编辑nginx-ingress-service.yaml配置文件，如下
+3) 编辑`nginx-ingress-service.yaml`配置文件，如下
 ```yaml
 apiVersion: v1
 kind: Service
@@ -54,16 +54,16 @@ spec:
     app.kubernetes.io/part-of: ingress-nginx
 ```
 
-4) apply配置文件，并观察
+4) `apply`配置文件，并观察
 ```bash
 [root@centos-1 chapter6]# kubectl get svc -n ingress-nginx
 NAME                       TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
 nginx-ingress-controller   NodePort   10.108.188.111   <none>        80:30080/TCP,443:30443/TCP   12m
 ```
 
-5) 访问任意一台虚拟机的30080端口，便能够访问到Nginx404页面
+5) 访问任意一台虚拟机的`30080`端口，便能够访问到`Nginx404`页面
 
-6) 编辑myapp-svc.yaml和myapp-ingress.yaml，并apply -f创建
+6) 编辑`myapp-svc.yaml`和`myapp-ingress.yaml`，并`apply -f`创建
 ```yaml
 #myapp-svc.yaml
 apiVersion: apps/v1
@@ -126,14 +126,14 @@ spec:
 
 ```
 
-7) 修改MAC本机hosts并访问foo.bar.com:30080,可以成功
+7) 修改`MAC本机`hosts`并访问`foo.bar.com:30080`,可以成功
 ```text
 192.168.0.104 foo.bar.com
 ```
 
-**4.tomcat实战部署**
+## 4.tomcat实战部署
 
-1) 编辑tomcat-svc-ingress.yaml，并apply -f
+1) 编辑`tomcat-svc-ingress.yaml`，并`apply -f`
 ```yaml
 apiVersion: v1
 kind: Namespace
@@ -220,7 +220,7 @@ replicaset.apps/tomcat-6b6fb9c8f6   2         2         2       4m33s
     
 ```
 
-3) 观察ingress条目生成情况
+3) 观察`ingress`条目生成情况
 ```bash
 [root@centos-1 chapter6]# kubectl get ingress -n eshop
 NAME     HOSTS           ADDRESS   PORTS   AGE
@@ -238,7 +238,7 @@ Rules:
                  /   tomcat:8080 (10.244.1.51:8080,10.244.2.34:8080)
 ```
 
-4) 进入ingress-nginx，查看配置文件生成情况
+4) 进入`ingress-nginx`，查看配置文件生成情况
 ```bash
 kubectl exec -it pod/nginx-ingress-controller-dc55d4998 -zxnrd -n ingress-nginx -- /bin/sh
     
@@ -266,7 +266,7 @@ more /etc/nginx/nginx.conf
 
 ```
 
-5) 新增Mac本机Hosts文件，并测试，至此部署已经完成
+5) 新增Mac本机`Hosts`文件，并测试，至此部署已经完成
 ```bash
 192.168.0.104 eshop.foo.com
     
@@ -281,11 +281,11 @@ Vary: Accept-Encoding
 
 ```
 
-**5.相关文档**
+## 5.参考文档
 
 Ingress-nginx:
 https://github.com/kubernetes/ingress-nginx
 
 部署文档：https://kubernetes.github.io/ingress-nginx/deploy/
 
-K8s官方例子：https://kubernetes.io/docs/concepts/services-networking/ingress/
+K8S官方例子：https://kubernetes.io/docs/concepts/services-networking/ingress/

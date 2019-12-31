@@ -37,7 +37,12 @@ module.exports = {
               ["/Kubernetes/5.Pod资源清单配置基础/",'Pod资源清单配置基础'],
               ["/Kubernetes/6.Pod资源管理/",'Pod资源管理'],
               ["/Kubernetes/7.Pod控制器-Deployment/",'Pod控制器-Deployment'],
-              ["/Kubernetes/8.Pod控制器-DaemonSet/",'Pod控制器-DaemonSet']
+              ["/Kubernetes/8.Pod控制器-DaemonSet/",'Pod控制器-DaemonSet'],
+              ["/Kubernetes/9.Pod控制器-Job/",'Pod控制器-Job'],
+              ["/Kubernetes/10.Service资源管理/",'Service资源管理'],
+              ["/Kubernetes/11.Ingress资源/",'Ingress资源'],
+              ["/Kubernetes/12.Volume基础应用/",'Volume基础应用源'],
+              ["/Kubernetes/13.ConfigMap资源/",'ConfigMap资源']
             ]
             },
             {

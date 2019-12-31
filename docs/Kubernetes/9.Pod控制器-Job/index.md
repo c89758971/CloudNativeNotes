@@ -1,6 +1,6 @@
-**Job控制器**
+## 1.Job控制器
 
-应用场景：一次性任务，任务完成时的状态为Completed（见下图），常用作备份操作
+应用场景：一次性任务，任务完成时的状态为Completed，常用作备份操作,如下所示：
 ```bash
 [root@centos-1 mainfasts]# kubectl get pod
 NAME                     READY   STATUS              RESTARTS   AGE
@@ -12,16 +12,16 @@ ngx-new-cb79d555-gqwf8   1/1     Running             0          33h
 ngx-new-cb79d555-hcdr9   1/1     Running             0          33h
 ```
 
-**1.命令说明**
+## 2.命令补充
 ```bash
 restartPolicy: 
     “OnFailure”  #失败就重启
-    "Never"     #就算失败，也不重启
+    "Never"      #就算失败，也不重启
 ```
 
-**2.demo**
+## 3.demo实战
 
-1) 单任务串行
+### 1.单任务串行
 ```yaml
 apiVersion: batch/v1
 kind: Job
@@ -40,7 +40,7 @@ spec:
       restartPolicy: Never                     #重启策略-never，就算失败，也不重启
 ```
 
-2) 多任务并行
+### 2.多任务并行
 ```yaml
 apiVersion: batch/v1
 kind: Job

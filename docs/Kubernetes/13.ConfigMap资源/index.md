@@ -1,19 +1,19 @@
-**1.应用场景定义**
+## 1.应用场景定义
 
 * ConfigMap：保存非敏感配置
     
     https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/
 * Secret：保存敏感配置信息
 
-**2.根据CMD创建ConfigMap(Pod配置不会热加载)**
+## 2.通过CMD创建ConfigMap(Pod配置不会热加载)
 
-1) 在config的namespace中，创建一个名为filebeat-cfg的configmap，具体如下
+1) 在`config`的`namespace`中，创建一个名为`filebeat-cfg`的`configmap`，具体如下
 ```bash
 kubectl create cm filebeat-cfg -n config --from-literal=redis_host="redis.test.com" --from-literal=log_level=“info”
 
 ```
 
-2) 检查CM（configmap简称）配置情况
+2) 检查`CM`（`configmap`简称）配置情况
 ```bash
 [root@centos-1 chapter8]# kubectl get cm filebeat-cfg -n config -o yaml
 apiVersion: v1
@@ -30,7 +30,7 @@ metadata:
   uid: 2cc00197-60b6-4850-9c24-ef4f385ae058
 ```
 
-3) 编辑nginx-cmcmd.yaml,并加载我们的配置
+3) 编辑`nginx-cmcmd.yaml`,并加载我们的配置
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -56,7 +56,7 @@ spec:
       value: "123123"
 ```
 
-4) apply启动Pod，并检查变量加载情况，发现能成功加载到变量（nginx_host、nginx_log_level和nginx_static_value）
+4) `apply`启动`Pod`，并检查变量加载情况，发现能成功加载到变量（`nginx_host`、`nginx_log_level`和`nginx_static_value`）
 ```bash
 [root@centos-1 mainfasts]# kubectl exec -it nginx -n config -- /bin/sh
 # printenv
@@ -99,7 +99,7 @@ metadata:
 
 ```
 
-6) 继续观察Pod内变量，发现没有改变
+6) 继续观察`Pod`内变量，发现没有改变
 ```yaml
 # printenv
 KUBERNETES_PORT=tcp://10.96.0.1:443
@@ -124,7 +124,7 @@ PWD=/
 
 ```
 
-7) 删除Pod，重新apply，发现配置才会更新
+7) 删除`Pod`，重新`apply`，发现配置才会更新
 ```yaml
 [root@centos-1 mainfasts]# kubectl delete -f pod-cfg.yaml 
 pod "nginx" deleted
@@ -150,13 +150,13 @@ nginx_static_value=123123
 
 8) 结论：
 
-    环境变量只会在Pod生成时加载，修改configMap，并不会被热加载到Pod中，需要重新生成Pod才行
+    环境变量只会在`Pod`生成时加载，修改`configMap`，并不会被热加载到`Pod`中，需要重新生成`Pod`才行
 
-9) 如何解决Pod中配置热加载的问题呢？请看下面的例子
+9) 如何解决`Pod`中配置热加载的问题呢？请看下面的例子
 
-**3.根据目录创建ConfigMap，并挂载(Pod配置可以热加载)**
+## 3.通过目录创建ConfigMap并挂载(Pod配置可以热加载)
 
-1) 创建nginx所需目录和虚拟主机配置
+1) 创建`nginx`所需目录和虚拟主机配置
 ```bash
 [root@centos-1 conf.d]# pwd
 /root/mainfasts/conf.d
@@ -193,12 +193,12 @@ server {
     }
 }
 ```
-2) 导入至configmap
+2) 导入至`configmap`
 ```bash
 kubectl create configmap nginx-cfg -n config --from-file=/root/mainfasts/conf.d/
 ```
 
-3) 检查configmap配置载入情况
+3) 检查`configmap`配置载入情况
 ```bash
 [root@centos-1 conf.d]# kubectl get cm -n config -o yaml
 apiVersion: v1
@@ -261,7 +261,7 @@ metadata:
   selfLink: ""
 ```
 
-4) 编辑nginx-cmfiles-volumes.yaml
+4) 编辑`nginx-cmfiles-volumes.yaml`
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -289,7 +289,7 @@ spec:
 
 ```
 
-5) apply配置文件，并进入Pod查看配置读取和挂载情况
+5) `apply`配置文件，并进入`Pod`查看配置读取和挂载情况
 ```bash
 [root@centos-1 mainfasts]# kubectl exec -it  nginx -n config -- /bin/sh
 # cd /etc/nginx/conf.d
@@ -327,7 +327,7 @@ server {
 }
 
 ```
-6) 修改configmap参数(分别将server_name修改成taobao和jingdong)
+6) 修改`configmap`参数(分别将`server_name`修改成`taobao`和`jingdong`)
 ```bash
 [root@centos-1 conf.d]# kubectl get cm nginx-cfg -n config -o yaml
 apiVersion: v1
@@ -374,7 +374,7 @@ metadata:
 
 ```
 
-7) 几秒后Pod的配置文件也自动的进行了热更新
+7) 几秒后`Pod`的配置文件也自动的进行了热更新
 ```bash
 # cat server1_new.conf
 server {
@@ -409,9 +409,9 @@ server {
 # 
 ```
 
-**4.使用配置清单申明configmap**
+## 4.使用配置清单申明configmap
 
-1) 参考ingress的配置文件：configmap-demo.yaml
+1) 参考`ingress`的配置文件：`configmap-demo.yaml`
 ```yaml
 apiVersion: v1
 kind: ConfigMap
