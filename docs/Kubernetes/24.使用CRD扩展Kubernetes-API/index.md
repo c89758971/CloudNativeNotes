@@ -1,31 +1,30 @@
 # 使用CRD扩展Kubernetes API
 
-有些场景，kubernetes内建的资源类型往往不能满足我们的需求，如redis集群初始化、扩容、缩容、备份等操作
-（类似于operator）。
-这时候就需要我们考虑如何去扩展kubernetes的API。
+有些场景，`kubernetes`内建的资源类型往往不能满足我们的需求，如`redis`集群初始化、扩容、缩容、备份等操作（类似于`operator`）。
+这时候就需要我们考虑如何去扩展`kubernetes的API`。
  
 - 扩展方式
 - 扩展架构图
 - 使用CRD扩展Kubernetes API
 - 高级主题
 - 其他高级功能demo
-- 附录：参考文档
+- 参考文档
 
 
-### 扩展方式
+## 1.扩展方式
 
-- 修改kubenetes的apiserver源码，难度最大、版本兼容性也很困难
-- 自定义API server（Custom API server）并聚合到API中，难度较大，需要开发能力
-- 1.7以下版本编写TPR，kubernetes1.7及以上版本用CRD，常用方式
+- 修改`kubenetes`的`apiserver`源码，难度最大、版本兼容性也很困难
+- 自定义`API server`（`Custom API server`）并聚合到`API`中，难度较大，需要开发能力
+- `1.7`以下版本编写`TPR`，`kubernetes1.7`及以上版本用`CRD`，常用方式
 
-### 扩展架构图
+## 2.扩展架构图
 
 
 ![扩展架构图](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Kubernetes/CRD.png)
 
 
 
-如图所示，用户对集群的请求首先到apiserver内部的Aggregator（聚合器），然后再到实际的apiserver模块。
+如图所示，用户对集群的请求首先到`apiserver`内部的`Aggregator`（聚合器），然后再到实际的`apiserver`模块。
 上面提到的三种扩展方式，可以在图中清晰看到
 
 特别注意：
@@ -35,9 +34,9 @@
 
 ```
 
-### 使用CRD扩展Kubernetes API
+## 3.使用CRD扩展Kubernetes API
 
-1) 创建自定义资源类型：编辑resourcedefinition.yaml
+1) 创建自定义资源类型：编辑`resourcedefinition.yaml`
 ```yaml
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -62,13 +61,13 @@ spec:
     shortNames:
     - ct
 ```
-2) apply配置文件
+2) `apply`配置文件
 ```bash
 [root@centos-1 chapter13]# kubectl apply -f resourcedefinition.yaml 
 customresourcedefinition.apiextensions.k8s.io/crontabs.stable.example.com created
 ```
 
-3) 创建自定义资源的对象：my-new-cron-object.yaml，其中kind引用上面自定义的资源类型：CronTab，并apply
+3) 创建自定义资源的对象：`my-new-cron-object.yaml`，其中`kind`引用上面自定义的资源类型：`CronTab`，并`apply`
 ```yaml
 apiVersion: "stable.example.com/v1"
 kind: CronTab
@@ -79,7 +78,7 @@ spec:
   image: my-awesome-cron-image
 
 ```
-4) 查看自定义资源类型上的pod资源
+4) 查看自定义资源类型上的`pod`资源
 ```bash
 [root@centos-1 chapter13]# kubectl get CronTab
 NAME                 AGE
@@ -107,14 +106,15 @@ Events:       <none>
 
 ```
 
-### 高级主题
+## 4.高级主题
 
-#### Validation（验证）
-##### 功能状态： Kubernetes v1.12 beta
+### 1.Validation（验证）
+
+功能状态： Kubernetes v1.12 beta
 
 可以通过 [OpenAPI v3 schema](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#schemaObject)验证自定义对象是否符合标准 。
 
-1) 在自定义资源类型CronTab中，定义crontabs-crd-with-validation.yaml，新增Validation（验证）功能
+1) 在自定义资源类型`CronTab`中，定义`crontabs-crd-with-validation.yaml`，新增`Validation`（验证）功能
 ```yaml
 kind: CustomResourceDefinition
 metadata:
@@ -148,7 +148,7 @@ spec:
           required: ["userID","groups"]
 ```
 
-2) 编辑crontabs-with-invalid-field.yaml，引用kind: CronTab，并设置非法userID，验证Validation（验证）功能是否work，并apply
+2) 编辑`crontabs-with-invalid-field.yaml`，引用`kind: CronTab`，并设置非法`userID`，验证`Validation`（验证）功能是否`work`，并`apply`
 ```yaml
 apiVersion: stable.example.com/v1      #定义规范：  <group>/<version>
 kind: CronTab 
@@ -159,7 +159,7 @@ spec:
   userID: 999999
 ```
 
-3) 这时候发现Validation（验证）已经生效，拦截了pod初始化和运行
+3) 这时候发现`Validation`（验证）已经生效，拦截了`pod`初始化和运行
 ```bash
 [root@centos-1 chapter13]# kubectl apply -f users-with-invalid-field.yaml 
 The CronTab "tony" is invalid: 
@@ -168,12 +168,12 @@ The CronTab "tony" is invalid:
 
 ```
 
-#### Category（分类）
-类别是自定义资源所属的分组资源的列表（例如 all）。您可以使用 kubectl get <category-name> 列出属于该类别的资源。此功能是 beta，可用于 v1.10 中的自定义资源。
+### 2.Category（分类）
+类别是自定义资源所属的分组资源的列表（例如`all`）。您可以使用`kubectl get <category-name> `列出属于该类别的资源。此功能是`beta`，可用于`v1.10` 中的自定义资源。
 
-以下示例将CustomResourceDefinition添加至all的类别列表，并说明如何使用 kubectl get all 输出自定义资源 。
+以下示例将`CustomResourceDefinition`添加至`all`的类别列表，并说明如何使用 `kubectl get all`输出自定义资源 。
 
-1) 编辑resourcedefinition-with-category.yaml，并apply
+1) 编辑`resourcedefinition-with-category.yaml`，并`apply`
 ```yaml
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -197,7 +197,7 @@ spec:
     - all
 
 ```
-2) 编辑my-crontab.yaml，并apply
+2) 编辑`my-crontab.yaml`，并`apply`
 ```yaml
 apiVersion: "stable.example.com/v1"
 kind: CronTab
@@ -207,7 +207,7 @@ spec:
   cronSpec: "* * * * */5"
   image: my-awesome-cron-image
 ```
-3) 使用kubectl get all，这时候就可以看到我们自定义的Crontab类型资源了
+3) 使用`kubectl get all`，这时候就可以看到我们自定义的`Crontab`类型资源了
 ```bash
 [root@centos-1 ~]# kubectl get all
 NAME                         READY   STATUS    RESTARTS   AGE
@@ -226,12 +226,12 @@ NAME                                            AGE
 crontab.stable.example.com/my-new-cron-object   1s
 ```
  
-### 其他高级功能demo
+## 5.其他高级功能demo
 
-[其他高级功能demo](https://github.com/Aaron1989/CloudNativeNotes/tree/master/Kubernetes/24.%E4%BD%BF%E7%94%A8CRD%E6%89%A9%E5%B1%95Kubernetes-API/%E5%85%B6%E4%BB%96%E9%AB%98%E7%BA%A7%E5%8A%9F%E8%83%BDdemo)
+[其他高级功能demo](https://github.com/Aaron1989/CloudNativeNotes/tree/master/docs/Kubernetes/24.%E4%BD%BF%E7%94%A8CRD%E6%89%A9%E5%B1%95Kubernetes-API/%E5%85%B6%E4%BB%96%E9%AB%98%E7%BA%A7%E5%8A%9F%E8%83%BDdemo)
 
 
-### 附录：参考文档
+## 6.参考文档
 
 * 官方文档：
 

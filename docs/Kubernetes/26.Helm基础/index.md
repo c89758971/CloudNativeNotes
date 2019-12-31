@@ -1,13 +1,13 @@
 # Helm基础
 
-Helm是一种管理Charts的工具，而charts则是打包预配置Kubernetes基础资源的配置。
+`Helm`是一种管理`Charts`的工具，而`charts`则是打包预配置`Kubernetes`基础资源的配置
 
 - 概念介绍
 - 安装
 - 常用命令
 - 附录：参考文档
 
-### 概念介绍
+## 1.概念介绍
 
 ![helm](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Kubernetes/helm.png)
 
@@ -20,16 +20,16 @@ Helm是一种管理Charts的工具，而charts则是打包预配置Kubernetes基
 * charts repo：charts仓库，有远程和本地两种
 * chart release：通过charts发布的应用，称之为release
 
-### 安装
+## 2.安装
 
 1) 根据自己平台，下载对应的[安装包](https://github.com/helm/helm/releases)
 2) 解压压缩包
-3) 把helm二进制文件cp到系统目录即可
+3) 把`helm`二进制文件`cp`到系统目录即可
 ```bash
 cp helm /usr/local/bin/
 ```
-4) 检查是否成功：helm help
-5) 创建SA,并通过clusterrolebinding绑定到内建的role(cluster-admin)上
+4) 检查是否成功：`helm help`
+5) 创建`SA`,并通过`clusterrolebinding`绑定到内建的`role`(`cluster-admin`)上
 ```bash
 #创建sa
 kubectl create serviceaccount --namespace kube-system tiller

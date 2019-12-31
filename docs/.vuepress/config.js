@@ -51,7 +51,13 @@ module.exports = {
               ["/Kubernetes/19.网络插件体系/",'网络插件体系'],
               ["/Kubernetes/20.Network-Policy/",'Network-Policy'],
               ["/Kubernetes/21.调度器与调度机制/",'调度器与调度机制'],
-              ["/Kubernetes/22.高级调度机制/",'高级调度机制']
+              ["/Kubernetes/22.高级调度机制/",'高级调度机制'],
+              ["/Kubernetes/23.污点和容忍度/",'污点和容忍度'],
+              ["/Kubernetes/24.使用CRD扩展Kubernetes-API/",'使用CRD扩展Kubernetes-API'],
+              ["/Kubernetes/25.HPA控制器/",'HPA控制器'],
+              ["/Kubernetes/26.Helm基础/",'Helm基础'],
+              ["/Kubernetes/27.Helm使用进阶/",'Helm使用进阶'],
+              ["/Kubernetes/28.二进制部署高可用k8s集群/",'二进制部署高可用k8s集群阶']
             ]
             },
             {

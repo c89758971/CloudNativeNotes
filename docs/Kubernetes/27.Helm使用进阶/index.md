@@ -1,17 +1,18 @@
 # Helm使用进阶
 
-Helm是一种管理Charts的工具，而charts则是打包预配置Kubernetes基础资源的配置。
+`Helm`是一种管理`Charts`的工具，而`charts`则是打包预配置`Kubernetes`基础资源的配置
 
 - 自定义chart制作
 - release迭代
 - release回滚
 - 自定义chart打包并发布
+- 命令补全
 
 
 
-### 自定义chart制作
+## 1.自定义chart制作
 
-1) 首先我们先创建我们的myapp的chart项目
+1) 首先我们先创建我们的`myapp`的`chart`项目
 ```bash
 #进入local仓库的目录
 [root@centos-1 local]# cd /root/.helm/repository/local
@@ -33,7 +34,7 @@ $ helm create mongodb
     └── values.yaml
 ```
 
-2) 按需修改Chart.yaml、values.yaml
+2) 按需修改`Chart.yaml`、`values.yaml`
 ```yaml
 #Chart.yaml
 apiVersion: v1
@@ -92,7 +93,7 @@ tolerations: []
 affinity: {}    
 ```
 
-3) 使用lint进行项目的语法检查
+3) 使用`lint`进行项目的语法检查
 ```bash
 [root@centos-1 local]# helm  lint myapp
 ==> Linting myapp
@@ -100,7 +101,7 @@ affinity: {}
 1 chart(s) linted, no failures
 ```
 
-4) 本地myapp项目发布，可以使用--dry-run进行检测,也可以使用set命令进行临时传参
+4) 本地`myapp`项目发布，可以使用`--dry-run`进行检测,也可以使用`set`命令进行临时传参
 ```bash
 [root@centos-1 local]# helm install -n myapp ./myapp/ --set service.type=NodePort --dry-run
 NAME:   myapp
@@ -132,7 +133,7 @@ NOTES:
   echo http://$NODE_IP:$NODE_PORT
 ```
 
-5) 查看release发布情况，发现发布成功了
+5) 查看`release`发布情况，发现发布成功了
 ```bash
 [root@centos-1 local]# helm list
 NAME 	REVISION	UPDATED                 	STATUS  	CHART      	NAMESPACE
@@ -140,9 +141,9 @@ myapp	1       	Tue Dec 17 17:35:10 2019	DEPLOYED	myapp-0.1.0	default
 
 ```
 
-### release迭代
+## 2.release迭代
 
-1) 修改Chart.yaml和values.yaml
+1) 修改`Chart.yaml`和`values.yaml`
 ```bash
 #Chart.yaml
 apiVersion: v1
@@ -162,7 +163,7 @@ image:
 
 ```
 
-2) 使用upgrade命令升级release
+2) 使用`upgrade`命令升级`release`
 ```bash
 [root@centos-1 local]# helm upgrade myapp ./myapp --set service.type=NodePort
 Release "myapp" has been upgraded. Happy Helming!
@@ -193,7 +194,7 @@ NOTES:
 
 ```
 
-3) 发现CHART已经成功更新至myapp-0.1.1版本，同时REVISION=2
+3) 发现`CHART`已经成功更新至`myapp-0.1.1`版本，同时`REVISION=2`
 ```bash
 [root@centos-1 local]# helm list 
 NAME 	REVISION	UPDATED                 	STATUS  	CHART      	NAMESPACE
@@ -201,9 +202,9 @@ myapp	2       	Tue Dec 17 17:41:29 2019	DEPLOYED	myapp-0.1.1	default
 
 ```
 
-### release回滚
+## 3.release回滚
 
-1) 使用rollback命令进行回滚，回滚到版本1。
+1) 使用`rollback`命令进行回滚，回滚到版本1。
 
     注意：rollback命令需要两个位置参数：release name, revision number
 ```bash
@@ -212,7 +213,7 @@ Rollback was a success! Happy Helming!
 
 ```
 
-2) 回滚成功，CHART为myapp-0.1.0，此时REVISION=3（递增的版本号）
+2) 回滚成功，`CHART`为`myapp-0.1.0`，此时`REVISION=3`（递增的版本号）
 ```bash
 [root@centos-1 local]# helm list 
 NAME 	REVISION	UPDATED                 	STATUS  	CHART      	NAMESPACE
@@ -249,9 +250,9 @@ NOTES:
 
 ```
 
-### 自定义chart打包并发布
+## 4.自定义chart打包并发布
 
-1) 使用package打包myapp项目
+1) 使用`package`打包`myapp`项目
 ```bash
 [root@centos-1 local]# helm package ./myapp/
 Successfully packaged chart and saved it to: /root/.helm/repository/local/myapp-0.1.1.tgz
@@ -264,14 +265,14 @@ mkdir -p /data/repo
 mv myapp /data/repo
 ```
 
-3) 使用serve启动local仓库
+3) 使用`serve`启动`local`仓库
 ```bash
 [root@centos-1 local]# helm serve --repo-path /data/repo --url /charts
 Regenerating index. This may take a moment.
 Now serving you on 127.0.0.1:8879
 ```
 
-4) 这时，我们就可以在local仓库找到我们打包的项目了
+4) 这时，我们就可以在`local`仓库找到我们打包的项目了
 ```bash
 [root@centos-1 ~]# helm search local 
 NAME                   	CHART VERSION	APP VERSION	DESCRIPTION                                       
@@ -280,8 +281,10 @@ stable/magic-ip-address	0.1.0        	0.9.0      	A Helm chart to assign static 
 
 ```
 
+## 5.命令补全
+
 注意：
-helm命令自动补全功能设置，可使用以下命令:
+`helm`命令自动补全功能设置，可使用以下命令:
 ```bash
 source <(helm completion bash)
 
