@@ -1,6 +1,6 @@
 <p align="center">
    <a href="https://github.com/Aaron1989/CloudNativeNotes/" target="_blank">
-      <img src="https://github-aaron89.oss-cn-beijing.aliyuncs.com/%E4%B8%AA%E4%BA%BA%E6%94%AF%E4%BB%98/CNCF.png"/>
+      <img src="./CNCF.png"/>
    </a>
 </p>
 
@@ -58,7 +58,7 @@
 
 您的赞赏，是对我专题持续更新最大的认可和鼓励。
 
-![打赏](https://github-aaron89.oss-cn-beijing.aliyuncs.com/%E4%B8%AA%E4%BA%BA%E6%94%AF%E4%BB%98/all_pay.png)
+![打赏](./all_pay.png)
 
 <details open=“open”>
  <summary>点击收起/打开赞赏名单</summary>
