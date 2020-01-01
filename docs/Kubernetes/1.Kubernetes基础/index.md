@@ -4,6 +4,7 @@
 - 架构图
 - 流程概述
 - 参考文档
+- 附录-示例源码
 
 
 ## 1.架构图
@@ -76,4 +77,11 @@ Node：
 
 
 官网：https://kubernetes.io
+
+
+## 4.附录-示例源码
+
+《Kubernetes进阶实战》一书中的配置清单示例源码：
+
+https://github.com/iKubernetes/Kubernetes_Advanced_Practical
 
