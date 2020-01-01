@@ -8,6 +8,10 @@ module.exports = {
         //repo: "Aaron1989/blog-demo",
         // 自定义仓库链接文字。
         repoLabel: 'My GitHub',
+        editLinks: true,
+        docsDir: "docs",
+	    editLinkText: '在 GitHub 上编辑此页',
+    	lastUpdated: '上次更新',
         nav: [
             { text: 'Home', link: '/' },
             { text: 'Docker', link: '/Docker/1.Dockerfile使用总结/' },
@@ -18,6 +22,13 @@ module.exports = {
         ],
         sidebarDepth : 5,
         sidebar: [
+            {
+            title: "写在最前面",
+            collapsable: false,
+            children: [
+              ["start/1.阅读指引/",'写在最前面']
+            ]
+            },
             {
             title: "Docker篇",
             collapsable: false,
@@ -62,7 +73,7 @@ module.exports = {
             ]
             },
             {
-            title: "istio篇",
+            title: "Istio篇",
             collapsable: false,
             children: [
               ["/istio/1.Service Mesh简介/",'Service Mesh简介'],

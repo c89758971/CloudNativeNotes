@@ -4,7 +4,7 @@ heroImage: /kubernetes.jpeg
 heroText: CloudNativeNotes
 tagline: 云原生
 actionText: 快速上手 →
-actionLink: /Ceph/1.简介/
+actionLink: /start/1.阅读指引/
 features:
 - title: Docker篇
   details: 积累Docker日常使用的心得，让你1天通关dockerfile和docker-compose。
