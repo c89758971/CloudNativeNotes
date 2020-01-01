@@ -1,6 +1,6 @@
 <p align="center">
    <a href="https://github.com/Aaron1989/CloudNativeNotes/" target="_blank">
-      <img src="https://ws1.sinaimg.cn/large/8afbb32dly1gaa700gs27j20hs03eaa5.jpg"/>
+      <img src="https://github-aaron89.oss-cn-beijing.aliyuncs.com/%E4%B8%AA%E4%BA%BA%E6%94%AF%E4%BB%98/CNCF.png"/>
    </a>
 </p>
 
