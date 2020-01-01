@@ -1,13 +1,13 @@
 # Envoy使用入门_2
-本章节将通过docker-compose容器的方式，模拟Sidecar与主容器协作的方式，让你学习到其中的基础配置、
-并理解监听器（listener）和集群（Cluster）之间是如何通过ingress协作的。
+本章节将通过`docker-compose`容器的方式，模拟`Sidecar`与主容器协作的方式，让你学习到其中的基础配置、
+并理解监听器（`listener`）和集群（`Cluster`）之间是如何通过`ingress`协作的。
 
  
 - Cluster简易静态配置
 - tcpproxy-ingress实例
 - 参考文档
 
-### Cluster简易静态配置
+## 1.Cluster简易静态配置
 
 ```yaml
 clusters:
@@ -28,7 +28,7 @@ clusters:
             protocol: ... # 协议类型；
 ```
 
-### tcpproxy-ingress实例
+## 2.tcpproxy-ingress实例
 
 1) 创建工作目录，并编辑所需文件
 ```bash
@@ -87,16 +87,16 @@ networks:
   envoymesh: {}           
 ```
 
-2) 使用docker-compose up启动容器，两者处于同一个网络名称空间（network_mode）
+2) 使用`docker-compose up`启动容器，两者处于同一个网络名称空间（`network_mode`）
 
-    一个是服务网格的ingress容器：tcpproxy_envoy_1
+    一个是服务网格的ingress容器：`tcpproxy_envoy_1`
     
-    另一个是业务主容器：tcpproxy_mainserver_1
+    另一个是业务主容器：`tcpproxy_mainserver_1`
 ```bash
 docker-compose up
 ```
 
-3) 进入tcpproxy_envoy_1容器观察ingress的listener_0 80端口是否起来
+3) 进入`tcpproxy_envoy_1`容器观察`ingress`的`listener_0 80`端口是否起来
 ```bash
 [root@k8s-etcd-mater01 tcpproxy]# docker exec -it tcpproxy_envoy_1 /bin/sh
 / # ifconfig 
@@ -139,6 +139,6 @@ Accept: */*
 
 ```
 
-### 参考文档
+## 3.参考文档
 
 Clusters_API_v2_Reference：https://www.envoyproxy.io/docs/envoy/latest/api-v2/clusters/clusters

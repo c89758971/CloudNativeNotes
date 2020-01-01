@@ -1,13 +1,13 @@
 # Envoy配置方式
 Envoy的架构支持非常灵活的配置方式：简单部署场景可以使用纯静态配置，
-而更复杂的部署场景则可以逐步添加需要的动态配置机制。
+而更复杂的部署场景则可以逐步添加需要的动态配置机制
  
 - 基础概念
 - Upstream clusters
 
-### 基础概念
+## 1.基础概念
 
-Bootstrap配置中几个重要的基础概念：
+`Bootstrap`配置中几个重要的基础概念：
 ```json
 {
 	"node": "{...}",
@@ -44,11 +44,11 @@ listener、cluster和secret配置的lds_config、cds_config和ads_config；
 
 一般来说，侦听器和集群是最为常用基础配置，无论是以静态 或者是动态方式提供
 
-### Upstream clusters
+## 2.Upstream clusters
 
-Envoy可配置任意数量的上游集群，并使用Cluster Manager进行管理；
-- 由集群管理器负责管理的各集群可以由用户静态配置，也可借助于CDS API动 态获取；
-- 集群中的每个成员由endpoint进行标识，它可由用户静态配置，也可通过EDS或 DNS服务动态发现；
+`Envoy`可配置任意数量的上游集群，并使用`Cluster Manager`进行管理；
+- 由集群管理器负责管理的各集群可以由用户静态配置，也可借助于`CDS API`动 态获取；
+- 集群中的每个成员由`endpoint`进行标识，它可由用户静态配置，也可通过`EDS`或 `DN`S服务动态发现；
     - Static：静态配置
     - Strict DNS：严格DNS，Envoy将持续和异步地解析指定的DNS目标，
     并将DNS结果中的返回的每个IP地址视为上游集群中可用成员；

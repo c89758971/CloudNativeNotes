@@ -68,7 +68,15 @@ module.exports = {
               ["/istio/1.Service Mesh简介/",'Service Mesh简介'],
               ["/istio/2.微服务和服务治理基础/",'微服务和服务治理基础'],
               ["/istio/3.Envoy基础/",'Envoy基础'],
-              ["/istio/4.Envoy部署类型/",'Envoy部署类型']
+              ["/istio/4.Envoy部署类型/",'Envoy部署类型'],
+              ["/istio/5.Envoy配置方式/",'Envoy配置方式'],
+              ["/istio/6.Envoy使用入门_1/",'Envoy使用入门_1'],
+              ["/istio/7.Envoy使用入门_2/",'Envoy使用入门_2'],
+              ["/istio/8.Envoy使用入门_3/",'Envoy使用入门_3'],
+              ["/istio/9.Envoy管理接口基础应用/",'Envoy管理接口基础应用'],
+              ["/istio/10.Envoy综合示例_FrontProxy/",'Envoy综合示例_FrontProxy'],
+              ["/istio/11.xDS API及动态配置_1/",'xDS API及动态配置_1'],
+              ["/istio/12.xDS API及动态配置_2/",'xDS API及动态配置_2']
             ]
             },
             {

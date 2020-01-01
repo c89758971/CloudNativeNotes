@@ -1,28 +1,28 @@
 # Envoy使用入门_1
-本章节将通过docker容器的方式，启动构建envoy环境；
+本章节将通过`docker`容器的方式，启动构建`envoy`环境；
 
-并通过静态化配置和内置过滤器envoy.echo的方式，让你了解Envoy的初步使用。
+并通过静态化配置和内置过滤器`envoy.echo`的方式，让你了解`Envoy`的初步使用
  
 - 构建说明
 - 环境构建
 - 参考文档
 
-### 构建说明
+## 1.构建说明
 
-Envoy使用C++开发，并以Bazel为构建系统，如果你想尝试直接编译，则需要依赖如下两个环境：
+`Envoy`使用`C++`开发，并以`Bazel`为构建系统，如果你想尝试直接编译，则需要依赖如下两个环境：
 - GCC 7+ or Clang/LLVM 7+ (for C++14 support)
 - These Bazel native dependencies
 
-另外，Enovy也提供了基于docker镜像的预编译完成的程序，用户也可基于这些基础镜像打包定制镜像， 并以容器的方式运行envoy。（推荐）
+另外，`Enovy`也提供了基于`docker`镜像的预编译完成的程序，用户也可基于这些基础镜像打包定制镜像， 并以容器的方式运行`envoy`。（推荐）
 
-### 环境构建
+## 2.环境构建
 
-1) 于[dockerhub](https://hub.docker.com/r/envoyproxy/envoy-alpine)搜索最新的envoy镜像，并pull下来
+1) 于[dockerhub](https://hub.docker.com/r/envoyproxy/envoy-alpine)搜索最新的`envoy`镜像，并`pull`下来
 ```bash
 docker pull envoyproxy/envoy-alpine:v1.11.1
 ```
 
-2) 创建工作目录envoy，并在目录中创建envoy.yaml配置文件和Dockerfile。
+2) 创建工作目录`envoy`，并在目录中创建`envoy.yaml`配置文件和`Dockerfile`。
    
    配置文件的语法规范请参考：[bootstrap](https://www.envoyproxy.io/docs/envoy/latest/api-v2/bootstrap/bootstrap)
     
@@ -53,7 +53,7 @@ docker build . -t envoy-echo:v0.1
 docker container run --name echo --rm envoy-echo:v0.1
 ```
 
-4) 另开一个中端，并通过命令获取容器运行的ip
+4) 另开一个中端，并通过命令获取容器运行的`ip`
 ```bash
 [root@k8s-etcd-mater01 envoy]# docker exec -it echo /bin/sh
 / # ifconfig 
@@ -74,7 +74,7 @@ lo        Link encap:Local Loopback
           RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
 ```
 
-5) 退出容器，使用nc命令测试172.17.0.2 10051并输入字符串，发现有相同字符返回，测试成功
+5) 退出容器，使用`nc`命令测试`172.17.0.2 10051`并输入字符串，发现有相同字符返回，测试成功
 ```bash
 [root@k8s-etcd-mater01 envoy]# nc 172.17.0.2 15001
 Hi Envoy         #手动输入
@@ -82,7 +82,7 @@ Hi Envoy         #自动返回
 
 ```
 
-### 参考文档
+## 3.参考文档
 
 api-v2 Reference：
 

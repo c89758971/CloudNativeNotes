@@ -1,12 +1,12 @@
 # Envoy管理接口基础应用
-Envoy内建了一个管理接口，它支持查询和修改操作，甚至有可能暴露私有数据（例如统计数据、集群名称和证书信息等），
+`Envoy`内建了一个管理接口，它支持查询和修改操作，甚至有可能暴露私有数据（例如统计数据、集群名称和证书信息等），
 因此非常有必要精心 编排其访问控制机制以避免非授权访问
  
 - admin核心字段
 - admin-path
 - admin实战
 
-### admin核心字段
+## 1.admin核心字段
 ```yaml
 admin:
     access_log_path: ...                 # 管理接口的访问日志文件路径，无须记录访问日志时使用/dev/null；
@@ -18,11 +18,11 @@ admin:
       port_value: ...
 ```
 
-admin是另一个顶级字段，和static_resources同级，你可以在[官方admin](https://www.envoyproxy.io/docs/envoy/latest/api-v2/admin/admin)中找到最详细的api配置说明
+`admin`是另一个顶级字段，和`static_resources`同级，你可以在[官方admin](https://www.envoyproxy.io/docs/envoy/latest/api-v2/admin/admin)中找到最详细的api配置说明
 
-### admin-path
+## 2.admin-path
 
-envoy的admin管理接口中，也内置了很多/path，不同的path可能会分别接受不同的GET或 POST请求。你可以通过GET /help打印所有可用选项：
+`envoy`的`admin`管理接口中，也内置了很多`/path`，不同的`path`可能会分别接受不同的`GET`或`POST`请求。你可以通过`GET /help`打印所有可用选项：
 
 uri | description | 备注
 ---- | ----- | ----- 
@@ -47,9 +47,9 @@ uri | description | 备注
 /stats| print server stats | 按需输出统计数据，例如GET /stats?filter=regex，另外还支持json和prometheus两种输出格式
 /stats/prometheus | print server stats in prometheus format | 输出prometheus格式的统计信息
 
-### admin实战
+## 3.admin实战
 
-1)将envoy.yaml、Dockerfile-envoy和docker-compose.yaml拉下来，并docker-compose up。这三个代码和上一章节egress/中一摸一样，只是在envoy.yaml中增加了admin段配置
+1)将`envoy.yaml`、`Dockerfile-envoy`和`docker-compose.yaml`拉下来，并`docker-compose up`。这三个代码和上一章节`egress/`中一摸一样，只是在`envoy.yaml`中增加了admin段配置
 ```yaml
 admin:
   access_log_path: /tmp/admin.log                              #统计信息的日志存放路径
@@ -57,7 +57,7 @@ admin:
     socket_address: { address: 127.0.0.1, port_value: 9901}         #需要使用未被分配的端口
 ```
 
-2) 进入envoy的交互式接口，你可以发现可以访问到管理接口和上文提到的path信息了
+2) 进入`envoy`的交互式接口，你可以发现可以访问到管理接口和上文提到的`path`信息了
 ```bash
 / # curl 127.0.0.1:9901/help
 admin commands are:
@@ -86,7 +86,7 @@ admin commands are:
 
 ```
 
-3) 你也可以在我们配置的容器路径（/tmp/admin.log）中查看到对应日志
+3) 你也可以在我们配置的容器路径（`/tmp/admin.log`）中查看到对应日志
 ```bash
 [2019-12-27T12:51:55.172Z] "GET / HTTP/1.1" 200 - 0 5072 1 - "172.21.0.4" "curl/7.66.0" "-" "127.0.0.1:9901" "-"
 [2019-12-27T12:51:57.185Z] "GET / HTTP/1.1" 200 - 0 5072 0 - "172.21.0.4" "curl/7.66.0" "-" "127.0.0.1:9901" "-"

@@ -1,6 +1,6 @@
 # Envoy使用入门_3
-本章节首先阐述L4过滤器http_connection_manager和egress代理配置说明，然后使用2个完善的例子，
-让你充分了解http_connection_manager于egress和ingress中的使用情况。
+本章节首先阐述`L4`过滤器`http_connection_manage`r和`egress`代理配置说明，然后使用2个完善的例子，
+让你充分了解`http_connection_manager`于`egress`和`ingress`中的使用情况。
 
  
 - L4过滤器http_connection_manager
@@ -9,9 +9,9 @@
 - Ingress实战
 
 
-### L4过滤器http_connection_manager
+## 1.L4过滤器http_connection_manager
 
-http_connection_manager通过引入L7过滤器链实现了对http协议的操纵， 其中router过滤器用于配置路由转发
+`http_connection_manager`通过引入`L7`过滤器链实现了对`http`协议的操纵， 其中`router`过滤器用于配置路由转发
 ```yaml
 listeners:
 - name:
@@ -33,11 +33,11 @@ listeners:
           - name: envoy.router # 调用的过滤器为envoy.router
 ```
 注意：
-- 处理请求时，Envoy首先根据下游客户端请求的“host”来搜索虚拟主机列表中各virtual_host中的domains列表中的定义，第一个匹配到的Domain的 定义所属的virtual_host即可处理请求的虚拟主机；
-- 而后搜索当前虚拟主机中的routes列表中的路由列表中各路由条目的match的定义，第一个匹配到的match后的路由机制（route、redirect或direct_response）即生效；
+- 处理请求时，`Envoy`首先根据下游客户端请求的`host`来搜索虚拟主机列表中各`virtual_host`中的`domains`列表中的定义，第一个匹配到的`Domain`的定义所属的`virtual_host`即可处理请求的虚拟主机；
+- 而后搜索当前虚拟主机中的`routes`列表中的路由列表中各路由条目的`match`的定义，第一个匹配到的`match`后的路由机制（`route`、`redirect`或`direct_response`）即生效；
 
-### Egress代理配置示例
-下面是一个egress类型的Envoy配置示例，它定义了两个virtual_host，不过，发往第二个 virtual_host的请求将被重定向至第一个virtual_hosts：web_service_1
+## 2.Egress代理配置示例
+下面是一个`egress`类型的`Envoy`配置示例，它定义了两个`virtual_host`，不过，发往第二个`virtual_host`的请求将被重定向至第一个`virtual_hosts：web_service_1`
 ```yaml
 static_resources:
     listeners:
@@ -69,23 +69,23 @@ static_resources:
     clusters:
       ...
 ```
-### Egress实战
+## 3.Egress实战
 
 
-需要提前配置好ip_forward：
+需要提前配置好`ip_forward`：
 ```bash
 sysctl -w net.ipv4.ip_forward=1
 ```
 
 ![egress-1](https://github-aaron89.oss-cn-beijing.aliyuncs.com/istio/egress-http_connection_manager.png)
 
-你需要先读懂这张图，本小结准备用curl模拟Sidecar模式下egress的工作逻辑，并借用内建的filter(http_connection_manager)进行代理。
+你需要先读懂这张图，本小结准备用`curl`模拟`Sidecar`模式下`egress`的工作逻辑，并借用内建的`filter(http_connection_manager)`进行代理。
 
-1) 将egress目录下的配置文件拉取到本地，并使用docker-compose up。
+1) 将`egress`目录下的配置文件拉取到本地，并使用`docker-compose up`。
     所有需要注意的地方，已经在配置文件中进行了注释
     
-2) 注意业务容器ID，下面测试会echo出来，用于检测。
-    进入egress_envoy_1容器的交互式接口，准备测试
+2) 注意业务容器`ID`，下面测试会`echo`出来，用于检测。
+    进入`egress_envoy_1`容器的交互式接口，准备测试
 ```bash
 CONTAINER ID        IMAGE                               COMMAND                  CREATED             STATUS              PORTS               NAMES
 2771ccb25e01        egress_envoy                        "/docker-entrypoint.…"   22 seconds ago      Up 21 seconds       10000/tcp           egress_envoy_1
@@ -119,7 +119,7 @@ tcp        0      0 127.0.0.1:80            0.0.0.0:*               LISTEN      
 
 ```
 
-3) 根据我们的预研，分别进行curl测试，发现跳转结果和预期一样，配置成功
+3) 根据我们的预研，分别进行`curl`测试，发现跳转结果和预期一样，配置成功
 ```bash
 / # curl -H "host: www.ik8s.io" 127.0.0.1/hostname
 Hostname: bdd457740567.              #webserver1
@@ -137,10 +137,10 @@ Hostname: bdd457740567.            #webserver1
 
 ```
 
-### Ingress实战
+## 4.Ingress实战
 
-1) 所有配置文件，请看ingress目录下（关键字段，我已经给了注释），此时你应该较容易看懂，
-然后使用docker-compose up
+1) 所有配置文件，请看`ingress`目录下（关键字段，我已经给了注释），此时你应该较容易看懂，
+然后使用`docker-compose up`
 ```bash
 [root@k8s-etcd-mater01 ingress]# docker-compose up
 Creating network "ingress_envoymesh" with the default driver
@@ -182,7 +182,7 @@ envoy_1       | [2019-12-26 14:28:31.264][1][info][main] [source/server/server.c
 
 ```
 
-2) 进入ingress_envoy_1容器交互式接口，获知ip地址
+2) 进入`ingress_envoy_1`容器交互式接口，获知`ip`地址
 ```bash
 [root@k8s-etcd-mater01 egress]# docker exec -it ingress_envoy_1 /bin/sh
 / # ifconfig 
@@ -204,7 +204,7 @@ lo        Link encap:Local Loopback
 
 ```
 
-3) 退出容器，使用curl命令，探测ingress_envoy_1容器的80端口；和预期一致，配置成功
+3) 退出容器，使用`curl`命令，探测`ingress_envoy_1`容器的80端口；和预期一致，配置成功
 ```bash
 [root@k8s-etcd-mater01 egress]# curl 172.20.0.2
 This is a website server by a Go HTTP server.
