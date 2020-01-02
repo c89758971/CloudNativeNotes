@@ -9,7 +9,7 @@ features:
 - title: Docker篇
   details: 积累Docker日常使用的心得，让你1天通关dockerfile和docker-compose。
 - title: Kubernetes篇
-  details: 真正的从0->1，渐进式的让你完美通关kubernetes。
+  details: 本专题共28个章节，真正的从0到1，带你系统且全面的学习kubernetes，摸清楚每一个组件的特性、难点和实战！
 - title: Istio篇
   details: 真正的从0->1，感受Istio的魅力和机遇。
 - title: Ceph篇

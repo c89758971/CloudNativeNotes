@@ -1,5 +1,5 @@
 # Kubernetes基础
-本章主要让我们初步了解到Kubernetes的主要组件有哪些，以及其协作关系是怎么样的
+随着业务需求的快速发展，“动态”特性仿佛就成了技术解决业务刚需的必要条件，3年前的spring cloud通过注册中心eureka解决了服务动态上下线、注册和续约的问题，近一年，kubernetes通过其强大的基础对象和平台的动态特性，从运维侧对产品的稳定性和扩展性保驾护航！
 
 - 架构图
 - 流程概述
@@ -11,6 +11,9 @@
 
 
 ![架构图-1](https://github-aaron89.oss-cn-beijing.aliyuncs.com/Docker/Kubernetes-Components-1.png)
+首先引入大家眼帘的是一张关于Kubernetes的组件架构图，这是我从官网摘录下来的。
+如图，我们可以粗略观察发现，Kubernetes分为Master端和Nodes端，以及一个外接的cloud端。
+他们工作逻辑和内部组件，你可以参考下面的文字描述：
 
 ### 1.Master节点
 又称为控制平面：control plane
@@ -32,6 +35,10 @@ etcd：
     高可用、KV结构的kubernetes的后端数据存储组件。
     备份方案：https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster
     官方文档：https://etcd.io/docs/v3.4.0/
+    
+cloud-controller-manager：
+    是kubernetes与云厂商提供的服务能力对接的关键组件。又称kubernetes cloudprovider。
+    阿里相关文档：https://yq.aliyun.com/articles/608575?spm=a2c4e.11153940.0.0.1dd819edqvfK0K
 ```
 
 ### 2.Node节点
@@ -52,8 +59,13 @@ Container Runtime：
     支持： Docker, containerd, cri-o, rktlet and any implementation of the Kubernetes CRI (Container Runtime Interface)。
     
 ```
+### 3.cloud端
+```text
+cloud:
+    作为集群外部的附加能力，通过于cloud-controller-manager组件对接，扩展kuberntes集群于云上动态扩展的特性
+```
 
-### 3.Addons(附加组件) 
+### 4.Addons(附加组件) 
 
     使用Kubernetes resources (DaemonSet, Deployment, etc)增加集群功能；
     其中附加组件的namespace属于kube-system。  
