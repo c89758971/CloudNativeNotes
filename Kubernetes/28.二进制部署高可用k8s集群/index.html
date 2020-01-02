@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>二进制部署高可用k8s集群 | CloudNativeNotes</title>
+    <meta name="description" content="Vuepress blog demo">
+    
+    
+    <link rel="preload" href="/CloudNativeNotes/assets/css/0.styles.7bebe62c.css" as="style"><link rel="preload" href="/CloudNativeNotes/assets/js/app.c1070463.js" as="script"><link rel="preload" href="/CloudNativeNotes/assets/js/2.6ea23a4f.js" as="script"><link rel="preload" href="/CloudNativeNotes/assets/js/30.10d3ea34.js" as="script"><link rel="prefetch" href="/CloudNativeNotes/assets/js/10.f683548e.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/11.9b2223ea.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/12.3d0adbb0.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/13.24d3d2d6.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/14.fb7baf12.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/15.eb690184.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/16.6733f10e.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/17.5cea8e35.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/18.72d80979.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/19.1d75c5a7.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/20.5d1c5bdc.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/21.0d03d3c8.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/22.781cc661.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/23.da24d4a5.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/24.64806e3e.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/25.f48de550.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/26.e94508f2.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/27.13277697.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/28.daef1e27.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/29.6a2b975d.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/3.a99930e0.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/31.9fb204ed.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/32.0b73c47c.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/33.e496dee3.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/34.9afa7698.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/35.1af9afd5.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/36.647a0f69.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/37.73629427.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/38.147eec58.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/39.a011e2e7.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/4.3ff2fe10.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/40.f5d50c60.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/41.12a538ad.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/42.bc7be63b.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/43.509cb678.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/44.f3cbf9dd.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/45.0c6478d7.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/46.122aa56e.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/47.78053982.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/48.abeefd62.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/49.b2619eaf.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/5.d3507002.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/50.f9be5e46.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/51.70801648.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/52.3ddd65d3.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/53.968a532f.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/6.a9535db6.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/7.b77fe9cf.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/8.2c03d1fa.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/9.836f7399.js">
+    <link rel="stylesheet" href="/CloudNativeNotes/assets/css/0.styles.7bebe62c.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/CloudNativeNotes/" class="home-link router-link-active"><!----> <span class="site-name">CloudNativeNotes</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/CloudNativeNotes/" class="nav-link">Home</a></div><div class="nav-item"><a href="/CloudNativeNotes/Docker/1.Dockerfile使用总结/" class="nav-link">Docker</a></div><div class="nav-item"><a href="/CloudNativeNotes/Kubernetes/1.Kubernetes基础/" class="nav-link">Kubernetes</a></div><div class="nav-item"><a href="/CloudNativeNotes/istio/1.Service Mesh简介/" class="nav-link">Istio</a></div><div class="nav-item"><a href="/CloudNativeNotes/Ceph/1.简介/" class="nav-link">Ceph</a></div><div class="nav-item"><a href="/CloudNativeNotes/Prometheus/" class="nav-link">Prometheus</a></div> <a href="https://github.com/Aaron1989/CloudNativeNotes" target="_blank" rel="noopener noreferrer" class="repo-link">
+    My GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/CloudNativeNotes/" class="nav-link">Home</a></div><div class="nav-item"><a href="/CloudNativeNotes/Docker/1.Dockerfile使用总结/" class="nav-link">Docker</a></div><div class="nav-item"><a href="/CloudNativeNotes/Kubernetes/1.Kubernetes基础/" class="nav-link">Kubernetes</a></div><div class="nav-item"><a href="/CloudNativeNotes/istio/1.Service Mesh简介/" class="nav-link">Istio</a></div><div class="nav-item"><a href="/CloudNativeNotes/Ceph/1.简介/" class="nav-link">Ceph</a></div><div class="nav-item"><a href="/CloudNativeNotes/Prometheus/" class="nav-link">Prometheus</a></div> <a href="https://github.com/Aaron1989/CloudNativeNotes" target="_blank" rel="noopener noreferrer" class="repo-link">
+    My GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>写在最前面</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/start/1.%E9%98%85%E8%AF%BB%E6%8C%87%E5%BC%95/" class="sidebar-link">写在最前面</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>Docker篇</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/Docker/1.Dockerfile%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/" class="sidebar-link">Dockerfile使用总结</a></li><li><a href="/CloudNativeNotes/Docker/2.%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93%E5%92%8C%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6/" class="sidebar-link">私有仓库和资源限制</a></li><li><a href="/CloudNativeNotes/Docker/3.Docker%20Compose%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/" class="sidebar-link">Docker Compose基础应用</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>Kubernetes篇</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/Kubernetes/1.Kubernetes%E5%9F%BA%E7%A1%80/" class="sidebar-link">Kubernetes基础</a></li><li><a href="/CloudNativeNotes/Kubernetes/2.Kubernetes%E5%9F%BA%E7%A1%80%E5%92%8C%E9%83%A8%E7%BD%B2%E8%AF%B4%E6%98%8E/" class="sidebar-link">Kubernetes基础和部署说明</a></li><li><a href="/CloudNativeNotes/Kubernetes/3.%E4%BD%BF%E7%94%A8Kubeadm%E9%83%A8%E7%BD%B2k8s%E9%9B%86%E7%BE%A4/" class="sidebar-link">使用Kubeadm部署k8s集群</a></li><li><a href="/CloudNativeNotes/Kubernetes/4.Kubernetes%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/" class="sidebar-link">Kubernetes快速入门</a></li><li><a href="/CloudNativeNotes/Kubernetes/5.Pod%E8%B5%84%E6%BA%90%E6%B8%85%E5%8D%95%E9%85%8D%E7%BD%AE%E5%9F%BA%E7%A1%80/" class="sidebar-link">Pod资源清单配置基础</a></li><li><a href="/CloudNativeNotes/Kubernetes/6.Pod%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="sidebar-link">Pod资源管理</a></li><li><a href="/CloudNativeNotes/Kubernetes/7.Pod%E6%8E%A7%E5%88%B6%E5%99%A8-Deployment/" class="sidebar-link">Pod控制器-Deployment</a></li><li><a href="/CloudNativeNotes/Kubernetes/8.Pod%E6%8E%A7%E5%88%B6%E5%99%A8-DaemonSet/" class="sidebar-link">Pod控制器-DaemonSet</a></li><li><a href="/CloudNativeNotes/Kubernetes/9.Pod%E6%8E%A7%E5%88%B6%E5%99%A8-Job/" class="sidebar-link">Pod控制器-Job</a></li><li><a href="/CloudNativeNotes/Kubernetes/10.Service%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="sidebar-link">Service资源管理</a></li><li><a href="/CloudNativeNotes/Kubernetes/11.Ingress%E8%B5%84%E6%BA%90/" class="sidebar-link">Ingress资源</a></li><li><a href="/CloudNativeNotes/Kubernetes/12.Volume%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/" class="sidebar-link">Volume基础应用源</a></li><li><a href="/CloudNativeNotes/Kubernetes/13.ConfigMap%E8%B5%84%E6%BA%90/" class="sidebar-link">ConfigMap资源</a></li><li><a href="/CloudNativeNotes/Kubernetes/14.Secret%E8%B5%84%E6%BA%90/" class="sidebar-link">Secret资源</a></li><li><a href="/CloudNativeNotes/Kubernetes/15.StatefulSet%E8%B5%84%E6%BA%90/" class="sidebar-link">StatefulSet资源</a></li><li><a href="/CloudNativeNotes/Kubernetes/16.Kubernetes%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/" class="sidebar-link">Kubernetes系统安全</a></li><li><a href="/CloudNativeNotes/Kubernetes/17.Dashboard/" class="sidebar-link">Dashboard</a></li><li><a href="/CloudNativeNotes/Kubernetes/18.%E5%87%86%E5%85%A5%E6%8E%A7%E5%88%B6%E5%99%A8/" class="sidebar-link">准入控制器</a></li><li><a href="/CloudNativeNotes/Kubernetes/19.%E7%BD%91%E7%BB%9C%E6%8F%92%E4%BB%B6%E4%BD%93%E7%B3%BB/" class="sidebar-link">网络插件体系</a></li><li><a href="/CloudNativeNotes/Kubernetes/20.Network-Policy/" class="sidebar-link">Network-Policy</a></li><li><a href="/CloudNativeNotes/Kubernetes/21.%E8%B0%83%E5%BA%A6%E5%99%A8%E4%B8%8E%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6/" class="sidebar-link">调度器与调度机制</a></li><li><a href="/CloudNativeNotes/Kubernetes/22.%E9%AB%98%E7%BA%A7%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6/" class="sidebar-link">高级调度机制</a></li><li><a href="/CloudNativeNotes/Kubernetes/23.%E6%B1%A1%E7%82%B9%E5%92%8C%E5%AE%B9%E5%BF%8D%E5%BA%A6/" class="sidebar-link">污点和容忍度</a></li><li><a href="/CloudNativeNotes/Kubernetes/24.%E4%BD%BF%E7%94%A8CRD%E6%89%A9%E5%B1%95Kubernetes-API/" class="sidebar-link">使用CRD扩展Kubernetes-API</a></li><li><a href="/CloudNativeNotes/Kubernetes/25.HPA%E6%8E%A7%E5%88%B6%E5%99%A8/" class="sidebar-link">HPA控制器</a></li><li><a href="/CloudNativeNotes/Kubernetes/26.Helm%E5%9F%BA%E7%A1%80/" class="sidebar-link">Helm基础</a></li><li><a href="/CloudNativeNotes/Kubernetes/27.Helm%E4%BD%BF%E7%94%A8%E8%BF%9B%E9%98%B6/" class="sidebar-link">Helm使用进阶</a></li><li><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/" class="active sidebar-link">二进制部署高可用k8s集群阶</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_1-高可用设计原则" class="sidebar-link">1.高可用设计原则</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_2-高可用架构" class="sidebar-link">2.高可用架构</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_3-基础环境准备" class="sidebar-link">3.基础环境准备</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_4-docker环境准备" class="sidebar-link">4.Docker环境准备</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_5-etcd集群部署" class="sidebar-link">5.Etcd集群部署</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_6-master配置" class="sidebar-link">6.Master配置</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_7-node配置" class="sidebar-link">7.Node配置</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_8-组件高可用扩展-apiserver" class="sidebar-link">8.组件高可用扩展-apiserver</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_1-其余master节点" class="sidebar-link">1.其余master节点</a></li></ul></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_9-组件高可用扩展-controller-manager" class="sidebar-link">9.组件高可用扩展-controller-manager</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_1-其余master节点-2" class="sidebar-link">1.其余master节点</a></li></ul></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_10-组件高可用扩展-scheduler" class="sidebar-link">10.组件高可用扩展-scheduler</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_1-其余master节点-3" class="sidebar-link">1.其余master节点</a></li></ul></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_11-coredns部署" class="sidebar-link">11.CoreDns部署</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_12-集群高可用测试" class="sidebar-link">12.集群高可用测试</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_1-etcd高可用测试" class="sidebar-link">1.Etcd高可用测试</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_2-kube-controller-manager高可用测试" class="sidebar-link">2.kube-controller-manager高可用测试</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_3-kube-scheduler高可用测试" class="sidebar-link">3.kube-scheduler高可用测试</a></li></ul></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/#_13-证书过期时间修改和查询" class="sidebar-link">13.证书过期时间修改和查询</a></li></ul></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>Istio篇</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/istio/1.Service%20Mesh%E7%AE%80%E4%BB%8B/" class="sidebar-link">Service Mesh简介</a></li><li><a href="/CloudNativeNotes/istio/2.%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E5%9F%BA%E7%A1%80/" class="sidebar-link">微服务和服务治理基础</a></li><li><a href="/CloudNativeNotes/istio/3.Envoy%E5%9F%BA%E7%A1%80/" class="sidebar-link">Envoy基础</a></li><li><a href="/CloudNativeNotes/istio/4.Envoy%E9%83%A8%E7%BD%B2%E7%B1%BB%E5%9E%8B/" class="sidebar-link">Envoy部署类型</a></li><li><a href="/CloudNativeNotes/istio/5.Envoy%E9%85%8D%E7%BD%AE%E6%96%B9%E5%BC%8F/" class="sidebar-link">Envoy配置方式</a></li><li><a href="/CloudNativeNotes/istio/6.Envoy%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8_1/" class="sidebar-link">Envoy使用入门_1</a></li><li><a href="/CloudNativeNotes/istio/7.Envoy%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8_2/" class="sidebar-link">Envoy使用入门_2</a></li><li><a href="/CloudNativeNotes/istio/8.Envoy%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8_3/" class="sidebar-link">Envoy使用入门_3</a></li><li><a href="/CloudNativeNotes/istio/9.Envoy%E7%AE%A1%E7%90%86%E6%8E%A5%E5%8F%A3%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/" class="sidebar-link">Envoy管理接口基础应用</a></li><li><a href="/CloudNativeNotes/istio/10.Envoy%E7%BB%BC%E5%90%88%E7%A4%BA%E4%BE%8B_FrontProxy/" class="sidebar-link">Envoy综合示例_FrontProxy</a></li><li><a href="/CloudNativeNotes/istio/11.xDS%20API%E5%8F%8A%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE_1/" class="sidebar-link">xDS API及动态配置_1</a></li><li><a href="/CloudNativeNotes/istio/12.xDS%20API%E5%8F%8A%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE_2/" class="sidebar-link">xDS API及动态配置_2</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>Ceph篇</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/Ceph/1.%E7%AE%80%E4%BB%8B/" class="sidebar-link">综述</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>Prometheus篇</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/Prometheus/" class="sidebar-link">综述</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="二进制部署高可用k8s集群"><a href="#二进制部署高可用k8s集群" class="header-anchor">#</a> 二进制部署高可用k8s集群</h1> <p>本次采用二进制文件方式部署<code>https</code>（证书有效期为10年）高可用<code>k8s</code>集群，所有涉及的配置文件和镜像均已提供，无需翻墙。
+另外，默认集群规模可支撑<code>254</code>个节点。
+如果需要调整，请自行修改<code>/etc/kubernetes/controller-manager</code>中的<code>--node-cidr-mask-size=24</code>字段</p> <ul><li>高可用设计原则</li> <li>高可用架构</li> <li>基础环境准备</li> <li>Docker环境准备</li> <li>Etcd集群部署</li> <li>Master配置</li> <li>Node配置</li> <li>组件高可用扩展-apiserver</li> <li>组件高可用扩展-controller-manager</li> <li>组件高可用扩展-scheduler</li> <li>CoreDns部署</li> <li>集群高可用测试</li> <li>证书过期时间修改和查询</li></ul> <h2 id="_1-高可用设计原则"><a href="#_1-高可用设计原则" class="header-anchor">#</a> 1.高可用设计原则</h2> <div class="language-text extra-class"><pre class="language-text"><code>生产环境：
+    高可用etcd集群（需定期备份），建立3、5或7个节点（奇数个节点）
+    高可用Master：
+        kube-apiserver无状态，可多实例部署：
+            借助于Haproxy、nginx或keepalived进行vip流量实现多实例冗余，用户和集群客户端通过vip访问    
+        kuber-scheduler和kuber-controller-manager：
+            只能有一个活动实例，但可以有多个备用（主备模式）
+</code></pre></div><h2 id="_2-高可用架构"><a href="#_2-高可用架构" class="header-anchor">#</a> 2.高可用架构</h2> <p><img src="https://github-aaron89.oss-cn-beijing.aliyuncs.com/Kubernetes/k8s-ha.png" alt="高可用架构-1"></p> <h2 id="_3-基础环境准备"><a href="#_3-基础环境准备" class="header-anchor">#</a> 3.基础环境准备</h2> <table><thead><tr><th>组件</th> <th>版本</th></tr></thead> <tbody><tr><td>kubernetes</td> <td>v1.13.4</td></tr> <tr><td>etcd</td> <td>3.3.11</td></tr> <tr><td>dockerce</td> <td>19.03.5</td></tr> <tr><td>cni</td> <td>v0.8.1</td></tr> <tr><td>OS</td> <td>Centos6.2</td></tr></tbody></table> <table><thead><tr><th>主机名</th> <th>ip</th> <th>组件</th> <th>角色</th></tr></thead> <tbody><tr><td>k8s-etcd-master01.shared</td> <td>192.168.0.111</td> <td>etcd/apiserver/controller-manager/scheduler</td> <td>Master</td></tr> <tr><td>k8s-etcd-master02.shared</td> <td>192.168.0.112</td> <td>etcd/apiserver/controller-manager/scheduler</td> <td>Master</td></tr> <tr><td>k8s-etcd-master03.shared</td> <td>192.168.0.113</td> <td>etcd/apiserver/controller-manager/scheduler</td> <td>Master</td></tr> <tr><td>k8s-node01.shared</td> <td>192.168.0.114</td> <td>kubelet/kube-proxy</td> <td>Node</td></tr></tbody></table> <p><code>hosts</code>信息和时间同步（略）:</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token number">192.168</span>.0.111   k8s-etcd-master01.shared   k8s-master01 etcd01 etcd01.ilinux.io k8s-master01.ilinux.io kubernetes-api.ilinux.io
+<span class="token number">192.168</span>.0.112   k8s-etcd-master02.shared   k8s-master02 etcd02 etcd02.ilinux.io k8s-master02.ilinux.io
+<span class="token number">192.168</span>.0.113   k8s-etcd-master03.shared   k8s-master03 etcd03 etcd03.ilinux.io k8s-master03.ilinux.io
+<span class="token number">192.168</span>.0.114   k8s-node01.shared
+</code></pre></div><p>关闭防火墙：</p> <div class="language-bash extra-class"><pre class="language-bash"><code>systemctl stop firewalld.service
+systemctl stop iptables.service
+systemctl disable firewalld.service
+systemctl disable iptables.service
+</code></pre></div><p>关闭<code>SELINUX</code>：</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#临时关闭：</span>
+setenforce <span class="token number">0</span>
+    
+    
+<span class="token comment">#永久关闭</span>
+<span class="token function">vi</span> /etc/selinux/config
+将SELINUX<span class="token operator">=</span>enforcing改为SELINUX<span class="token operator">=</span>disabled 
+设置后需要重启才能生效
+</code></pre></div><p>禁用<code>swap</code>设备</p> <div class="language-bash extra-class"><pre class="language-bash"><code>临时禁用： swapoff  -a
+    
+永久禁用：
+<span class="token function">vim</span>  /etc/fstab 
+注释 /dev/mapper/VolGroup-lv_swap swap 行
+</code></pre></div><p>更新<code>nss</code> <code>curl</code> <code>libcurl</code>（否则<code>git clone</code>会报错）</p> <div class="language-bash extra-class"><pre class="language-bash"><code>yum update -y nss <span class="token function">curl</span> libcurl
+</code></pre></div><h2 id="_4-docker环境准备"><a href="#_4-docker环境准备" class="header-anchor">#</a> 4.Docker环境准备</h2> <p>安装步骤请参考<a href="/CloudNativeNotes/Kubernetes/28.二进制部署高可用k8s集群/'http:/localhost:8080/CloudNativeNotes/Kubernetes/3.使用Kubeadm部署k8s集群/#_1-环境准备'">使用Kubeadm部署k8s集群</a>中的前五步即可</p> <h2 id="_5-etcd集群部署"><a href="#_5-etcd集群部署" class="header-anchor">#</a> 5.Etcd集群部署</h2> <table><thead><tr><th>文件</th> <th>路径</th> <th>说明</th></tr></thead> <tbody><tr><td>etcd.conf</td> <td>/etc/etcd/</td> <td>配置文件</td></tr> <tr><td>pki/*</td> <td>/etc/etcd/</td> <td>证书文件</td></tr> <tr><td>pki/*</td> <td>/root/k8s-certs-generator/etcd</td> <td>证书生成的路径（备用）</td></tr> <tr><td>k8s.etcd</td> <td>/var/lib/etcd/</td> <td>数据文件，需定期备份</td></tr></tbody></table> <p>Tips：</p> <div class="language-text extra-class"><pre class="language-text"><code>下面展示如何从0-&gt;http集群-&gt;https集群的建设全过程，如果打算https一步到位，可跳过4和5两个步骤进行配置。
+</code></pre></div><p><code>Master</code>端：</p> <ol><li>安装<code>3.3.11</code>的<code>etcd</code></li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>yum <span class="token function">install</span> -y etcd-3.3.11-2.el7.centos
+</code></pre></div><ol start="2"><li>可以通过以下命令检查<code>install</code>是否成功</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">rpm</span> -ql etcd
+</code></pre></div><ol start="3"><li>三台对应修改<code>/etc/etcd/etcd.conf</code>配置文件，其中<code>ETCD_LISTEN_PEER_URLS</code>
+、<code>ETCD_LISTEN_CLIENT_URLS</code>、<code>ETCD_NAME</code>、<code>ETCD_INITIAL_ADVERTISE_PEER_URLS</code>和
+<code>ETCD_ADVERTISE_CLIENT_URLS</code>需要改成自己对应的信息</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#[Member]</span>
+<span class="token comment">#ETCD_CORS=&quot;&quot;</span>
+<span class="token assign-left variable">ETCD_DATA_DIR</span><span class="token operator">=</span><span class="token string">&quot;/var/lib/etcd/default.etcd&quot;</span>
+<span class="token comment">#ETCD_WAL_DIR=&quot;&quot;</span>
+<span class="token assign-left variable">ETCD_LISTEN_PEER_URLS</span><span class="token operator">=</span><span class="token string">&quot;http://192.168.0.111:2380&quot;</span>  <span class="token comment">#集群内相互通信地址</span>
+<span class="token assign-left variable">ETCD_LISTEN_CLIENT_URLS</span><span class="token operator">=</span><span class="token string">&quot;http://192.168.0.111:2379&quot;</span> <span class="token comment">#客户端访问地址</span>
+<span class="token comment">#ETCD_MAX_SNAPSHOTS=&quot;5&quot;</span>
+<span class="token comment">#ETCD_MAX_WALS=&quot;5&quot;</span>
+<span class="token assign-left variable">ETCD_NAME</span><span class="token operator">=</span><span class="token string">&quot;etcd01&quot;</span>           <span class="token comment">#本节点etcd名</span>
+<span class="token comment">#ETCD_SNAPSHOT_COUNT=&quot;100000&quot;</span>
+<span class="token comment">#ETCD_HEARTBEAT_INTERVAL=&quot;100&quot;</span>
+<span class="token comment">#ETCD_ELECTION_TIMEOUT=&quot;1000&quot;</span>
+<span class="token comment">#ETCD_QUOTA_BACKEND_BYTES=&quot;0&quot;</span>
+<span class="token comment">#ETCD_MAX_REQUEST_BYTES=&quot;1572864&quot;</span>
+<span class="token comment">#ETCD_GRPC_KEEPALIVE_MIN_TIME=&quot;5s&quot;</span>
+<span class="token comment">#ETCD_GRPC_KEEPALIVE_INTERVAL=&quot;2h0m0s&quot;</span>
+<span class="token comment">#ETCD_GRPC_KEEPALIVE_TIMEOUT=&quot;20s&quot;</span>
+<span class="token comment">#</span>
+<span class="token comment">#[Clustering]</span>
+<span class="token assign-left variable">ETCD_INITIAL_ADVERTISE_PEER_URLS</span><span class="token operator">=</span><span class="token string">&quot;http://etcd01:2380&quot;</span>  <span class="token comment">#集群初始化监听在哪个地址，可用主机名</span>
+<span class="token assign-left variable">ETCD_ADVERTISE_CLIENT_URLS</span><span class="token operator">=</span><span class="token string">&quot;http://etcd01:2379&quot;</span>      <span class="token comment">#监听在哪个地址，可用主机名 </span>
+<span class="token comment">#ETCD_DISCOVERY=&quot;&quot;</span>
+<span class="token comment">#ETCD_DISCOVERY_FALLBACK=&quot;proxy&quot;</span>
+<span class="token comment">#ETCD_DISCOVERY_PROXY=&quot;&quot;</span>
+<span class="token comment">#ETCD_DISCOVERY_SRV=&quot;&quot;</span>
+<span class="token assign-left variable">ETCD_INITIAL_CLUSTER</span><span class="token operator">=</span><span class="token string">&quot;etcd01=http://etcd01:2380,etcd02=http://etcd02:2380,etcd03=http://etcd03:2380&quot;</span>    <span class="token comment">#静态初始化集群</span>
+<span class="token comment">#ETCD_INITIAL_CLUSTER_TOKEN=&quot;etcd-cluster&quot;</span>
+<span class="token comment">#ETCD_INITIAL_CLUSTER_STATE=&quot;new&quot;</span>
+</code></pre></div><ol start="4"><li>逆序依次启动<code>etcd</code></li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>systemctl start etcd
+systemctl <span class="token builtin class-name">enable</span> etcd
+</code></pre></div><ol start="5"><li>此时高可用<code>etcd</code>集群已经部署完成（但是内部通信是<code>http</code>，非安全协议）</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@k8s-etcd-master02 /<span class="token punctuation">]</span><span class="token comment"># etcdctl --endpoints='http://etcd01:2379' member list</span>
+b3504381e8ba3cb: <span class="token assign-left variable">name</span><span class="token operator">=</span>etcd02 <span class="token assign-left variable">peerURLs</span><span class="token operator">=</span>http://etcd02:2380 <span class="token assign-left variable">clientURLs</span><span class="token operator">=</span>http://etcd02:2379 <span class="token assign-left variable">isLeader</span><span class="token operator">=</span>false
+b8b747c74aaea686: <span class="token assign-left variable">name</span><span class="token operator">=</span>etcd01 <span class="token assign-left variable">peerURLs</span><span class="token operator">=</span>http://etcd01:2380 <span class="token assign-left variable">clientURLs</span><span class="token operator">=</span>http://etcd01:2379 <span class="token assign-left variable">isLeader</span><span class="token operator">=</span>false
+f572fdfc5cb68406: <span class="token assign-left variable">name</span><span class="token operator">=</span>etcd03 <span class="token assign-left variable">peerURLs</span><span class="token operator">=</span>http://etcd03:2380 <span class="token assign-left variable">clientURLs</span><span class="token operator">=</span>http://etcd03:2379 <span class="token assign-left variable">isLeader</span><span class="token operator">=</span>true
+</code></pre></div><ol start="6"><li>将<code>cert-generator</code>目录<code>git clone</code>到本地，然后使用<code>bash gencerts.sh etcd</code>生成<code>etcd</code>证书，默认域名是<code>ilinux.io</code>，可自行填写，然后回车</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@k8s-etcd-master01 cert-generator<span class="token punctuation">]</span><span class="token comment"># bash gencerts.sh etcd</span>
+Enter Domain Name <span class="token punctuation">[</span>ilinux.io<span class="token punctuation">]</span>: 
+
+</code></pre></div><ol start="7"><li>证书生成并归档结果如下：</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@k8s-etcd-master01 k8s-certs-generator<span class="token punctuation">]</span><span class="token comment"># tree etcd</span>
+etcd
+├── patches
+│   └── etcd-client-cert.patch        
+└── pki
+    ├── apiserver-etcd-client.crt     <span class="token comment">#让apiserver作为客户端与etcd集群通信的证书     </span>
+    ├── apiserver-etcd-client.key     <span class="token comment">#让apiserver作为客户端与etcd集群通信的证书</span>
+    ├── ca.crt                        <span class="token comment">#etcd https测试功能是否成功的证书</span>
+    ├── ca.key                        <span class="token comment">#etcd https测试功能是否成功的证书</span>
+    ├── client.crt               <span class="token comment">#客户端证书,apiserver也可以用这一个</span>
+    ├── client.key               <span class="token comment">#客户端私钥,apiserver也可以用这一个</span>
+    ├── peer.crt                 <span class="token comment">#etcd集群对等通信证书  </span>
+    ├── peer.key                 <span class="token comment">#etcd集群对等通信私钥  </span>
+    ├── server.crt               <span class="token comment">#服务端证书</span>
+    └── server.key               <span class="token comment">#服务端私钥</span>
+
+</code></pre></div><ol start="8"><li>证书分发至各<code>Master</code>节点的<code>/etc/etcd/</code>目录下</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token builtin class-name">cd</span> etcd
+<span class="token comment">#本机</span>
+<span class="token function">cp</span> -rp pki/ /etc/etcd/ -a
+    
+<span class="token comment">#各节点</span>
+<span class="token function">scp</span> -rp pki/ etcd02:/etc/etcd/
+<span class="token function">scp</span> -rp pki/ etcd03:/etc/etcd/
+</code></pre></div><ol start="9"><li>修改各<code>Master</code>节点的<code>/etc/etcd/etcd.conf</code>配置文件中的<code>Security</code>段落</li></ol> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token comment">#[Security]</span>
+ETCD_CERT_FILE=&quot;/etc/etcd/pki/server.crt&quot;
+ETCD_KEY_FILE=&quot;/etc/etcd/pki/server.key&quot;
+ETCD_CLIENT_CERT_AUTH=&quot;true&quot;                        <span class="token comment">#服务端必须验证客户端证书 </span>
+ETCD_TRUSTED_CA_FILE=&quot;/etc/etcd/pki/ca.crt&quot;
+<span class="token comment">#ETCD_AUTO_TLS=&quot;false&quot;</span>
+ETCD_PEER_CERT_FILE=&quot;/etc/etcd/pki/peer.crt&quot;
+ETCD_PEER_KEY_FILE=&quot;/etc/etcd/pki/peer.key&quot;
+ETCD_PEER_CLIENT_CERT_AUTH=&quot;true&quot;                    <span class="token comment">#集群间必须相互验证证书</span>
+ETCD_PEER_TRUSTED_CA_FILE=&quot;/etc/etcd/pki/ca.crt&quot;
+<span class="token comment">#ETCD_PEER_AUTO_TLS=&quot;false&quot;</span>
+</code></pre></div><ol start="10"><li>将第三步修改的<code>http</code>全改成<code>https</code>，<code>ETCD_DATA_DIR</code>修改成新地址，<code>ETCD_NAME=&quot;etcd03.ilinux.io&quot;</code>修改成和<code>ca</code>域名设置时的<code>Domain Name</code>保持一致，最后修改<code>ETCD_INITIAL_CLUSTER_TOKEN=&quot;k8s-etcd-cluster&quot;</code>,完成配置文件可参阅<code>etcd/etcd.conf</code></li></ol> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token punctuation">[</span>Member<span class="token punctuation">]</span>
+ETCD_DATA_DIR=&quot;/var/lib/etcd/k8s.etcd&quot;
+ETCD_LISTEN_PEER_URLS=&quot;https<span class="token punctuation">:</span>//192.168.0.113<span class="token punctuation">:</span>2380&quot;
+ETCD_LISTEN_CLIENT_URLS=&quot;https<span class="token punctuation">:</span>//192.168.0.113<span class="token punctuation">:</span>2379&quot;
+ETCD_NAME=&quot;etcd03.ilinux.io&quot;
+  
+<span class="token comment">#[Clustering]</span>
+ETCD_INITIAL_ADVERTISE_PEER_URLS=&quot;https<span class="token punctuation">:</span>//etcd03.ilinux.io<span class="token punctuation">:</span>2380&quot;
+ETCD_ADVERTISE_CLIENT_URLS=&quot;https<span class="token punctuation">:</span>//etcd03.ilinux.io<span class="token punctuation">:</span>2379&quot;
+ETCD_INITIAL_CLUSTER=&quot;etcd01.ilinux.io=https<span class="token punctuation">:</span>//etcd01.ilinux.io<span class="token punctuation">:</span><span class="token number">2380</span><span class="token punctuation">,</span>etcd02.ilinux.io=https<span class="token punctuation">:</span>//etcd02.ilinux.io<span class="token punctuation">:</span><span class="token number">2380</span><span class="token punctuation">,</span>etcd03.ilinux.io=https<span class="token punctuation">:</span>//etcd03.ilinux.io<span class="token punctuation">:</span>2380&quot;
+ETCD_INITIAL_CLUSTER_TOKEN=&quot;k8s<span class="token punctuation">-</span>etcd<span class="token punctuation">-</span>cluster&quot;
+  
+<span class="token comment">#[Security]</span>
+ETCD_CERT_FILE=&quot;/etc/etcd/pki/server.crt&quot;
+ETCD_KEY_FILE=&quot;/etc/etcd/pki/server.key&quot;
+ETCD_CLIENT_CERT_AUTH=&quot;true&quot;                 <span class="token comment">#服务端必须验证客户端证书</span>
+ETCD_TRUSTED_CA_FILE=&quot;/etc/etcd/pki/ca.crt&quot;
+ETCD_PEER_CERT_FILE=&quot;/etc/etcd/pki/peer.crt&quot;
+ETCD_PEER_KEY_FILE=&quot;/etc/etcd/pki/peer.key&quot;
+ETCD_PEER_CLIENT_CERT_AUTH=&quot;true&quot;             <span class="token comment">#集群间必须相互验证证书</span>
+ETCD_PEER_TRUSTED_CA_FILE=&quot;/etc/etcd/pki/ca.crt&quot;
+
+</code></pre></div><ol start="11"><li>全部停止并重启<code>etcd</code>，并用之前生成功能测试的<code>ca</code>客户端证书进行访问，至此<code>etcd https</code>集群已经部署完成</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#全停止</span>
+systemctl stop etcd
+    
+<span class="token comment">#全启动</span>
+systemctl start etcd
+    
+<span class="token comment">#使用证书查看集群状态    </span>
+<span class="token punctuation">[</span>root@k8s-etcd-master01 etcd<span class="token punctuation">]</span><span class="token comment"># etcdctl --endpoints='https://etcd01.ilinux.io:2379' --cert-file=/etc/etcd/pki/client.crt --key-file=/etc/etcd/pki/client.key --ca-file=/etc/etcd/pki/ca.crt cluster-health</span>
+member 1f22dc5568642e6f is healthy: got healthy result from https://etcd03.ilinux.io:2379
+member 433f227ff9ad65cd is healthy: got healthy result from https://etcd02.ilinux.io:2379
+member c4eb31a06cd36dd7 is healthy: got healthy result from https://etcd01.ilinux.io:2379
+cluster is healthy
+
+</code></pre></div><h2 id="_6-master配置"><a href="#_6-master配置" class="header-anchor">#</a> 6.Master配置</h2> <table><thead><tr><th>文件</th> <th>路径</th> <th>说明</th></tr></thead> <tbody><tr><td>.*</td> <td>/etc/kubernetes</td> <td>master端实际配置文件</td></tr> <tr><td>auth/*</td> <td>/etc/kubernetes</td> <td>auth证书文件</td></tr> <tr><td>pki/*</td> <td>/etc/kubernetes</td> <td>pki证书文件</td></tr> <tr><td>token.csv</td> <td>/etc/kubernetes</td> <td>引导令牌文件</td></tr> <tr><td>token.csv</td> <td>/root/k8s-certs-generator/kubernetes/k8s-master01</td> <td>引导令牌文件(备用)</td></tr> <tr><td>.*</td> <td>/root/k8s-certs-generator/kubernetes</td> <td>证书生成的路径（备用）</td></tr> <tr><td>.*</td> <td>/usr/local/kubernetes/server/bin</td> <td>二进制启动文件</td></tr> <tr><td>kube-apiserver.service</td> <td>/usr/lib/systemd/system</td> <td>apiserver的启动配置文件</td></tr> <tr><td>kube-controller-manager.service</td> <td>/usr/lib/systemd/system</td> <td>controller-manager的启动配置文件</td></tr> <tr><td>kube-scheduler.service</td> <td>/usr/lib/systemd/system</td> <td>scheduler的启动配置文件</td></tr> <tr><td>.*</td> <td>/var/run/kubernetes</td> <td>k8s运行目录</td></tr></tbody></table> <ol><li>生成必要的证书和密钥，包括访问<code>etcd</code>集群时用到的客户端证书和私钥</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#生成证书</span>
+<span class="token builtin class-name">cd</span> /root/cert-generator
+    
+<span class="token comment">#生成k8s相关证书</span>
+<span class="token punctuation">[</span>root@k8s-etcd-master01 k8s-certs-generator<span class="token punctuation">]</span><span class="token comment"># bash gencerts.sh k8s</span>
+Enter Domain Name <span class="token punctuation">[</span>ilinux.io<span class="token punctuation">]</span>:                    <span class="token comment">#不需要动，需要和etcd配置时保持一致</span>
+Enter Kubernetes Cluster Name <span class="token punctuation">[</span>kubernetes<span class="token punctuation">]</span>:       <span class="token comment">#可自定义</span>
+Enter the IP Address <span class="token keyword">in</span> default namespace 
+  of the Kubernetes API Server<span class="token punctuation">[</span><span class="token number">10.96</span>.0.1<span class="token punctuation">]</span>:        <span class="token comment">#不需要改</span>
+Enter Master servers name<span class="token punctuation">[</span>master01 master02 master03<span class="token punctuation">]</span>: k8s-master01 k8s-master02 k8s-master03      
+                                                  <span class="token comment">#master名，与Domain Name拼接</span>
+
+</code></pre></div><ol start="2"><li>所需证书已经全部生成并归档</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@k8s-etcd-master01 k8s-certs-generator<span class="token punctuation">]</span><span class="token comment"># tree kubernetes/</span>
+kubernetes/
+├── CA
+│   ├── ca.crt
+│   └── ca.key
+├── front-proxy
+│   ├── front-proxy-ca.crt
+│   ├── front-proxy-ca.key
+│   ├── front-proxy-client.crt
+│   └── front-proxy-client.key
+├── ingress
+│   ├── ingress-server.crt
+│   ├── ingress-server.key
+│   └── patches
+│       └── ingress-tls.patch
+├── k8s-master01
+│   ├── auth
+│   │   ├── admin.conf
+│   │   ├── controller-manager.conf
+│   │   └── scheduler.conf
+│   ├── pki
+│   │   ├── apiserver.crt
+│   │   ├── apiserver-etcd-client.crt
+│   │   ├── apiserver-etcd-client.key
+│   │   ├── apiserver.key
+│   │   ├── apiserver-kubelet-client.crt
+│   │   ├── apiserver-kubelet-client.key
+│   │   ├── ca.crt
+│   │   ├── ca.key
+│   │   ├── front-proxy-ca.crt
+│   │   ├── front-proxy-ca.key
+│   │   ├── front-proxy-client.crt
+│   │   ├── front-proxy-client.key
+│   │   ├── kube-controller-manager.crt
+│   │   ├── kube-controller-manager.key
+│   │   ├── kube-scheduler.crt
+│   │   ├── kube-scheduler.key
+│   │   ├── sa.key
+│   │   └── sa.pub
+│   └── token.csv
+├── k8s-master02
+│   ├── auth
+│   │   ├── admin.conf
+│   │   ├── controller-manager.conf
+│   │   └── scheduler.conf
+│   ├── pki
+│   │   ├── apiserver.crt
+│   │   ├── apiserver-etcd-client.crt
+│   │   ├── apiserver-etcd-client.key
+│   │   ├── apiserver.key
+│   │   ├── apiserver-kubelet-client.crt
+│   │   ├── apiserver-kubelet-client.key
+│   │   ├── ca.crt
+│   │   ├── ca.key
+│   │   ├── front-proxy-ca.crt
+│   │   ├── front-proxy-ca.key
+│   │   ├── front-proxy-client.crt
+│   │   ├── front-proxy-client.key
+│   │   ├── kube-controller-manager.crt
+│   │   ├── kube-controller-manager.key
+│   │   ├── kube-scheduler.crt
+│   │   ├── kube-scheduler.key
+│   │   ├── sa.key
+│   │   └── sa.pub
+│   └── token.csv
+├── k8s-master03
+│   ├── auth
+│   │   ├── admin.conf
+│   │   ├── controller-manager.conf
+│   │   └── scheduler.conf
+│   ├── pki
+│   │   ├── apiserver.crt
+│   │   ├── apiserver-etcd-client.crt
+│   │   ├── apiserver-etcd-client.key
+│   │   ├── apiserver.key
+│   │   ├── apiserver-kubelet-client.crt
+│   │   ├── apiserver-kubelet-client.key
+│   │   ├── ca.crt
+│   │   ├── ca.key
+│   │   ├── front-proxy-ca.crt
+│   │   ├── front-proxy-ca.key
+│   │   ├── front-proxy-client.crt
+│   │   ├── front-proxy-client.key
+│   │   ├── kube-controller-manager.crt
+│   │   ├── kube-controller-manager.key
+│   │   ├── kube-scheduler.crt
+│   │   ├── kube-scheduler.key
+│   │   ├── sa.key
+│   │   └── sa.pub
+│   └── token.csv
+└── kubelet
+    ├── auth
+    │   ├── bootstrap.conf
+    │   └── kube-proxy.conf
+    └── pki
+        ├── ca.crt
+        ├── kube-proxy.crt
+        └── kube-proxy.key
+
+</code></pre></div><ol start="3"><li>将证书分发至各节点</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#各节点</span>
+<span class="token function">mkdir</span> /etc/kubernetes
+    
+<span class="token comment">#本节点操作</span>
+<span class="token function">cp</span> -r kubernetes/k8s-master01/* /etc/kubernetes/
+    
+<span class="token comment">#其他节点</span>
+<span class="token function">scp</span> -rp kubernetes/k8s-master02/* k8s-master02:/etc/kubernetes/
+<span class="token function">scp</span> -rp kubernetes/k8s-master03/* k8s-master03:/etc/kubernetes/        
+</code></pre></div><ol start="4"><li>获取<code>v1.13.4</code>二进制<code>k8s</code>文件，解压缩至<code>/usr/local</code>,并分发至其余<code>master</code>节点一份</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#获取镜像</span>
+docker pull registry.cn-hangzhou.aliyuncs.com/aaron89/k8s_bin:v1.13.4
+    
+<span class="token comment">#解压二进制文件    </span>
+docker run --rm -d --name temp registry.cn-hangzhou.aliyuncs.com/aaron89/k8s_bin:v1.13.4 <span class="token function">sleep</span> <span class="token number">10</span>
+docker <span class="token function">cp</span> temp:/kubernetes-server-linux-amd64.tar.gz <span class="token builtin class-name">.</span>
+<span class="token function">tar</span> xf kubernetes-server-linux-amd64.tar.gz  -C /usr/local/
+    
+<span class="token comment">#分发二进制文件</span>
+<span class="token function">scp</span> kubernetes-server-linux-amd64.tar.gz k8s-etcd-master02.shared:~
+<span class="token function">scp</span> kubernetes-server-linux-amd64.tar.gz k8s-etcd-master03.shared:~
+</code></pre></div><ol start="5"><li>将我提供的配置文件<code>cp</code>到对应路径</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#本节点</span>
+<span class="token function">cp</span> etc/kubernetes/* /etc/kubernetes/
+<span class="token function">cp</span> usr/lib/systemd/system/* /usr/lib/systemd/system
+    
+<span class="token comment">#各节点</span>
+<span class="token function">scp</span> etc/kubernetes/* k8s-master02:/etc/kubernetes/
+<span class="token function">scp</span> usr/lib/systemd/system/* k8s-master02:/usr/lib/systemd/system
+    
+<span class="token function">scp</span> etc/kubernetes/* k8s-master03:/etc/kubernetes/
+<span class="token function">scp</span> usr/lib/systemd/system/* k8s-master03:/usr/lib/systemd/system    
+</code></pre></div><ol start="6"><li>修改<code>apiserver</code>配置文件中的<code>KUBE_ETCD_SERVERS</code>，另外<code>config</code>文件中的日志级别是<code>0(Debug)</code>，先不动,为了测试</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token assign-left variable">KUBE_ETCD_SERVERS</span><span class="token operator">=</span><span class="token string">&quot;--etcd-servers=https://etcd01.ilinux.io:2379,https://etcd02.ilinux.io:2379,https://etcd03.ilinux.io:2379&quot;</span>
+
+</code></pre></div><ol start="7"><li>创建<code>kube</code>用户、<code>kubernetes</code>运行目录和权限</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">useradd</span> -r kube
+<span class="token function">mkdir</span> /var/run/kubernetes
+<span class="token function">chown</span> kube.kube /var/run/kubernetes/
+</code></pre></div><ol start="8"><li>启动<code>apiserver</code>，并查看<code>status</code>是否正常.至此<code>apiserver</code>已经成功启动，连接<code>etcd</code>集群和相关证书</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>systemctl daemon-reload
+systemctl start kube-apiserver
+systemctl <span class="token builtin class-name">enable</span> kube-apiserver
+systemctl status kube-apiserver
+</code></pre></div><ol start="9"><li>配置<code>kubectl</code>，并使用<code>kubectl config view</code>查看配置是否正常</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">mkdir</span> ~/.kube
+<span class="token function">ln</span> -sv /usr/local/kubernetes/server/bin/kubectl /usr/bin/
+<span class="token function">cp</span> /etc/kubernetes/auth/admin.conf ~/.kube/config
+    
+<span class="token comment">#kubectl config view   </span>
+<span class="token punctuation">[</span>root@k8s-etcd-master01 auth<span class="token punctuation">]</span><span class="token comment"># kubectl config view</span>
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: DATA+OMITTED
+    server: https://k8s-master01.ilinux.io:6443
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    user: k8s-admin
+  name: k8s-admin@kubernetes
+current-context: k8s-admin@kubernetes
+kind: Config
+preferences: <span class="token punctuation">{</span><span class="token punctuation">}</span>
+users:
+- name: k8s-admin
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
+</code></pre></div><ol start="10"><li>使用<code>get nodes</code>命令，如果没<code>error</code>就说明一切正常！</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@k8s-etcd-master01 auth<span class="token punctuation">]</span><span class="token comment"># kubectl get nodes</span>
+No resources found.
+
+</code></pre></div><ol start="11"><li>创建<code>ClusterRoleBinding</code>，将<code>/etc/kubernetes/token.csv</code>(引导<code>token</code>)中创建用户或者用户组（二选一即可）绑定至内建的
+允许引导令牌功能的<code>clusterrole：system:node-bootstrapper</code>上。这里我使用的是<code>system:bootstrapper</code>用户。</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment"># token.csv说明：用户（system:bootstrapper），组（system:bootstrappers）</span>
+b21f94.fbff38f94cfd0713,<span class="token string">&quot;system:bootstrapper&quot;</span>,10001,<span class="token string">&quot;system:bootstrappers&quot;</span>
+    
+<span class="token comment">#授权        </span>
+kubectl create clusterrolebinding system:bootstrapper --user<span class="token operator">=</span>system:bootstrapper --clusterrole<span class="token operator">=</span>system:node-bootstrapper
+</code></pre></div><ol start="12"><li>启动<code>kube-controller-manager</code>和<code>kube-scheduler</code></li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#controller-manager</span>
+systemctl start kube-controller-manager
+systemctl <span class="token builtin class-name">enable</span> kube-controller-manager
+systemctl status kube-controller-manager
+    
+<span class="token comment">#scheduler    </span>
+systemctl start kube-scheduler
+systemctl <span class="token builtin class-name">enable</span> kube-scheduler    
+systemctl status kube-scheduler
+</code></pre></div><ol start="13"><li>此时单台<code>master</code>已经配置完毕</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@k8s-etcd-master01 kubernetes<span class="token punctuation">]</span><span class="token comment"># kubectl get cs</span>
+NAME                 STATUS    MESSAGE             ERROR
+scheduler            Healthy   ok                  
+controller-manager   Healthy   ok                  
+etcd-1               Healthy   <span class="token punctuation">{</span><span class="token string">&quot;health&quot;</span><span class="token builtin class-name">:</span><span class="token string">&quot;true&quot;</span><span class="token punctuation">}</span>   
+etcd-0               Healthy   <span class="token punctuation">{</span><span class="token string">&quot;health&quot;</span><span class="token builtin class-name">:</span><span class="token string">&quot;true&quot;</span><span class="token punctuation">}</span>   
+etcd-2               Healthy   <span class="token punctuation">{</span><span class="token string">&quot;health&quot;</span><span class="token builtin class-name">:</span><span class="token string">&quot;true&quot;</span><span class="token punctuation">}</span>   
+
+</code></pre></div><h2 id="_7-node配置"><a href="#_7-node配置" class="header-anchor">#</a> 7.Node配置</h2> <table><thead><tr><th>文件</th> <th>路径</th> <th>说明</th></tr></thead> <tbody><tr><td>.*</td> <td>/etc/kubernetes</td> <td>node端实际配置文件</td></tr> <tr><td>auth/*</td> <td>/etc/kubernetes</td> <td>auth证书文件</td></tr> <tr><td>pki/*</td> <td>/etc/kubernetes</td> <td>pki证书文件</td></tr> <tr><td>kubelet</td> <td>/usr/local/kubernetes/node/bin</td> <td>kubelet二进制启动文件</td></tr> <tr><td>kube-proxy</td> <td>/usr/local/kubernetes/node/bin</td> <td>kube-proxy二进制启动文件</td></tr> <tr><td>kubelet</td> <td>/var/lib/</td> <td>kubelet的配置文件</td></tr> <tr><td>kube-proxy</td> <td>/var/lib/</td> <td>kube-proxy的配置文件</td></tr> <tr><td>kubelet.service</td> <td>/usr/lib/systemd/system</td> <td>kubelet的service文件</td></tr> <tr><td>kube-proxy.service</td> <td>/usr/lib/systemd/system</td> <td>kube-proxy的service文件</td></tr> <tr><td>.*</td> <td>/opt/cni/bin</td> <td>cni运行文件</td></tr> <tr><td>ipvs.modules</td> <td>/etc/sysconfig/modules/ipvs.modules</td> <td>ipvs脚本</td></tr></tbody></table> <p>你需要自行将环境准备环节和<code>dockerce</code>环境初始化好</p> <ol><li>准备配置文件和证书</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#将本章提供的kube-proxy和kubelet整个目录复制到/var/lib/下面</span>
+<span class="token function">cp</span> -rp kube-proxy/ /var/lib/
+<span class="token function">cp</span> -rp kubelet/ /var/lib/
+        
+<span class="token comment">#将本章提供的kubernetes/目录整个复制到/etc下</span>
+<span class="token function">cp</span> -rp kubernetes/ /etc/  
+    
+<span class="token comment">#将Master端生成的kubelet证书分发至node节点的/etc/kubernetes/下     </span>
+<span class="token builtin class-name">cd</span> ~/k8s-certs-generator/kubernetes/kubelet/
+<span class="token function">scp</span> -r * k8s-node01.shared:/etc/kubernetes/
+</code></pre></div><ol start="2"><li>下载<code>cni</code>插件，并放到<code>opt/cni/bin</code>目录下</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">wget</span> https://github.com/containernetworking/plugins/releases/download/v0.8.1/cni-plugins-linux-amd64-v0.8.1.tgz
+<span class="token function">mkdir</span> -p /opt/cni/bin
+<span class="token function">tar</span> xf cni-plugins-linux-amd64-v0.8.1.tgz  -C /opt/cni/bin/
+</code></pre></div><ol start="3"><li>准备<code>kublet</code>和<code>kubeproxy</code>的<code>service</code>文件</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#将本章提供的node/unit-files/*放到/usr/lib/systemd/system目录</span>
+<span class="token function">scp</span> node/unit-files/* k8s-node01.shared:/usr/lib/systemd/system
+</code></pre></div><ol start="4"><li>创建<code>bin</code>目录，并从<code>master</code>端分发<code>kubelet</code>和<code>kubeproxy</code>的二进制文件</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">mkdir</span> -p /usr/local/kubernetes/node/bin/
+    
+<span class="token comment">#在拉取过k8s二进制代码的master节点上操作    </span>
+<span class="token function">scp</span> /usr/local/kubernetes/server/bin/kube<span class="token punctuation">{</span>let,-proxy<span class="token punctuation">}</span> k8s-node01.shared:/usr/local/kubernetes/node/bin/
+</code></pre></div><ol start="5"><li>启动<code>kubelet</code></li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>systemctl start  kubelet
+systemctl <span class="token builtin class-name">enable</span>  kubelet
+systemctl status  kubelet
+</code></pre></div><ol start="6"><li><code>master</code>端确认加入集群的请求</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#查询请求</span>
+<span class="token punctuation">[</span>root@k8s-etcd-master01 auth<span class="token punctuation">]</span><span class="token comment"># kubectl get csr</span>
+NAME                                                   AGE     REQUESTOR             CONDITION
+node-csr-O1ThCQzmKSWv7aUvCBJLF0U2A-FJY73d3l9ui2Zdf74   5m48s   system:bootstrapper   Pending
+    
+<span class="token comment">#签署请求</span>
+<span class="token punctuation">[</span>root@k8s-etcd-master01 auth<span class="token punctuation">]</span><span class="token comment"># kubectl certificate approve node-csr-O1ThCQzmKSWv7aUvCBJLF0U2A-FJY73d3l9ui2Zdf74</span>
+certificatesigningrequest.certificates.k8s.io/node-csr-O1ThCQzmKSWv7aUvCBJLF0U2A-FJY73d3l9ui2Zdf74 approved
+    
+<span class="token comment"># node已经加入，但是还没ready</span>
+<span class="token punctuation">[</span>root@k8s-etcd-master01 auth<span class="token punctuation">]</span><span class="token comment"># kubectl get nodes</span>
+NAME                STATUS     ROLES    AGE     VERSION
+k8s-node01.shared   NotReady   <span class="token operator">&lt;</span>none<span class="token operator">&gt;</span>   2m44s   v1.13.4
+    
+</code></pre></div><ol start="7"><li>启用<code>ipvs</code>内核模块
+创建内核模块载入相关的脚本文件<code>/etc/sysconfig/modules/ipvs.modules</code>，设定自动载入的内核模块。文件内容如下：</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token shebang important">#!/bin/bash</span>
+<span class="token assign-left variable">ipvs_mods_dir</span><span class="token operator">=</span><span class="token string">&quot;/usr/lib/modules/<span class="token variable"><span class="token variable">$(</span><span class="token function">uname</span> -r<span class="token variable">)</span></span>/kernel/net/netfilter/ipvs&quot;</span>
+<span class="token keyword">for</span> <span class="token for-or-select variable">i</span> <span class="token keyword">in</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">ls</span> $ipvs_mods_dir <span class="token operator">|</span> <span class="token function">grep</span> -o <span class="token string">&quot;^[^.]*&quot;</span><span class="token variable">)</span></span><span class="token punctuation">;</span> <span class="token keyword">do</span>
+    /sbin/modinfo -F filename <span class="token variable">$i</span>  <span class="token operator">&amp;&gt;</span> /dev/null
+    <span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token variable">$?</span> -eq <span class="token number">0</span> <span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token keyword">then</span>
+        /sbin/modprobe <span class="token variable">$i</span>
+    <span class="token keyword">fi</span>
+<span class="token keyword">done</span>
+    
+<span class="token comment"># 赋权、运行并检查    </span>
+<span class="token function">chmod</span> +x /etc/sysconfig/modules/ipvs.modules
+/etc/sysconfig/modules/ipvs.modules
+lsmod <span class="token operator">|</span><span class="token function">grep</span> ip_vs
+</code></pre></div><ol start="8"><li>启动<code>kube-proxy</code></li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@k8s-node01 kubernetes<span class="token punctuation">]</span><span class="token comment"># systemctl  start kube-proxy</span>
+<span class="token punctuation">[</span>root@k8s-node01 kubernetes<span class="token punctuation">]</span><span class="token comment"># systemctl  enable kube-proxy</span>
+Created symlink from /etc/systemd/system/multi-user.target.wants/kube-proxy.service to /usr/lib/systemd/system/kube-proxy.service.
+<span class="token punctuation">[</span>root@k8s-node01 kubernetes<span class="token punctuation">]</span><span class="token comment"># systemctl  status kube-proxy</span>
+
+</code></pre></div><ol start="9"><li>拉取<code>flannel</code>所需镜像</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#node节点</span>
+docker pull registry.cn-hangzhou.aliyuncs.com/aaron89/flannel:v0.11.0-amd64	
+docker tag registry.cn-hangzhou.aliyuncs.com/aaron89/flannel:v0.11.0-amd64	  quay.io/coreos/flannel:v0.11.0-amd64
+
+docker pull registry.cn-hangzhou.aliyuncs.com/aaron89/pause:3.1
+docker tag registry.cn-hangzhou.aliyuncs.com/aaron89/pause:3.1 k8s.gcr.io/pause:3.1    
+</code></pre></div><ol start="10"><li><code>master</code>端<code>apply flannel</code>插件</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+</code></pre></div><ol start="11"><li>此时<code>flannel</code>的<code>pod</code>已经成功运行，而且<code>node</code>的状态也已经是<code>ready</code>了</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@k8s-etcd-master01 ~<span class="token punctuation">]</span><span class="token comment"># kubectl get pod -n kube-system -o wide</span>
+NAME                          READY   STATUS    RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
+kube-flannel-ds-amd64-cj8rh   <span class="token number">1</span>/1     Running   <span class="token number">0</span>          37m   <span class="token number">192.168</span>.0.114   k8s-node01.shared   <span class="token operator">&lt;</span>none<span class="token operator">&gt;</span>           <span class="token operator">&lt;</span>none<span class="token operator">&gt;</span>
+    
+<span class="token punctuation">[</span>root@k8s-etcd-master01 ~<span class="token punctuation">]</span><span class="token comment"># kubectl get node</span>
+NAME                STATUS   ROLES    AGE   VERSION
+k8s-node01.shared   Ready    <span class="token operator">&lt;</span>none<span class="token operator">&gt;</span>   93m   v1.13.4    
+</code></pre></div><h2 id="_8-组件高可用扩展-apiserver"><a href="#_8-组件高可用扩展-apiserver" class="header-anchor">#</a> 8.组件高可用扩展-apiserver</h2> <h3 id="_1-其余master节点"><a href="#_1-其余master节点" class="header-anchor">#</a> 1.其余master节点</h3> <ol><li>创建<code>kube</code>用户、<code>kubernetes</code>运行目录和权限</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">useradd</span> -r kube
+<span class="token function">mkdir</span> /var/run/kubernetes
+<span class="token function">chown</span> kube.kube /var/run/kubernetes/
+</code></pre></div><ol start="2"><li>启动<code>apiserver</code>，并查看<code>status</code>是否正常.至此<code>apiserver</code>已经成功启动，连接<code>etcd</code>集群和相关证书</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>systemctl daemon-reload
+systemctl start kube-apiserver
+systemctl <span class="token builtin class-name">enable</span> kube-apiserver
+systemctl status kube-apiserver
+</code></pre></div><ol start="3"><li>配置<code>kubectl</code>(可选)</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">mkdir</span> ~/.kube
+<span class="token function">ln</span> -sv /usr/local/kubernetes/server/bin/kubectl /usr/bin/
+<span class="token function">cp</span> /etc/kubernetes/auth/admin.conf ~/.kube/config
+    
+<span class="token comment">#使用kubelet命令查看</span>
+<span class="token punctuation">[</span>root@k8s-etcd-master02 kubernetes<span class="token punctuation">]</span><span class="token comment"># kubectl get node</span>
+NAME                STATUS   ROLES    AGE   VERSION
+k8s-node01.shared   Ready    <span class="token operator">&lt;</span>none<span class="token operator">&gt;</span>   22h   v1.13.4
+
+</code></pre></div><ol start="4"><li>集群的高可用链接地址，需要用<code>vip</code>或者多个<code>A</code>记录进行冗余。本章暂时就通过<code>hosts</code>解析在<code>mater01</code>上。</li></ol> <p>高可用集群接入地址：</p> <div class="language-bash extra-class"><pre class="language-bash"><code>https://kubernetes-api.ilinux.io:6443
+</code></pre></div><p>配置文件位置如下：</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#master：</span>
+/root/k8s-certs-generator/kubernetes/kubelet/auth/bootstrap.conf和kube-proxy.conf
+    
+<span class="token comment">#node:</span>
+/etc/kubernetes/auth/bootstrap.conf和kube-proxy.conf
+</code></pre></div><h2 id="_9-组件高可用扩展-controller-manager"><a href="#_9-组件高可用扩展-controller-manager" class="header-anchor">#</a> 9.组件高可用扩展-controller-manager</h2> <h3 id="_1-其余master节点-2"><a href="#_1-其余master节点-2" class="header-anchor">#</a> 1.其余master节点</h3> <div class="language-bash extra-class"><pre class="language-bash"><code>systemctl start kube-controller-manager
+systemctl <span class="token builtin class-name">enable</span> kube-controller-manager
+systemctl status kube-controller-manager
+</code></pre></div><h2 id="_10-组件高可用扩展-scheduler"><a href="#_10-组件高可用扩展-scheduler" class="header-anchor">#</a> 10.组件高可用扩展-scheduler</h2> <h3 id="_1-其余master节点-3"><a href="#_1-其余master节点-3" class="header-anchor">#</a> 1.其余master节点</h3> <div class="language-bash extra-class"><pre class="language-bash"><code>systemctl start kube-scheduler
+systemctl <span class="token builtin class-name">enable</span> kube-scheduler
+systemctl status kube-scheduler
+</code></pre></div><h2 id="_11-coredns部署"><a href="#_11-coredns部署" class="header-anchor">#</a> 11.CoreDns部署</h2> <p>1)<code>Master01</code>上进行操作</p> <div class="language-bash extra-class"><pre class="language-bash"><code>docker pull registry.cn-hangzhou.aliyuncs.com/aaron89/coredns:1.6.6
+docker tag registry.cn-hangzhou.aliyuncs.com/aaron89/coredns:1.6.6 coredns/coredns:1.6.6
+<span class="token function">wget</span> https://raw.githubusercontent.com/coredns/deployment/master/kubernetes/coredns.yaml.sed
+<span class="token function">wget</span> https://raw.githubusercontent.com/coredns/deployment/master/kubernetes/deploy.sh
+<span class="token function">bash</span> deploy.sh -i <span class="token number">10.96</span>.0.10 -r <span class="token string">&quot;10.96.0.0/12&quot;</span> -s -t coredns.yaml.sed <span class="token operator">|</span> kubectl apply -f -
+</code></pre></div><ol start="2"><li>解析测试</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#初始化pod</span>
+cat<span class="token operator">&lt;&lt;</span>EOF <span class="token operator">|</span> kubectl apply -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+  namespace: default
+spec:
+  containers:
+  - name: busybox
+    image: busybox:1.28
+    command:
+      - <span class="token function">sleep</span>
+      - <span class="token string">&quot;3600&quot;</span>
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Always
+EOF
+    
+<span class="token comment">#测试</span>
+<span class="token punctuation">[</span>root@k8s-etcd-mater01 ~<span class="token punctuation">]</span><span class="token comment"># kubectl exec -ti busybox -- nslookup kubernetes</span>
+Server:    <span class="token number">10.96</span>.0.10
+Address <span class="token number">1</span>: <span class="token number">10.96</span>.0.10 kube-dns.kube-system.svc.cluster.local
+    
+Name:      kubernetes
+Address <span class="token number">1</span>: <span class="token number">10.96</span>.0.1 kubernetes.default.svc.cluster.local
+    
+</code></pre></div><h2 id="_12-集群高可用测试"><a href="#_12-集群高可用测试" class="header-anchor">#</a> 12.集群高可用测试</h2> <h3 id="_1-etcd高可用测试"><a href="#_1-etcd高可用测试" class="header-anchor">#</a> 1.Etcd高可用测试</h3> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#现在etcd02是leader节点</span>
+<span class="token punctuation">[</span>root@k8s-etcd-master01 unit-files<span class="token punctuation">]</span><span class="token comment"># etcdctl --endpoints='https://etcd01.ilinux.io:2379' --cert-file=/etc/etcd/pki/client.crt --key-file=/etc/etcd/pki/client.key --ca-file=/etc/etcd/pki/ca.crt member list</span>
+1f22dc5568642e6f: <span class="token assign-left variable">name</span><span class="token operator">=</span>etcd03.ilinux.io <span class="token assign-left variable">peerURLs</span><span class="token operator">=</span>https://etcd03.ilinux.io:2380 <span class="token assign-left variable">clientURLs</span><span class="token operator">=</span>https://etcd03.ilinux.io:2379 <span class="token assign-left variable">isLeader</span><span class="token operator">=</span>false
+433f227ff9ad65cd: <span class="token assign-left variable">name</span><span class="token operator">=</span>etcd02.ilinux.io <span class="token assign-left variable">peerURLs</span><span class="token operator">=</span>https://etcd02.ilinux.io:2380 <span class="token assign-left variable">clientURLs</span><span class="token operator">=</span>https://etcd02.ilinux.io:2379 <span class="token assign-left variable">isLeader</span><span class="token operator">=</span>true
+c4eb31a06cd36dd7: <span class="token assign-left variable">name</span><span class="token operator">=</span>etcd01.ilinux.io <span class="token assign-left variable">peerURLs</span><span class="token operator">=</span>https://etcd01.ilinux.io:2380 <span class="token assign-left variable">clientURLs</span><span class="token operator">=</span>https://etcd01.ilinux.io:2379 <span class="token assign-left variable">isLeader</span><span class="token operator">=</span>false
+    
+<span class="token comment">#在etcd02上关闭etcd    </span>
+systemctl stop etcd
+    
+<span class="token comment">#此时已经进行重新选举etcd03成了leader</span>
+<span class="token punctuation">[</span>root@k8s-etcd-master01 unit-files<span class="token punctuation">]</span><span class="token comment"># etcdctl --endpoints='https://etcd01.ilinux.io:2379' --cert-file=/etc/etcd/pki/client.crt --key-file=/etc/etcd/pki/client.key --ca-file=/etc/etcd/pki/ca.crt member list</span>
+1f22dc5568642e6f: <span class="token assign-left variable">name</span><span class="token operator">=</span>etcd03.ilinux.io <span class="token assign-left variable">peerURLs</span><span class="token operator">=</span>https://etcd03.ilinux.io:2380 <span class="token assign-left variable">clientURLs</span><span class="token operator">=</span>https://etcd03.ilinux.io:2379 <span class="token assign-left variable">isLeader</span><span class="token operator">=</span>true
+433f227ff9ad65cd: <span class="token assign-left variable">name</span><span class="token operator">=</span>etcd02.ilinux.io <span class="token assign-left variable">peerURLs</span><span class="token operator">=</span>https://etcd02.ilinux.io:2380 <span class="token assign-left variable">clientURLs</span><span class="token operator">=</span>https://etcd02.ilinux.io:2379 <span class="token assign-left variable">isLeader</span><span class="token operator">=</span>false
+c4eb31a06cd36dd7: <span class="token assign-left variable">name</span><span class="token operator">=</span>etcd01.ilinux.io <span class="token assign-left variable">peerURLs</span><span class="token operator">=</span>https://etcd01.ilinux.io:2380 <span class="token assign-left variable">clientURLs</span><span class="token operator">=</span>https://etcd01.ilinux.io:2379 <span class="token assign-left variable">isLeader</span><span class="token operator">=</span>false
+    
+<span class="token comment">#此时集群状态是degraded降级，且k8s集群功能正常，表示etcd集群高可用验证成功</span>
+<span class="token punctuation">[</span>root@k8s-etcd-master01 unit-files<span class="token punctuation">]</span><span class="token comment"># etcdctl --endpoints='https://etcd01.ilinux.io:2379' --cert-file=/etc/etcd/pki/client.crt --key-file=/etc/etcd/pki/client.key --ca-file=/etc/etcd/pki/ca.crt cluster-health</span>
+member 1f22dc5568642e6f is healthy: got healthy result from https://etcd03.ilinux.io:2379
+failed to check the health of member 433f227ff9ad65cd on https://etcd02.ilinux.io:2379: Get https://etcd02.ilinux.io:2379/health: dial tcp <span class="token number">192.168</span>.0.112:2379: connect: connection refused
+member 433f227ff9ad65cd is unreachable: <span class="token punctuation">[</span>https://etcd02.ilinux.io:2379<span class="token punctuation">]</span> are all unreachable
+member c4eb31a06cd36dd7 is healthy: got healthy result from https://etcd01.ilinux.io:2379
+cluster is degraded
+    
+<span class="token comment">#[root@k8s-etcd-master01 unit-files]# kubectl get node</span>
+NAME                STATUS   ROLES    AGE   VERSION
+k8s-node01.shared   Ready    <span class="token operator">&lt;</span>none<span class="token operator">&gt;</span>   22h   v1.13.4
+    
+<span class="token comment">#最后我们回复etcd02节点，发现集群状态已经恢复成healthy</span>
+<span class="token punctuation">[</span>root@k8s-etcd-master01 unit-files<span class="token punctuation">]</span><span class="token comment"># etcdctl --endpoints='https://etcd01.ilinux.io:2379' --cert-file=/etc/etcd/pki/client.crt --key-file=/etc/etcd/pki/client.key --ca-file=/etc/etcd/pki/ca.crt cluster-health</span>
+member 1f22dc5568642e6f is healthy: got healthy result from https://etcd03.ilinux.io:2379
+member 433f227ff9ad65cd is healthy: got healthy result from https://etcd02.ilinux.io:2379
+member c4eb31a06cd36dd7 is healthy: got healthy result from https://etcd01.ilinux.io:2379
+cluster is healthy
+        
+</code></pre></div><h3 id="_2-kube-controller-manager高可用测试"><a href="#_2-kube-controller-manager高可用测试" class="header-anchor">#</a> 2.kube-controller-manager高可用测试</h3> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#当前controller-manager使用的是吗master01的组件（一定要注意：这是主备模式的组件，有一个工作就行），并且探测周期为15秒</span>
+<span class="token punctuation">[</span>root@k8s-etcd-master02 kubernetes<span class="token punctuation">]</span><span class="token comment"># kubectl get endpoints -n kube-system kube-controller-manager -o yaml</span>
+apiVersion: v1
+kind: Endpoints
+metadata:
+  annotations:
+    control-plane.alpha.kubernetes.io/leader: <span class="token string">'{&quot;holderIdentity&quot;:&quot;k8s-etcd-master01.shared_25338479-2400-11ea-ac38-001c425c73bc&quot;,&quot;leaseDurationSeconds&quot;:15,&quot;acquireTime&quot;:&quot;2019-12-22T09:30:00Z&quot;,&quot;renewTime&quot;:&quot;2019-12-22T11:07:15Z&quot;,&quot;leaderTransitions&quot;:3}'</span>
+  creationTimestamp: <span class="token string">&quot;2019-12-20T13:26:28Z&quot;</span>
+  name: kube-controller-manager
+  namespace: kube-system
+  resourceVersion: <span class="token string">&quot;35332&quot;</span>
+  selfLink: /api/v1/namespaces/kube-system/endpoints/kube-controller-manager
+  uid: 54417b97-232c-11ea-a207-001c425c73bc
+    
+<span class="token comment">#关闭master01的controller-manager</span>
+systemctl stop kube-controller-manager
+    
+<span class="token comment">#此时我们发现controller-manager已经切换至k8s-etcd-master02，且一切功能正常</span>
+<span class="token punctuation">[</span>root@k8s-etcd-master02 kubernetes<span class="token punctuation">]</span><span class="token comment"># kubectl get endpoints -n kube-system kube-controller-manager -o yaml</span>
+apiVersion: v1
+kind: Endpoints
+metadata:
+  annotations:
+    control-plane.alpha.kubernetes.io/leader: <span class="token string">'{&quot;holderIdentity&quot;:&quot;k8s-etcd-master02.shared_f16dffb2-24a7-11ea-89b4-001c42662fdd&quot;,&quot;leaseDurationSeconds&quot;:15,&quot;acquireTime&quot;:&quot;2019-12-22T11:11:01Z&quot;,&quot;renewTime&quot;:&quot;2019-12-22T11:12:27Z&quot;,&quot;leaderTransitions&quot;:4}'</span>
+  creationTimestamp: <span class="token string">&quot;2019-12-20T13:26:28Z&quot;</span>
+  name: kube-controller-manager
+  namespace: kube-system
+  resourceVersion: <span class="token string">&quot;35880&quot;</span>
+  selfLink: /api/v1/namespaces/kube-system/endpoints/kube-controller-manager
+  uid: 54417b97-232c-11ea-a207-001c425c73bc
+    
+<span class="token comment">#最后我们恢复master01的controller-manager,controller-manager使用的还是k8s-etcd-master02，和预期一致，测试成功</span>
+systemctl start kube-controller-manager    
+</code></pre></div><h3 id="_3-kube-scheduler高可用测试"><a href="#_3-kube-scheduler高可用测试" class="header-anchor">#</a> 3.kube-scheduler高可用测试</h3> <p>同上，不再单独演示</p> <h2 id="_13-证书过期时间修改和查询"><a href="#_13-证书过期时间修改和查询" class="header-anchor">#</a> 13.证书过期时间修改和查询</h2> <p>最后，我要说一下kubernetes默认证书1年，本章提供证书已经改为10年，你已经不需要调整；当然也可以通过修改源码的方式，修改kubernetes默认证书时间</p> <ol><li>拉取源码</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token builtin class-name">cd</span> /data <span class="token operator">&amp;&amp;</span> <span class="token function">git</span> clone https://github.com/kubernetes/kubernetes.git
+
+</code></pre></div><ol start="2"><li>切换到指定版本，以<code>V1.12.3</code>为例</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">git</span> checkout -b remotes/origin/release-1.12  v1.12.3
+</code></pre></div><ol start="3"><li>安装<code>go</code>环境</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token builtin class-name">cd</span> /data/soft <span class="token operator">&amp;&amp;</span> <span class="token function">wget</span> https://dl.google.com/go/go1.11.2.linux-amd64.tar.gz
+<span class="token function">tar</span> zxvf go1.11.2.linux-amd64.tar.gz  -C /usr/local 
+    
+<span class="token comment">#编辑/etc/profile文件添加如下：</span>
+    
+<span class="token comment">#go setting</span>
+<span class="token builtin class-name">export</span> <span class="token assign-left variable">GOROOT</span><span class="token operator">=</span>/usr/local/go
+<span class="token builtin class-name">export</span> <span class="token assign-left variable">GOPATH</span><span class="token operator">=</span>/usr/local/gopath
+<span class="token builtin class-name">export</span> <span class="token assign-left variable"><span class="token environment constant">PATH</span></span><span class="token operator">=</span><span class="token environment constant">$PATH</span><span class="token builtin class-name">:</span><span class="token variable">$GOROOT</span>/bin
+    
+<span class="token builtin class-name">source</span> /etc/profile 生效
+    
+<span class="token comment">#验证：</span>
+
+go version
+go version go1.11.2 linux/amd64
+
+</code></pre></div><ol start="4"><li>修改源码：
+<code>/data/kubernetes/staging/src/k8s.io/client-go/util/cert/cert.go</code></li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token number">112</span>  NotAfter:     time.Now<span class="token punctuation">(</span><span class="token punctuation">)</span>.Add<span class="token punctuation">(</span>duration365d * <span class="token number">10</span><span class="token punctuation">)</span>.UTC<span class="token punctuation">(</span><span class="token punctuation">)</span>,
+<span class="token number">187</span>  NotAfter:  validFrom.Add<span class="token punctuation">(</span>maxAge *10<span class="token punctuation">)</span>,
+<span class="token number">215</span>  NotAfter:  validFrom.Add<span class="token punctuation">(</span>maxAge * <span class="token number">10</span><span class="token punctuation">)</span>,
+    
+原来1年 ； * <span class="token number">10</span> 表示10年 
+    
+</code></pre></div><ol start="5"><li>编译：</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token builtin class-name">cd</span> /data/kubernetes/ <span class="token operator">&amp;&amp;</span> <span class="token function">make</span> <span class="token assign-left variable">WHAT</span><span class="token operator">=</span>cmd/kubeadm
+</code></pre></div><ol start="6"><li>查看证书过期时间</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token builtin class-name">cd</span> /etc/kubernetes/pki
+    
+openssl x509 -in front-proxy-client.crt   -noout -text  <span class="token operator">|</span><span class="token function">grep</span> Not
+            Not Before: Nov <span class="token number">28</span> 09:07:02 <span class="token number">2018</span> GMT
+            Not After <span class="token builtin class-name">:</span> Nov <span class="token number">25</span> 09:07:03 <span class="token number">2028</span> GMT
+    
+openssl x509 -in apiserver.crt   -noout -text  <span class="token operator">|</span><span class="token function">grep</span> Not
+            Not Before: Nov <span class="token number">28</span> 09:07:04 <span class="token number">2018</span> GMT
+            Not After <span class="token builtin class-name">:</span> Nov <span class="token number">25</span> 09:07:04 <span class="token number">2028</span> GMT
+
+</code></pre></div></div> <footer class="page-edit"><div class="edit-link"><a href="https://github.com/Aaron1989/CloudNativeNotes/edit/master/docs/Kubernetes/28.二进制部署高可用k8s集群/index.md" target="_blank" rel="noopener noreferrer">在 GitHub 上编辑此页</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></div> <div class="last-updated"><span class="prefix">上次更新:</span> <span class="time">12/31/2019, 11:55:25 PM</span></div></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/CloudNativeNotes/assets/js/app.c1070463.js" defer></script><script src="/CloudNativeNotes/assets/js/2.6ea23a4f.js" defer></script><script src="/CloudNativeNotes/assets/js/30.10d3ea34.js" defer></script>
+  </body>
+</html>

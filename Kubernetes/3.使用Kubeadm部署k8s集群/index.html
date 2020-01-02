@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>使用Kubeadm部署k8s集群 | CloudNativeNotes</title>
+    <meta name="description" content="Vuepress blog demo">
+    
+    
+    <link rel="preload" href="/CloudNativeNotes/assets/css/0.styles.7bebe62c.css" as="style"><link rel="preload" href="/CloudNativeNotes/assets/js/app.c1070463.js" as="script"><link rel="preload" href="/CloudNativeNotes/assets/js/2.6ea23a4f.js" as="script"><link rel="preload" href="/CloudNativeNotes/assets/js/31.9fb204ed.js" as="script"><link rel="prefetch" href="/CloudNativeNotes/assets/js/10.f683548e.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/11.9b2223ea.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/12.3d0adbb0.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/13.24d3d2d6.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/14.fb7baf12.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/15.eb690184.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/16.6733f10e.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/17.5cea8e35.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/18.72d80979.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/19.1d75c5a7.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/20.5d1c5bdc.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/21.0d03d3c8.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/22.781cc661.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/23.da24d4a5.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/24.64806e3e.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/25.f48de550.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/26.e94508f2.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/27.13277697.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/28.daef1e27.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/29.6a2b975d.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/3.a99930e0.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/30.10d3ea34.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/32.0b73c47c.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/33.e496dee3.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/34.9afa7698.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/35.1af9afd5.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/36.647a0f69.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/37.73629427.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/38.147eec58.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/39.a011e2e7.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/4.3ff2fe10.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/40.f5d50c60.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/41.12a538ad.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/42.bc7be63b.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/43.509cb678.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/44.f3cbf9dd.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/45.0c6478d7.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/46.122aa56e.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/47.78053982.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/48.abeefd62.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/49.b2619eaf.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/5.d3507002.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/50.f9be5e46.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/51.70801648.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/52.3ddd65d3.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/53.968a532f.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/6.a9535db6.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/7.b77fe9cf.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/8.2c03d1fa.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/9.836f7399.js">
+    <link rel="stylesheet" href="/CloudNativeNotes/assets/css/0.styles.7bebe62c.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/CloudNativeNotes/" class="home-link router-link-active"><!----> <span class="site-name">CloudNativeNotes</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/CloudNativeNotes/" class="nav-link">Home</a></div><div class="nav-item"><a href="/CloudNativeNotes/Docker/1.Dockerfile使用总结/" class="nav-link">Docker</a></div><div class="nav-item"><a href="/CloudNativeNotes/Kubernetes/1.Kubernetes基础/" class="nav-link">Kubernetes</a></div><div class="nav-item"><a href="/CloudNativeNotes/istio/1.Service Mesh简介/" class="nav-link">Istio</a></div><div class="nav-item"><a href="/CloudNativeNotes/Ceph/1.简介/" class="nav-link">Ceph</a></div><div class="nav-item"><a href="/CloudNativeNotes/Prometheus/" class="nav-link">Prometheus</a></div> <a href="https://github.com/Aaron1989/CloudNativeNotes" target="_blank" rel="noopener noreferrer" class="repo-link">
+    My GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/CloudNativeNotes/" class="nav-link">Home</a></div><div class="nav-item"><a href="/CloudNativeNotes/Docker/1.Dockerfile使用总结/" class="nav-link">Docker</a></div><div class="nav-item"><a href="/CloudNativeNotes/Kubernetes/1.Kubernetes基础/" class="nav-link">Kubernetes</a></div><div class="nav-item"><a href="/CloudNativeNotes/istio/1.Service Mesh简介/" class="nav-link">Istio</a></div><div class="nav-item"><a href="/CloudNativeNotes/Ceph/1.简介/" class="nav-link">Ceph</a></div><div class="nav-item"><a href="/CloudNativeNotes/Prometheus/" class="nav-link">Prometheus</a></div> <a href="https://github.com/Aaron1989/CloudNativeNotes" target="_blank" rel="noopener noreferrer" class="repo-link">
+    My GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>写在最前面</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/start/1.%E9%98%85%E8%AF%BB%E6%8C%87%E5%BC%95/" class="sidebar-link">写在最前面</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>Docker篇</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/Docker/1.Dockerfile%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/" class="sidebar-link">Dockerfile使用总结</a></li><li><a href="/CloudNativeNotes/Docker/2.%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93%E5%92%8C%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6/" class="sidebar-link">私有仓库和资源限制</a></li><li><a href="/CloudNativeNotes/Docker/3.Docker%20Compose%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/" class="sidebar-link">Docker Compose基础应用</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>Kubernetes篇</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/Kubernetes/1.Kubernetes%E5%9F%BA%E7%A1%80/" class="sidebar-link">Kubernetes基础</a></li><li><a href="/CloudNativeNotes/Kubernetes/2.Kubernetes%E5%9F%BA%E7%A1%80%E5%92%8C%E9%83%A8%E7%BD%B2%E8%AF%B4%E6%98%8E/" class="sidebar-link">Kubernetes基础和部署说明</a></li><li><a href="/CloudNativeNotes/Kubernetes/3.%E4%BD%BF%E7%94%A8Kubeadm%E9%83%A8%E7%BD%B2k8s%E9%9B%86%E7%BE%A4/" class="active sidebar-link">使用Kubeadm部署k8s集群</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/3.%E4%BD%BF%E7%94%A8Kubeadm%E9%83%A8%E7%BD%B2k8s%E9%9B%86%E7%BE%A4/#_1-环境准备" class="sidebar-link">1.环境准备</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/3.%E4%BD%BF%E7%94%A8Kubeadm%E9%83%A8%E7%BD%B2k8s%E9%9B%86%E7%BE%A4/#_2-hosts文件准备" class="sidebar-link">2.Hosts文件准备</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/3.%E4%BD%BF%E7%94%A8Kubeadm%E9%83%A8%E7%BD%B2k8s%E9%9B%86%E7%BE%A4/#_3-docker环境配置" class="sidebar-link">3.Docker环境配置</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/3.%E4%BD%BF%E7%94%A8Kubeadm%E9%83%A8%E7%BD%B2k8s%E9%9B%86%E7%BE%A4/#_4-其他准备工作" class="sidebar-link">4.其他准备工作</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/3.%E4%BD%BF%E7%94%A8Kubeadm%E9%83%A8%E7%BD%B2k8s%E9%9B%86%E7%BE%A4/#_5-使用kubeadm部署k8s集群" class="sidebar-link">5.使用Kubeadm部署k8s集群</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/3.%E4%BD%BF%E7%94%A8Kubeadm%E9%83%A8%E7%BD%B2k8s%E9%9B%86%E7%BE%A4/#_6-参考文档" class="sidebar-link">6.参考文档</a></li></ul></li><li><a href="/CloudNativeNotes/Kubernetes/4.Kubernetes%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/" class="sidebar-link">Kubernetes快速入门</a></li><li><a href="/CloudNativeNotes/Kubernetes/5.Pod%E8%B5%84%E6%BA%90%E6%B8%85%E5%8D%95%E9%85%8D%E7%BD%AE%E5%9F%BA%E7%A1%80/" class="sidebar-link">Pod资源清单配置基础</a></li><li><a href="/CloudNativeNotes/Kubernetes/6.Pod%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="sidebar-link">Pod资源管理</a></li><li><a href="/CloudNativeNotes/Kubernetes/7.Pod%E6%8E%A7%E5%88%B6%E5%99%A8-Deployment/" class="sidebar-link">Pod控制器-Deployment</a></li><li><a href="/CloudNativeNotes/Kubernetes/8.Pod%E6%8E%A7%E5%88%B6%E5%99%A8-DaemonSet/" class="sidebar-link">Pod控制器-DaemonSet</a></li><li><a href="/CloudNativeNotes/Kubernetes/9.Pod%E6%8E%A7%E5%88%B6%E5%99%A8-Job/" class="sidebar-link">Pod控制器-Job</a></li><li><a href="/CloudNativeNotes/Kubernetes/10.Service%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="sidebar-link">Service资源管理</a></li><li><a href="/CloudNativeNotes/Kubernetes/11.Ingress%E8%B5%84%E6%BA%90/" class="sidebar-link">Ingress资源</a></li><li><a href="/CloudNativeNotes/Kubernetes/12.Volume%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/" class="sidebar-link">Volume基础应用源</a></li><li><a href="/CloudNativeNotes/Kubernetes/13.ConfigMap%E8%B5%84%E6%BA%90/" class="sidebar-link">ConfigMap资源</a></li><li><a href="/CloudNativeNotes/Kubernetes/14.Secret%E8%B5%84%E6%BA%90/" class="sidebar-link">Secret资源</a></li><li><a href="/CloudNativeNotes/Kubernetes/15.StatefulSet%E8%B5%84%E6%BA%90/" class="sidebar-link">StatefulSet资源</a></li><li><a href="/CloudNativeNotes/Kubernetes/16.Kubernetes%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/" class="sidebar-link">Kubernetes系统安全</a></li><li><a href="/CloudNativeNotes/Kubernetes/17.Dashboard/" class="sidebar-link">Dashboard</a></li><li><a href="/CloudNativeNotes/Kubernetes/18.%E5%87%86%E5%85%A5%E6%8E%A7%E5%88%B6%E5%99%A8/" class="sidebar-link">准入控制器</a></li><li><a href="/CloudNativeNotes/Kubernetes/19.%E7%BD%91%E7%BB%9C%E6%8F%92%E4%BB%B6%E4%BD%93%E7%B3%BB/" class="sidebar-link">网络插件体系</a></li><li><a href="/CloudNativeNotes/Kubernetes/20.Network-Policy/" class="sidebar-link">Network-Policy</a></li><li><a href="/CloudNativeNotes/Kubernetes/21.%E8%B0%83%E5%BA%A6%E5%99%A8%E4%B8%8E%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6/" class="sidebar-link">调度器与调度机制</a></li><li><a href="/CloudNativeNotes/Kubernetes/22.%E9%AB%98%E7%BA%A7%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6/" class="sidebar-link">高级调度机制</a></li><li><a href="/CloudNativeNotes/Kubernetes/23.%E6%B1%A1%E7%82%B9%E5%92%8C%E5%AE%B9%E5%BF%8D%E5%BA%A6/" class="sidebar-link">污点和容忍度</a></li><li><a href="/CloudNativeNotes/Kubernetes/24.%E4%BD%BF%E7%94%A8CRD%E6%89%A9%E5%B1%95Kubernetes-API/" class="sidebar-link">使用CRD扩展Kubernetes-API</a></li><li><a href="/CloudNativeNotes/Kubernetes/25.HPA%E6%8E%A7%E5%88%B6%E5%99%A8/" class="sidebar-link">HPA控制器</a></li><li><a href="/CloudNativeNotes/Kubernetes/26.Helm%E5%9F%BA%E7%A1%80/" class="sidebar-link">Helm基础</a></li><li><a href="/CloudNativeNotes/Kubernetes/27.Helm%E4%BD%BF%E7%94%A8%E8%BF%9B%E9%98%B6/" class="sidebar-link">Helm使用进阶</a></li><li><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/" class="sidebar-link">二进制部署高可用k8s集群阶</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>Istio篇</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/istio/1.Service%20Mesh%E7%AE%80%E4%BB%8B/" class="sidebar-link">Service Mesh简介</a></li><li><a href="/CloudNativeNotes/istio/2.%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E5%9F%BA%E7%A1%80/" class="sidebar-link">微服务和服务治理基础</a></li><li><a href="/CloudNativeNotes/istio/3.Envoy%E5%9F%BA%E7%A1%80/" class="sidebar-link">Envoy基础</a></li><li><a href="/CloudNativeNotes/istio/4.Envoy%E9%83%A8%E7%BD%B2%E7%B1%BB%E5%9E%8B/" class="sidebar-link">Envoy部署类型</a></li><li><a href="/CloudNativeNotes/istio/5.Envoy%E9%85%8D%E7%BD%AE%E6%96%B9%E5%BC%8F/" class="sidebar-link">Envoy配置方式</a></li><li><a href="/CloudNativeNotes/istio/6.Envoy%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8_1/" class="sidebar-link">Envoy使用入门_1</a></li><li><a href="/CloudNativeNotes/istio/7.Envoy%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8_2/" class="sidebar-link">Envoy使用入门_2</a></li><li><a href="/CloudNativeNotes/istio/8.Envoy%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8_3/" class="sidebar-link">Envoy使用入门_3</a></li><li><a href="/CloudNativeNotes/istio/9.Envoy%E7%AE%A1%E7%90%86%E6%8E%A5%E5%8F%A3%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/" class="sidebar-link">Envoy管理接口基础应用</a></li><li><a href="/CloudNativeNotes/istio/10.Envoy%E7%BB%BC%E5%90%88%E7%A4%BA%E4%BE%8B_FrontProxy/" class="sidebar-link">Envoy综合示例_FrontProxy</a></li><li><a href="/CloudNativeNotes/istio/11.xDS%20API%E5%8F%8A%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE_1/" class="sidebar-link">xDS API及动态配置_1</a></li><li><a href="/CloudNativeNotes/istio/12.xDS%20API%E5%8F%8A%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE_2/" class="sidebar-link">xDS API及动态配置_2</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>Ceph篇</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/Ceph/1.%E7%AE%80%E4%BB%8B/" class="sidebar-link">综述</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>Prometheus篇</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/Prometheus/" class="sidebar-link">综述</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="使用kubeadm部署k8s集群"><a href="#使用kubeadm部署k8s集群" class="header-anchor">#</a> 使用Kubeadm部署k8s集群</h1> <p>kubeadm是一个提供了<code>kubeadm init</code>和<code>kubeadm join</code>最佳实践命令，且用于快速构建一个kubernetes集群的工具，你可以使用此工具快速构建一个kubernetes学习环境。
+通过本章节的学习，你将能够使用kubeadm工具，成功构建出一个基础的kubernetes集群环境</p> <ul><li>环境准备</li> <li>Hosts文件准备</li> <li>Docker环境配置</li> <li>其他准备工作</li> <li>使用Kubeadm部署k8s集群</li> <li>参考文档</li></ul> <h2 id="_1-环境准备"><a href="#_1-环境准备" class="header-anchor">#</a> 1.环境准备</h2> <table><thead><tr><th>ip</th> <th>主机名</th> <th>角色</th> <th>操作系统</th></tr></thead> <tbody><tr><td>192.168.0.104</td> <td>centos-1.shared master</td> <td>Master</td> <td>Centos6.4</td></tr> <tr><td>192.168.0.108</td> <td>centos-2.shared node01</td> <td>Node</td> <td>Centos6.4</td></tr> <tr><td>192.168.0.109</td> <td>centos-3.shared node01</td> <td>Node</td> <td>Centos6.4</td></tr></tbody></table> <h2 id="_2-hosts文件准备"><a href="#_2-hosts文件准备" class="header-anchor">#</a> 2.Hosts文件准备</h2> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token number">192.168</span>.0.104 centos-1.shared master
+<span class="token number">192.168</span>.0.108 centos-2.shared node01
+<span class="token number">192.168</span>.0.109 centos-3.shared node02
+</code></pre></div><h2 id="_3-docker环境配置"><a href="#_3-docker环境配置" class="header-anchor">#</a> 3.Docker环境配置</h2> <ol><li>关闭系统默认防火墙和<code>SELINUX</code></li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>setenforce <span class="token number">0</span>
+<span class="token function">sed</span> -i -r <span class="token string">&quot;/^SELINUX=/c SELINUX=disabled&quot;</span> /etc/selinux/config
+<span class="token function">which</span> systemctl <span class="token operator">&amp;&amp;</span> systemctl stop firewalld
+<span class="token function">which</span> systemctl <span class="token operator">&amp;&amp;</span> systemctl disable firewalld
+<span class="token function">which</span> systemctl <span class="token operator">&amp;&amp;</span> systemctl stop iptables <span class="token operator">||</span> <span class="token function">service</span> iptables stop
+<span class="token function">which</span> systemctl <span class="token operator">&amp;&amp;</span> systemctl disable iptables <span class="token operator">||</span> <span class="token function">chkconfig</span> iptables off
+</code></pre></div><ol start="2"><li>卸载旧版本<code>Docker</code></li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>yum remove docker <span class="token punctuation">\</span>
+            docker-client <span class="token punctuation">\</span>
+            docker-client-latest <span class="token punctuation">\</span>
+            docker-common <span class="token punctuation">\</span>
+            docker-latest <span class="token punctuation">\</span>
+            docker-latest-logrotate <span class="token punctuation">\</span>
+            docker-logrotate <span class="token punctuation">\</span>
+            docker-selinux <span class="token punctuation">\</span>
+            docker-engine-selinux <span class="token punctuation">\</span>
+            docker-engine <span class="token punctuation">\</span>
+            docker <span class="token punctuation">\</span>
+            docker-ce <span class="token punctuation">\</span>
+            docker-ee
+</code></pre></div><ol start="3"><li>安装<code>DockerCE</code></li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment"># 1.安装所需的包</span>
+<span class="token comment"># yum-utils 提供了 yum-config-manager 实用程</span>
+<span class="token comment"># 并且 devicemapper 存储驱动需要 device-mapper-persistent-data 和 lvm2</span>
+yum <span class="token function">install</span> -y yum-utils device-mapper-persistent-data lvm2
+    
+<span class="token comment"># 2.更新xfsprogs</span>
+yum update xfsprogs
+    
+ 
+<span class="token comment"># 3.使用以下命令设置源</span>
+<span class="token comment">#官方源</span>
+yum-config-manager <span class="token punctuation">\</span>
+--add-repo <span class="token punctuation">\</span>
+https://download.docker.com/linux/centos/docker-ce.repo
+     
+<span class="token comment">#阿里源（建议使用）</span>
+yum-config-manager <span class="token punctuation">\</span>
+--add-repo <span class="token punctuation">\</span>
+https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+ 
+ 
+<span class="token comment"># 4.安装Docker CE</span>
+yum <span class="token function">install</span> -y docker-ce    
+ 
+<span class="token comment"># 4.或者安装指定版本</span>
+yum list docker-ce --showduplicates <span class="token operator">|</span> <span class="token function">sort</span> -r
+yum <span class="token function">install</span> -y docker-ce-17.12.1.ce-1.el7.centos
+</code></pre></div><ol start="4"><li>启动<code>Docker</code>并设置开机运行</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>systemctl start docker
+systemctl <span class="token builtin class-name">enable</span> docker
+systemctl status docker
+</code></pre></div><ol start="5"><li>常见问题</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>WARINING提示：
+WARNING: bridge-nf-call-iptables is disabled
+WARNING: bridge-nf-call-ip6tables is disabled
+ 
+<span class="token comment">#解决方案   </span>
+<span class="token function">cat</span> <span class="token operator">&lt;&lt;</span>EOF <span class="token operator">&gt;</span>  /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables <span class="token operator">=</span> <span class="token number">1</span>
+net.bridge.bridge-nf-call-iptables <span class="token operator">=</span> <span class="token number">1</span>
+EOF
+ 
+sysctl --system
+</code></pre></div><h2 id="_4-其他准备工作"><a href="#_4-其他准备工作" class="header-anchor">#</a> 4.其他准备工作</h2> <ol><li>关闭防火墙</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>systemctl stop firewalld.service
+systemctl stop iptables.service
+systemctl disable firewalld.service
+systemctl disable iptables.service
+</code></pre></div><ol start="2"><li>禁用<code>SELINUX</code></li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#临时关闭：</span>
+setenforce <span class="token number">0</span>            
+   
+<span class="token comment">#永久关闭：</span>
+<span class="token function">vim</span> /etc/selinux/config
+<span class="token assign-left variable">SELINUX</span><span class="token operator">=</span>disabled
+</code></pre></div><ol start="3"><li>禁用<code>swap</code>设备（影响性能，<code>k8s</code>集群初始化会报错）</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#临时禁用</span>
+swapoff  -a
+    
+<span class="token comment">#永久禁用</span>
+Vim  /etc/fstab 
+注释 /dev/mapper/VolGroup-lv_swap swap 所在的行
+</code></pre></div><ol start="4"><li>启用<code>ipvs</code>内核模块 创建内核模块载入相关的脚本文件<code>/etc/sysconfig/modules/ipvs.modules</code>，设定自动载入的内核模块。文件内容如下(用到再配置也可以)</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token shebang important">#!/bin/bash</span>
+<span class="token assign-left variable">ipvs_mods_dir</span><span class="token operator">=</span><span class="token string">&quot;/usr/lib/modules/<span class="token variable"><span class="token variable">$(</span><span class="token function">uname</span> -r<span class="token variable">)</span></span>/kernel/net/netfilter/ipvs&quot;</span>
+<span class="token keyword">for</span> <span class="token for-or-select variable">i</span> <span class="token keyword">in</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">ls</span> $ipvs_mods_dir <span class="token operator">|</span> <span class="token function">grep</span> -o <span class="token string">&quot;^[^.]*&quot;</span><span class="token variable">)</span></span><span class="token punctuation">;</span> <span class="token keyword">do</span>
+    /sbin/modinfo -F filename <span class="token variable">$i</span>  <span class="token operator">&amp;&gt;</span> /dev/null
+    <span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token variable">$?</span> -eq <span class="token number">0</span> <span class="token punctuation">]</span><span class="token punctuation">;</span> <span class="token keyword">then</span>
+        /sbin/modprobe <span class="token variable">$i</span>
+    <span class="token keyword">fi</span>
+<span class="token keyword">done</span>
+    
+<span class="token comment"># 赋权、运行并检查    </span>
+<span class="token function">chmod</span> +x /etc/sysconfig/modules/ipvs.modules
+/etc/sysconfig/modules/ipvs.modules
+lsmod <span class="token operator">|</span><span class="token function">grep</span> ip_vs
+</code></pre></div><ol start="5"><li><code>docker</code>文件配置（docker unit file： <code>/usr/lib/systemd/system/docker.service</code>）</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token assign-left variable">ExecStart</span><span class="token operator">=</span>/usr/bin/dockerd -H fd:// --containerd<span class="token operator">=</span>/run/containerd/containerd.sock
+<span class="token assign-left variable">ExecStartPost</span><span class="token operator">=</span>/usr/sbin/iptables -P FPRWARD ACCEPT
+<span class="token assign-left variable">ExecReload</span><span class="token operator">=</span>/bin/kill -s HUP <span class="token variable">$MAINPID</span>
+<span class="token assign-left variable">TimeoutSe</span><span class="token operator">=</span><span class="token number">0</span>
+<span class="token assign-left variable">RestartSec</span><span class="token operator">=</span><span class="token number">2</span>
+<span class="token assign-left variable">Restart</span><span class="token operator">=</span>always
+    
+systemctl daemon-reload
+systemctl restart docker
+    
+<span class="token comment">#变量查看</span>
+docker info
+</code></pre></div><h2 id="_5-使用kubeadm部署k8s集群"><a href="#_5-使用kubeadm部署k8s集群" class="header-anchor">#</a> 5.使用Kubeadm部署k8s集群</h2> <ol><li>首先安装k8s相关软件包。
+<a href="https://mirrors.aliyun.com/" target="_blank" rel="noopener noreferrer">阿里云镜像仓库<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>配置如下所示：</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token builtin class-name">cd</span> /etc/yum.repos.d/
+<span class="token function">vi</span> k8s.repo
+    
+<span class="token punctuation">[</span>kubernetes<span class="token punctuation">]</span>
+<span class="token assign-left variable">name</span><span class="token operator">=</span>Kubernetes Repository
+<span class="token assign-left variable">baseurl</span><span class="token operator">=</span>https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
+<span class="token assign-left variable">gpgcheck</span><span class="token operator">=</span><span class="token number">1</span>
+<span class="token assign-left variable">gpgkey</span><span class="token operator">=</span>https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+      https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
+</code></pre></div><ol start="2"><li>仓库载入情况检查</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>yum repolist
+    
+<span class="token punctuation">[</span>root@centos-1 yum.repos.d<span class="token punctuation">]</span><span class="token comment"># yum list all |grep &quot;^kube&quot;</span>
+kubeadm.x86_64                              <span class="token number">1.16</span>.3-0                   kubernetes
+kubectl.x86_64                              <span class="token number">1.16</span>.3-0                   kubernetes
+kubelet.x86_64                              <span class="token number">1.16</span>.3-0                   kubernetes
+kubernetes.x86_64                           <span class="token number">1.5</span>.2-0.7.git269f928.el7   extras   
+kubernetes-client.x86_64                    <span class="token number">1.5</span>.2-0.7.git269f928.el7   extras   
+kubernetes-cni.x86_64                       <span class="token number">0.7</span>.5-0                    kubernetes
+kubernetes-master.x86_64                    <span class="token number">1.5</span>.2-0.7.git269f928.el7   extras   
+kubernetes-node.x86_64                      <span class="token number">1.5</span>.2-0.7.git269f928.el7   extras 
+</code></pre></div><ol start="3"><li>使用<code>yum</code>安装<code>kubeadm</code> 、<code>kubectl</code>和<code>kubelet</code></li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>    yum <span class="token function">install</span> kubeadm  kubectl kubelet
+
+</code></pre></div><ol start="4"><li>检查相关软件包是否完整</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@centos-1 yum.repos.d<span class="token punctuation">]</span><span class="token comment"># rpm -ql kubelet</span>
+/etc/kubernetes/manifests
+/etc/sysconfig/kubelet
+/usr/bin/kubelet
+/usr/lib/systemd/system/kubelet.service
+</code></pre></div><ol start="5"><li>配置<code>kubelet</code>,<code>swap</code>处于启用状态时，不要报错(如果上面配置了关闭<code>swap</code>，可省略)</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>     <span class="token function">vim</span> /etc/sysconfig/kubelet
+     <span class="token assign-left variable">KUBELET_EXTRA_ARG</span><span class="token operator">=</span>&quot;--fail-swap-on<span class="token operator">=</span>false”
+
+</code></pre></div><ol start="6"><li>初始化集群(<code>Master</code>节点)</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#集群镜像获取</span>
+https://www.jianshu.com/p/8bc61078bded
+    
+kubeadm config print init-defaults --kubeconfig ClusterConfiguration <span class="token operator">&gt;</span> kubeadm.yml
+kubeadm config images pull
+    
+<span class="token comment">#方式一:命令行(--dry-run：试运行，不会有改动)</span>
+kubeadm init --kubernetes-version<span class="token operator">=</span>v1.16.0 --pod-network-cidr<span class="token operator">=</span><span class="token string">&quot;10.244.0.0/16&quot;</span>  --dry-run
+    
+<span class="token comment">#方式二：Yml配置文件，使用—config string</span>
+
+
+<span class="token comment">#集群初始化完毕后，创建用户（最好用普通账号创建）：</span>
+<span class="token function">mkdir</span> -p <span class="token environment constant">$HOME</span>/.kube
+    
+<span class="token comment">#切换至Root用户操作：</span>
+<span class="token function">sudo</span> <span class="token function">cp</span> -i /etc/kubernetes/admin.conf <span class="token environment constant">$HOME</span>/.kube/config<span class="token punctuation">(</span>主配置文件，至关重要，不能泄露<span class="token punctuation">)</span>
+<span class="token function">sudo</span> <span class="token function">chown</span> <span class="token variable"><span class="token variable">$(</span><span class="token function">id</span> -u<span class="token variable">)</span></span><span class="token builtin class-name">:</span><span class="token variable"><span class="token variable">$(</span><span class="token function">id</span> -g<span class="token variable">)</span></span> <span class="token environment constant">$HOME</span>/.kube/config
+    
+<span class="token comment">#集成flannel插件，并观察</span>
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+    
+<span class="token comment">#Pod情况查看：</span>
+kubectl get pods -n kube-system
+    
+<span class="token comment">#集群初始化完毕</span>
+kubectl get nodes
+</code></pre></div><ol start="7"><li>Node节点</li></ol> <ul><li>从主节点复制<code>repo</code>配置到对应<code>node</code>节点上：</li></ul> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token function">scp</span> k8s.repo node01:/etc/yum.repos.d/
+<span class="token function">scp</span> /etc/sysconfig/kubelet  node01:/etc/sysconfig
+<span class="token function">scp</span> k8s.repo node02:/etc/yum.repos.d/
+<span class="token function">scp</span> /etc/sysconfig/kubelet  node02:/etc/sysconfig
+<span class="token function">scp</span>  /run/flannel/subnet.env node01: /run/flannel/subnet.env
+<span class="token function">scp</span>  /run/flannel/subnet.env node02: /run/flannel/subnet.env
+</code></pre></div><ol start="8"><li>在主节点打包<code>node</code>所需镜像，并<code>scp</code>到各<code>node</code>节点</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>docker save -o k8s-node.tar k8s.gcr.io/coredns quay.io/coreos/flannel k8s.gcr.io/pause
+<span class="token function">scp</span> k8s-node.tar node01:/
+<span class="token function">scp</span> k8s-node.tar node02:/
+</code></pre></div><ol start="9"><li><code>Node</code>节点：</li></ol> <ul><li>加载镜像( <code>coredns</code>、 <code>flannel</code>、 <code>pause</code>)：<div class="language-bash extra-class"><pre class="language-bash"><code> <span class="token builtin class-name">cd</span> / <span class="token operator">&amp;&amp;</span> docker load —input k8s-node.tar
+ yum <span class="token function">install</span> kubelet kubeadm    
+</code></pre></div></li> <li>添加集群。注意这个token是第六步初始化集群给你的，用于<code>node</code>节点加入节点时候用的。<div class="language-bash extra-class"><pre class="language-bash"><code>kubeadm <span class="token function">join</span> <span class="token number">192.168</span>.0.104:6443 --token z9kmma.p8ak2ffytr7gjnsv <span class="token punctuation">\</span>
+--discovery-token-ca-cert-hash sha256:82ee3a673e99fa8f46a8f515fa430819b595d532f3fcb21d9c3114f3394b4b0d 
+</code></pre></div></li></ul> <ol start="10"><li>部署完毕，并检查集群状态（<code>Master</code>），此时一个基础的kubernetes集群已经构建完成了。</li></ol> <div class="language-bash extra-class"><pre class="language-bash"><code>kubectl get nodes
+NAME              STATUS   ROLES    AGE   VERSION    
+centos-1.shared   Ready    master   41m   v1.16.3
+centos-2.shared   Ready    <span class="token operator">&lt;</span>none<span class="token operator">&gt;</span>   19m   v1.16.3
+centos-3.shared   Ready    <span class="token operator">&lt;</span>none<span class="token operator">&gt;</span>   18m   v1.16.3
+</code></pre></div><h2 id="_6-参考文档"><a href="#_6-参考文档" class="header-anchor">#</a> 6.参考文档</h2> <p>官方文档：https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/</p></div> <footer class="page-edit"><div class="edit-link"><a href="https://github.com/Aaron1989/CloudNativeNotes/edit/master/docs/Kubernetes/3.使用Kubeadm部署k8s集群/index.md" target="_blank" rel="noopener noreferrer">在 GitHub 上编辑此页</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></div> <div class="last-updated"><span class="prefix">上次更新:</span> <span class="time">12/31/2019, 9:35:06 PM</span></div></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/CloudNativeNotes/assets/js/app.c1070463.js" defer></script><script src="/CloudNativeNotes/assets/js/2.6ea23a4f.js" defer></script><script src="/CloudNativeNotes/assets/js/31.9fb204ed.js" defer></script>
+  </body>
+</html>

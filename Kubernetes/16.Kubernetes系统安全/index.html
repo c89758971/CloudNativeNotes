@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>1.实际演练:新证书、新用户和新集群 | CloudNativeNotes</title>
+    <meta name="description" content="Vuepress blog demo">
+    
+    
+    <link rel="preload" href="/CloudNativeNotes/assets/css/0.styles.7bebe62c.css" as="style"><link rel="preload" href="/CloudNativeNotes/assets/js/app.c1070463.js" as="script"><link rel="preload" href="/CloudNativeNotes/assets/js/2.6ea23a4f.js" as="script"><link rel="preload" href="/CloudNativeNotes/assets/js/16.6733f10e.js" as="script"><link rel="prefetch" href="/CloudNativeNotes/assets/js/10.f683548e.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/11.9b2223ea.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/12.3d0adbb0.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/13.24d3d2d6.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/14.fb7baf12.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/15.eb690184.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/17.5cea8e35.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/18.72d80979.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/19.1d75c5a7.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/20.5d1c5bdc.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/21.0d03d3c8.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/22.781cc661.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/23.da24d4a5.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/24.64806e3e.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/25.f48de550.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/26.e94508f2.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/27.13277697.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/28.daef1e27.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/29.6a2b975d.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/3.a99930e0.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/30.10d3ea34.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/31.9fb204ed.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/32.0b73c47c.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/33.e496dee3.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/34.9afa7698.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/35.1af9afd5.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/36.647a0f69.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/37.73629427.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/38.147eec58.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/39.a011e2e7.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/4.3ff2fe10.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/40.f5d50c60.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/41.12a538ad.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/42.bc7be63b.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/43.509cb678.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/44.f3cbf9dd.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/45.0c6478d7.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/46.122aa56e.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/47.78053982.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/48.abeefd62.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/49.b2619eaf.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/5.d3507002.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/50.f9be5e46.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/51.70801648.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/52.3ddd65d3.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/53.968a532f.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/6.a9535db6.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/7.b77fe9cf.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/8.2c03d1fa.js"><link rel="prefetch" href="/CloudNativeNotes/assets/js/9.836f7399.js">
+    <link rel="stylesheet" href="/CloudNativeNotes/assets/css/0.styles.7bebe62c.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/CloudNativeNotes/" class="home-link router-link-active"><!----> <span class="site-name">CloudNativeNotes</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/CloudNativeNotes/" class="nav-link">Home</a></div><div class="nav-item"><a href="/CloudNativeNotes/Docker/1.Dockerfile使用总结/" class="nav-link">Docker</a></div><div class="nav-item"><a href="/CloudNativeNotes/Kubernetes/1.Kubernetes基础/" class="nav-link">Kubernetes</a></div><div class="nav-item"><a href="/CloudNativeNotes/istio/1.Service Mesh简介/" class="nav-link">Istio</a></div><div class="nav-item"><a href="/CloudNativeNotes/Ceph/1.简介/" class="nav-link">Ceph</a></div><div class="nav-item"><a href="/CloudNativeNotes/Prometheus/" class="nav-link">Prometheus</a></div> <a href="https://github.com/Aaron1989/CloudNativeNotes" target="_blank" rel="noopener noreferrer" class="repo-link">
+    My GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/CloudNativeNotes/" class="nav-link">Home</a></div><div class="nav-item"><a href="/CloudNativeNotes/Docker/1.Dockerfile使用总结/" class="nav-link">Docker</a></div><div class="nav-item"><a href="/CloudNativeNotes/Kubernetes/1.Kubernetes基础/" class="nav-link">Kubernetes</a></div><div class="nav-item"><a href="/CloudNativeNotes/istio/1.Service Mesh简介/" class="nav-link">Istio</a></div><div class="nav-item"><a href="/CloudNativeNotes/Ceph/1.简介/" class="nav-link">Ceph</a></div><div class="nav-item"><a href="/CloudNativeNotes/Prometheus/" class="nav-link">Prometheus</a></div> <a href="https://github.com/Aaron1989/CloudNativeNotes" target="_blank" rel="noopener noreferrer" class="repo-link">
+    My GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>写在最前面</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/start/1.%E9%98%85%E8%AF%BB%E6%8C%87%E5%BC%95/" class="sidebar-link">写在最前面</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>Docker篇</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/Docker/1.Dockerfile%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/" class="sidebar-link">Dockerfile使用总结</a></li><li><a href="/CloudNativeNotes/Docker/2.%E7%A7%81%E6%9C%89%E4%BB%93%E5%BA%93%E5%92%8C%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6/" class="sidebar-link">私有仓库和资源限制</a></li><li><a href="/CloudNativeNotes/Docker/3.Docker%20Compose%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/" class="sidebar-link">Docker Compose基础应用</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>Kubernetes篇</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/Kubernetes/1.Kubernetes%E5%9F%BA%E7%A1%80/" class="sidebar-link">Kubernetes基础</a></li><li><a href="/CloudNativeNotes/Kubernetes/2.Kubernetes%E5%9F%BA%E7%A1%80%E5%92%8C%E9%83%A8%E7%BD%B2%E8%AF%B4%E6%98%8E/" class="sidebar-link">Kubernetes基础和部署说明</a></li><li><a href="/CloudNativeNotes/Kubernetes/3.%E4%BD%BF%E7%94%A8Kubeadm%E9%83%A8%E7%BD%B2k8s%E9%9B%86%E7%BE%A4/" class="sidebar-link">使用Kubeadm部署k8s集群</a></li><li><a href="/CloudNativeNotes/Kubernetes/4.Kubernetes%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/" class="sidebar-link">Kubernetes快速入门</a></li><li><a href="/CloudNativeNotes/Kubernetes/5.Pod%E8%B5%84%E6%BA%90%E6%B8%85%E5%8D%95%E9%85%8D%E7%BD%AE%E5%9F%BA%E7%A1%80/" class="sidebar-link">Pod资源清单配置基础</a></li><li><a href="/CloudNativeNotes/Kubernetes/6.Pod%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="sidebar-link">Pod资源管理</a></li><li><a href="/CloudNativeNotes/Kubernetes/7.Pod%E6%8E%A7%E5%88%B6%E5%99%A8-Deployment/" class="sidebar-link">Pod控制器-Deployment</a></li><li><a href="/CloudNativeNotes/Kubernetes/8.Pod%E6%8E%A7%E5%88%B6%E5%99%A8-DaemonSet/" class="sidebar-link">Pod控制器-DaemonSet</a></li><li><a href="/CloudNativeNotes/Kubernetes/9.Pod%E6%8E%A7%E5%88%B6%E5%99%A8-Job/" class="sidebar-link">Pod控制器-Job</a></li><li><a href="/CloudNativeNotes/Kubernetes/10.Service%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" class="sidebar-link">Service资源管理</a></li><li><a href="/CloudNativeNotes/Kubernetes/11.Ingress%E8%B5%84%E6%BA%90/" class="sidebar-link">Ingress资源</a></li><li><a href="/CloudNativeNotes/Kubernetes/12.Volume%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/" class="sidebar-link">Volume基础应用源</a></li><li><a href="/CloudNativeNotes/Kubernetes/13.ConfigMap%E8%B5%84%E6%BA%90/" class="sidebar-link">ConfigMap资源</a></li><li><a href="/CloudNativeNotes/Kubernetes/14.Secret%E8%B5%84%E6%BA%90/" class="sidebar-link">Secret资源</a></li><li><a href="/CloudNativeNotes/Kubernetes/15.StatefulSet%E8%B5%84%E6%BA%90/" class="sidebar-link">StatefulSet资源</a></li><li><a href="/CloudNativeNotes/Kubernetes/16.Kubernetes%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/" class="active sidebar-link">Kubernetes系统安全</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/16.Kubernetes%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/#_1-实际演练-新证书、新用户和新集群" class="sidebar-link">1.实际演练:新证书、新用户和新集群</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/16.Kubernetes%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/#_2-rbac" class="sidebar-link">2.RBAC</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/16.Kubernetes%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/#_3-常用策略" class="sidebar-link">3.常用策略</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/16.Kubernetes%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/#_1-role-rolebinding" class="sidebar-link">1.Role+RoleBinding</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/16.Kubernetes%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/#_2-clusterrole-clusterrolebinding" class="sidebar-link">2.ClusterRole+ClusterRoleBinding</a></li><li class="sidebar-sub-header"><a href="/CloudNativeNotes/Kubernetes/16.Kubernetes%E7%B3%BB%E7%BB%9F%E5%AE%89%E5%85%A8/#_3-clusterrole-rolebinding" class="sidebar-link">3.ClusterRole+RoleBinding</a></li></ul></li></ul></li><li><a href="/CloudNativeNotes/Kubernetes/17.Dashboard/" class="sidebar-link">Dashboard</a></li><li><a href="/CloudNativeNotes/Kubernetes/18.%E5%87%86%E5%85%A5%E6%8E%A7%E5%88%B6%E5%99%A8/" class="sidebar-link">准入控制器</a></li><li><a href="/CloudNativeNotes/Kubernetes/19.%E7%BD%91%E7%BB%9C%E6%8F%92%E4%BB%B6%E4%BD%93%E7%B3%BB/" class="sidebar-link">网络插件体系</a></li><li><a href="/CloudNativeNotes/Kubernetes/20.Network-Policy/" class="sidebar-link">Network-Policy</a></li><li><a href="/CloudNativeNotes/Kubernetes/21.%E8%B0%83%E5%BA%A6%E5%99%A8%E4%B8%8E%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6/" class="sidebar-link">调度器与调度机制</a></li><li><a href="/CloudNativeNotes/Kubernetes/22.%E9%AB%98%E7%BA%A7%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6/" class="sidebar-link">高级调度机制</a></li><li><a href="/CloudNativeNotes/Kubernetes/23.%E6%B1%A1%E7%82%B9%E5%92%8C%E5%AE%B9%E5%BF%8D%E5%BA%A6/" class="sidebar-link">污点和容忍度</a></li><li><a href="/CloudNativeNotes/Kubernetes/24.%E4%BD%BF%E7%94%A8CRD%E6%89%A9%E5%B1%95Kubernetes-API/" class="sidebar-link">使用CRD扩展Kubernetes-API</a></li><li><a href="/CloudNativeNotes/Kubernetes/25.HPA%E6%8E%A7%E5%88%B6%E5%99%A8/" class="sidebar-link">HPA控制器</a></li><li><a href="/CloudNativeNotes/Kubernetes/26.Helm%E5%9F%BA%E7%A1%80/" class="sidebar-link">Helm基础</a></li><li><a href="/CloudNativeNotes/Kubernetes/27.Helm%E4%BD%BF%E7%94%A8%E8%BF%9B%E9%98%B6/" class="sidebar-link">Helm使用进阶</a></li><li><a href="/CloudNativeNotes/Kubernetes/28.%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E9%AB%98%E5%8F%AF%E7%94%A8k8s%E9%9B%86%E7%BE%A4/" class="sidebar-link">二进制部署高可用k8s集群阶</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>Istio篇</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/istio/1.Service%20Mesh%E7%AE%80%E4%BB%8B/" class="sidebar-link">Service Mesh简介</a></li><li><a href="/CloudNativeNotes/istio/2.%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E5%9F%BA%E7%A1%80/" class="sidebar-link">微服务和服务治理基础</a></li><li><a href="/CloudNativeNotes/istio/3.Envoy%E5%9F%BA%E7%A1%80/" class="sidebar-link">Envoy基础</a></li><li><a href="/CloudNativeNotes/istio/4.Envoy%E9%83%A8%E7%BD%B2%E7%B1%BB%E5%9E%8B/" class="sidebar-link">Envoy部署类型</a></li><li><a href="/CloudNativeNotes/istio/5.Envoy%E9%85%8D%E7%BD%AE%E6%96%B9%E5%BC%8F/" class="sidebar-link">Envoy配置方式</a></li><li><a href="/CloudNativeNotes/istio/6.Envoy%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8_1/" class="sidebar-link">Envoy使用入门_1</a></li><li><a href="/CloudNativeNotes/istio/7.Envoy%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8_2/" class="sidebar-link">Envoy使用入门_2</a></li><li><a href="/CloudNativeNotes/istio/8.Envoy%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8_3/" class="sidebar-link">Envoy使用入门_3</a></li><li><a href="/CloudNativeNotes/istio/9.Envoy%E7%AE%A1%E7%90%86%E6%8E%A5%E5%8F%A3%E5%9F%BA%E7%A1%80%E5%BA%94%E7%94%A8/" class="sidebar-link">Envoy管理接口基础应用</a></li><li><a href="/CloudNativeNotes/istio/10.Envoy%E7%BB%BC%E5%90%88%E7%A4%BA%E4%BE%8B_FrontProxy/" class="sidebar-link">Envoy综合示例_FrontProxy</a></li><li><a href="/CloudNativeNotes/istio/11.xDS%20API%E5%8F%8A%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE_1/" class="sidebar-link">xDS API及动态配置_1</a></li><li><a href="/CloudNativeNotes/istio/12.xDS%20API%E5%8F%8A%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE_2/" class="sidebar-link">xDS API及动态配置_2</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>Ceph篇</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/Ceph/1.%E7%AE%80%E4%BB%8B/" class="sidebar-link">综述</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>Prometheus篇</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/CloudNativeNotes/Prometheus/" class="sidebar-link">综述</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h2 id="_1-实际演练-新证书、新用户和新集群"><a href="#_1-实际演练-新证书、新用户和新集群" class="header-anchor">#</a> 1.实际演练:新证书、新用户和新集群</h2> <ol><li><p>生成私钥<code>ilinux.crt</code></p> <div class="language-bash extra-class"><pre class="language-bash"><code>openssl genrsa -out ilinux.crt <span class="token number">2048</span>
+</code></pre></div></li> <li><p>生成证书签名请求文件<code>ilinux.csr</code></p> <div class="language-bash extra-class"><pre class="language-bash"><code>openssl req -new -key ilinux.key -out ilinux.csr -subj <span class="token string">&quot;/CN=ilinux/O=kubeusers&quot;</span>
+</code></pre></div></li> <li><p>使用<code>k8s</code>的<code>ca.crt</code>和<code>ca.key</code>进行签名生成证书<code>ilinux.crt</code>，有效期为<code>365</code>天</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@centos-1 pki<span class="token punctuation">]</span><span class="token comment"># openssl x509 -req -in ilinux.csr -CA ./ca.crt -CAkey ./ca.key -CAcreateserial -out ilinux.crt -days 365</span>
+Signature ok
+<span class="token assign-left variable">subject</span><span class="token operator">=</span>/CN<span class="token operator">=</span>ilinux/O<span class="token operator">=</span>kubeusers
+Getting CA Private Key
+</code></pre></div></li> <li><p>设置新集群（<code>mykube</code>），指明<code>apiserver</code>地址，<code>k8s</code>证书路径和隐藏证书，并保存在（<code>/tmp/ilinux.kubeconfig</code>）</p> <div class="language-bash extra-class"><pre class="language-bash"><code>kubectl config set-cluster mykube --server<span class="token operator">=</span><span class="token string">&quot;https://192.168.0.104:6443&quot;</span> --certificate-authority<span class="token operator">=</span>/etc/kubernetes/pki/ca.crt --embed-certs<span class="token operator">=</span>true --kubeconfig<span class="token operator">=</span>/tmp/ilinux.kubeconfig
+</code></pre></div></li> <li><p>查看集群,新集群已经创建成功</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@centos-1 ~<span class="token punctuation">]</span><span class="token comment"># kubectl config get-clusters </span>
+NAME
+mykube
+kubernetes
+</code></pre></div></li> <li><p>配置新集群权限，自定义权限名为<code>ilinux</code>，其中<code>username</code>需要和<code>ilinux.csr</code>的<code>CN</code>保持一致，<code>--embed-certs=true</code>表示需要打包存放</p> <div class="language-bash extra-class"><pre class="language-bash"><code>kubectl config set-credentials ilinux --client-certificate<span class="token operator">=</span>/etc/kubernetes/pki/ilinux.crt --client-key<span class="token operator">=</span>/etc/kubernetes/pki/ilinux.key --username<span class="token operator">=</span>ilinux --embed-certs<span class="token operator">=</span>true  --kubeconfig<span class="token operator">=</span>/tmp/ilinux.kubeconfig
+</code></pre></div></li> <li><p>配置<code>context</code>，并绑定上面设置的新集群名、用户名和自定义权限名，并保存在<code>/tmp/ilinux.kubeconfig</code></p> <div class="language-bash extra-class"><pre class="language-bash"><code>kubectl config set-context ilinux@mykube --cluster<span class="token operator">=</span>mykube --user<span class="token operator">=</span>ilinux  --kubeconfig<span class="token operator">=</span>/tmp/ilinux.kubeconfig
+</code></pre></div></li> <li><p>查询当前集群配置信息，发现新集群已经载入，但没有使用，当前读取的配置是<code>current-context: kubernetes-admin@kubernetes</code></p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@centos-1 ~<span class="token punctuation">]</span><span class="token comment"># kubectl config view</span>
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: DATA+OMITTED
+    server: https://192.168.0.104:6443
+  name: kubernetes
+- cluster:
+    certificate-authority-data: DATA+OMITTED
+    server: https://192.168.0.104:6443
+  name: mykube
+contexts:
+- context:
+    cluster: mykube
+    user: ilinux
+  name: ilinux@mykube
+- context:
+    cluster: kubernetes
+    user: kubernetes-admin
+  name: kubernetes-admin@kubernetes
+current-context: kubernetes-admin@kubernetes
+kind: Config
+preferences: <span class="token punctuation">{</span><span class="token punctuation">}</span>
+users:
+- name: ilinux
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
+    username: ilinux
+- name: kubernetes-admin
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
+
+</code></pre></div></li> <li><p>切换<code>use-context ilinux@mykube</code>，发现已经没有查询<code>pod</code>的权限了</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@centos-1 tmp<span class="token punctuation">]</span><span class="token comment"># kubectl get pods</span>
+NAME                     READY   STATUS    RESTARTS   AGE
+ngx-new-cb79d555-hfc7h   <span class="token number">1</span>/1     Running   <span class="token number">0</span>          9d
+   
+<span class="token punctuation">[</span>root@centos-1 tmp<span class="token punctuation">]</span><span class="token comment"># kubectl config use-context ilinux@mykube</span>
+Switched to context <span class="token string">&quot;ilinux@mykube&quot;</span><span class="token builtin class-name">.</span>
+<span class="token punctuation">[</span>root@centos-1 tmp<span class="token punctuation">]</span><span class="token comment"># kubectl get pods</span>
+Error from server <span class="token punctuation">(</span>Forbidden<span class="token punctuation">)</span>: pods is forbidden: User <span class="token string">&quot;ilinux&quot;</span> cannot list resource <span class="token string">&quot;pods&quot;</span> <span class="token keyword">in</span> API group <span class="token string">&quot;&quot;</span> <span class="token keyword">in</span> the namespace <span class="token string">&quot;default&quot;</span>
+
+</code></pre></div></li> <li><p>这时候，再切换成管理员账号，发现一切正常</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@centos-1 tmp<span class="token punctuation">]</span><span class="token comment"># kubectl config use-context         kubernetes-admin@kubernetes</span>
+Switched to context <span class="token string">&quot;kubernetes-admin@kubernetes&quot;</span><span class="token builtin class-name">.</span>
+<span class="token punctuation">[</span>root@centos-1 tmp<span class="token punctuation">]</span><span class="token comment"># kubectl get pods</span>
+NAME                     READY   STATUS    RESTARTS   AGE
+ngx-new-cb79d555-hfc7h   <span class="token number">1</span>/1     Running   <span class="token number">0</span>          9d
+
+</code></pre></div></li> <li><p>我们还可以使用，位置参数的方式，使用自定义配置文件进行用户权限的切换</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@centos-1 tmp<span class="token punctuation">]</span><span class="token comment"># kubectl config view --kubeconfig=/tmp/ilinux.kubeconfig</span>
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: DATA+OMITTED
+    server: https://192.168.0.104:6443
+  name: mykube
+contexts:
+- context:
+    cluster: mykube
+    user: ilinux
+  name: ilinux@mykube
+current-context: <span class="token string">&quot;&quot;</span>
+kind: Config
+preferences: <span class="token punctuation">{</span><span class="token punctuation">}</span>
+users:
+- name: ilinux
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
+    username: ilinux
+    
+<span class="token punctuation">[</span>root@centos-1 tmp<span class="token punctuation">]</span><span class="token comment"># kubectl config use-context ilinux@mykube --kubeconfig=/tmp/ilinux.kubeconfig</span>
+Switched to context <span class="token string">&quot;ilinux@mykube&quot;</span><span class="token builtin class-name">.</span>
+    
+<span class="token punctuation">[</span>root@centos-1 tmp<span class="token punctuation">]</span><span class="token comment"># kubectl get pods --kubeconfig=/tmp/ilinux.kubeconfig</span>
+Error from server <span class="token punctuation">(</span>Forbidden<span class="token punctuation">)</span>: pods is forbidden: User <span class="token string">&quot;ilinux&quot;</span> cannot list resource <span class="token string">&quot;pods&quot;</span> <span class="token keyword">in</span> API group <span class="token string">&quot;&quot;</span> <span class="token keyword">in</span> the namespace <span class="token string">&quot;default&quot;</span>
+<span class="token punctuation">[</span>root@centos-1 tmp<span class="token punctuation">]</span><span class="token comment"># kubectl get pods </span>
+NAME                     READY   STATUS    RESTARTS   AGE
+ngx-new-cb79d555-hfc7h   <span class="token number">1</span>/1     Running   <span class="token number">0</span>          9d
+
+</code></pre></div></li></ol> <h2 id="_2-rbac"><a href="#_2-rbac" class="header-anchor">#</a> 2.RBAC</h2> <p>官方文档：</p> <p>https://kubernetes.io/docs/reference/access-authn-authz/rbac/</p> <ol><li><p>授权模型</p> <div class="language-text extra-class"><pre class="language-text"><code>基于节点：
+    Node：专用的授权插件，根据Pod对象调度的结果为Node进行授权
+    
+基于用户：
+    ABAC：1.17之前的策略，新版本已经默认使用RBAC
+    RBAC：赋予某个角色对于某个资源进行某种操作，其中角色可以是人也可以是组
+其他：
+    Webhook
+</code></pre></div></li> <li><p>当前<code>K8s</code>集群采用的集群策略查看(<code>Node+RBAC</code>)</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@centos-1 chapter10<span class="token punctuation">]</span><span class="token comment"># cat /etc/kubernetes/manifests/kube-apiserver.yaml </span>
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    component: kube-apiserver
+    tier: control-plane
+  name: kube-apiserver
+  namespace: kube-system
+spec:
+  containers:
+  - command:
+    - kube-apiserver
+    - --advertise-address<span class="token operator">=</span><span class="token number">192.168</span>.0.104
+    - --allow-privileged<span class="token operator">=</span>true
+    - --authorization-mode<span class="token operator">=</span>Node,RBAC
+
+</code></pre></div></li> <li><p>相关命令</p> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token comment">#名称空间级别权限和绑定</span>
+kubectl explain role  
+kubectl explain rolebinding
+   
+<span class="token comment">#集群级别权限和绑定</span>
+kubectl explain ClusterRole  
+kubectl explain ClusterRoleBinding
+   
+<span class="token comment">#策略详情查看</span>
+kubectl get role  view -o yaml
+kubectl get clusterrole  view -o yaml
+</code></pre></div></li></ol> <h2 id="_3-常用策略"><a href="#_3-常用策略" class="header-anchor">#</a> 3.常用策略</h2> <p>（以下所有操作都基于上面创建的<code>ilinux</code>用户进行，并且每个操作之前需要删除之前配置过的权限
+，否则会相互影响）</p> <h3 id="_1-role-rolebinding"><a href="#_1-role-rolebinding" class="header-anchor">#</a> 1.Role+RoleBinding</h3> <p>正常使用：某个名称空间级别的权限授权</p> <ul><li>编辑<code>role：res-reader.yaml</code></li></ul> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token key atrule">kind</span><span class="token punctuation">:</span> Role             <span class="token comment">#名称空间权限</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> rbac.authorization.k8s.io/v1
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> default         <span class="token comment">#只能读取default名称空间下的对应规则</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> res<span class="token punctuation">-</span>reader
+<span class="token key atrule">rules</span><span class="token punctuation">:</span>
+<span class="token punctuation">-</span> <span class="token key atrule">apiGroups</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">&quot;&quot;</span><span class="token punctuation">]</span>   <span class="token comment"># &quot;&quot; 表示核心群组：core API group</span>
+  <span class="token key atrule">resources</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">&quot;pods&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;pods/log&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;services&quot;</span><span class="token punctuation">]</span>
+  <span class="token key atrule">verbs</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">&quot;get&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;list&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;watch&quot;</span><span class="token punctuation">]</span>
+</code></pre></div><ul><li>编辑<code>rolebinding：ilinux-res-reader.yaml</code></li></ul> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token key atrule">kind</span><span class="token punctuation">:</span> RoleBinding                 <span class="token comment">#名称空间级别权限绑定;ClusterRoleBinding为集群级别的权限绑定</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> rbac.authorization.k8s.io/v1
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> ilinux<span class="token punctuation">-</span>res<span class="token punctuation">-</span>reader                   <span class="token comment">#增加可读性，命名规则：&lt;用户&gt;-&lt;权限&gt;</span>
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> default
+<span class="token key atrule">subjects</span><span class="token punctuation">:</span>
+<span class="token punctuation">-</span> <span class="token key atrule">kind</span><span class="token punctuation">:</span> User
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> ilinux
+  <span class="token key atrule">apiGroup</span><span class="token punctuation">:</span> rbac.authorization.k8s.io
+<span class="token key atrule">roleRef</span><span class="token punctuation">:</span>
+  <span class="token key atrule">kind</span><span class="token punctuation">:</span> Role
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> res<span class="token punctuation">-</span>reader
+  <span class="token key atrule">apiGroup</span><span class="token punctuation">:</span> rbac.authorization.k8s.io
+</code></pre></div><ul><li>依次<code>apply</code>配置文件，发现<code>ilinux</code>用户至在<code>default</code>名称空间下有对应<code>pods</code>, <code>pods/log</code>, <code>services</code>的对应权限，和预期一样</li></ul> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@centos-1 RBAC<span class="token punctuation">]</span><span class="token comment"># kubectl get pod --kubeconfig=/tmp/ilinux.kubeconfig </span>
+NAME                     READY   STATUS    RESTARTS   AGE
+ngx-new-cb79d555-hfc7h   <span class="token number">1</span>/1     Running   <span class="token number">0</span>          10d
+  
+<span class="token punctuation">[</span>root@centos-1 RBAC<span class="token punctuation">]</span><span class="token comment"># kubectl get service --kubeconfig=/tmp/ilinux.kubeconfig</span>
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT<span class="token punctuation">(</span>S<span class="token punctuation">)</span>   AGE
+kubernetes   ClusterIP   <span class="token number">10.96</span>.0.1    <span class="token operator">&lt;</span>none<span class="token operator">&gt;</span>        <span class="token number">443</span>/TCP   11d
+  
+<span class="token punctuation">[</span>root@centos-1 RBAC<span class="token punctuation">]</span><span class="token comment"># kubectl get service --kubeconfig=/tmp/ilinux.kubeconfig -n ingress-nginx</span>
+Error from server <span class="token punctuation">(</span>Forbidden<span class="token punctuation">)</span>: services is forbidden: User <span class="token string">&quot;ilinux&quot;</span> cannot list resource <span class="token string">&quot;services&quot;</span> <span class="token keyword">in</span> API group <span class="token string">&quot;&quot;</span> <span class="token keyword">in</span> the namespace <span class="token string">&quot;ingress-nginx&quot;</span>
+</code></pre></div><h3 id="_2-clusterrole-clusterrolebinding"><a href="#_2-clusterrole-clusterrolebinding" class="header-anchor">#</a> 2.ClusterRole+ClusterRoleBinding</h3> <p>正常使用：k8s集群级别的权限授权</p> <ul><li>编辑<code>ClusterRole：cluster-res-reader.yaml</code></li></ul> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token key atrule">kind</span><span class="token punctuation">:</span> ClusterRole             <span class="token comment">#集群范围权限</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> rbac.authorization.k8s.io/v1
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> cluster<span class="token punctuation">-</span>res<span class="token punctuation">-</span>reader
+<span class="token key atrule">rules</span><span class="token punctuation">:</span>
+<span class="token punctuation">-</span> <span class="token key atrule">apiGroups</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">&quot;&quot;</span><span class="token punctuation">]</span>   <span class="token comment"># &quot;&quot; 表示核心群组：core API group</span>
+  <span class="token key atrule">resources</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">&quot;pods&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;pods/log&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;services&quot;</span><span class="token punctuation">]</span>
+  <span class="token key atrule">verbs</span><span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">&quot;get&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;list&quot;</span><span class="token punctuation">,</span> <span class="token string">&quot;watch&quot;</span><span class="token punctuation">]</span>
+
+</code></pre></div><ul><li>编辑<code>ClusterRoleBinding：cluster-ilinux-res-reader.yaml</code></li></ul> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token key atrule">kind</span><span class="token punctuation">:</span> ClusterRoleBinding                  <span class="token comment">#ClusterRoleBinding为集群级别的权限绑定</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> rbac.authorization.k8s.io/v1
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> cluster<span class="token punctuation">-</span>ilinux<span class="token punctuation">-</span>res<span class="token punctuation">-</span>reader                   <span class="token comment">#增加可读性，命名规则：&lt;用户&gt;-&lt;权限&gt;</span>
+<span class="token key atrule">subjects</span><span class="token punctuation">:</span>
+<span class="token punctuation">-</span> <span class="token key atrule">kind</span><span class="token punctuation">:</span> User
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> ilinux
+  <span class="token key atrule">apiGroup</span><span class="token punctuation">:</span> rbac.authorization.k8s.io
+<span class="token key atrule">roleRef</span><span class="token punctuation">:</span>
+  <span class="token key atrule">kind</span><span class="token punctuation">:</span> ClusterRole
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> cluster<span class="token punctuation">-</span>res<span class="token punctuation">-</span>reader
+  <span class="token key atrule">apiGroup</span><span class="token punctuation">:</span> rbac.authorization.k8s.io
+</code></pre></div><ul><li>依次<code>apply</code>配置文件，并通过以下命令观察权限生成情况</li></ul> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@centos-1 RBAC<span class="token punctuation">]</span><span class="token comment"># kubectl get clusterrole</span>
+<span class="token punctuation">[</span>root@centos-1 RBAC<span class="token punctuation">]</span><span class="token comment"># kubectl get clusterrolebinding</span>
+</code></pre></div><ul><li>这时，我们发现<code>ilinux</code>用户已经具有集群级别（所有名称空间）的对应权限</li></ul> <div class="language-bash extra-class"><pre class="language-bash"><code><span class="token punctuation">[</span>root@centos-1 RBAC<span class="token punctuation">]</span><span class="token comment"># kubectl get service --kubeconfig=/tmp/ilinux.kubeconfig -n ingress-nginx</span>
+NAME                       TYPE       CLUSTER-IP      EXTERNAL-IP   PORT<span class="token punctuation">(</span>S<span class="token punctuation">)</span>                      AGE
+nginx-ingress-controller   NodePort   <span class="token number">10.99</span>.160.254   <span class="token operator">&lt;</span>none<span class="token operator">&gt;</span>        <span class="token number">80</span>:30080/TCP,443:30443/TCP   26h
+  
+<span class="token punctuation">[</span>root@centos-1 RBAC<span class="token punctuation">]</span><span class="token comment"># kubectl get service --kubeconfig=/tmp/ilinux.kubeconfig </span>
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT<span class="token punctuation">(</span>S<span class="token punctuation">)</span>   AGE
+kubernetes   ClusterIP   <span class="token number">10.96</span>.0.1    <span class="token operator">&lt;</span>none<span class="token operator">&gt;</span>        <span class="token number">443</span>/TCP   11d
+</code></pre></div><h3 id="_3-clusterrole-rolebinding"><a href="#_3-clusterrole-rolebinding" class="header-anchor">#</a> 3.ClusterRole+RoleBinding</h3> <p>交叉使用：其中<code>ClusterRole</code>策略会降级成<code>rolebinding</code>名称空间的策略，效果和<code>role+rolebinding</code>一样，
+好处就是在名称空间很多的时候，重复权限的配置文件会少一半，而且更灵活</p> <ul><li><p>使用上面的<code>ClusterRole</code>（<code>cluster-res-reader.yaml</code>），并<code>apply-f</code></p></li> <li><p>编辑<code>rolebinding</code>：<code>cluster-default-ilinux-res-reader.yaml</code></p></li></ul> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token key atrule">kind</span><span class="token punctuation">:</span> RoleBinding                 <span class="token comment">#名称空间级别权限绑定;ClusterRoleBinding为集群级别的权限绑定</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> rbac.authorization.k8s.io/v1
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> cluster<span class="token punctuation">-</span>default<span class="token punctuation">-</span>ilinux<span class="token punctuation">-</span>res<span class="token punctuation">-</span>reader                   <span class="token comment">#增加可读性，命名规则：&lt;用户&gt;-&lt;权限&gt;</span>
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> default
+<span class="token key atrule">subjects</span><span class="token punctuation">:</span>
+<span class="token punctuation">-</span> <span class="token key atrule">kind</span><span class="token punctuation">:</span> User
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> ilinux
+  <span class="token key atrule">apiGroup</span><span class="token punctuation">:</span> rbac.authorization.k8s.io
+<span class="token key atrule">roleRef</span><span class="token punctuation">:</span>
+  <span class="token key atrule">kind</span><span class="token punctuation">:</span> ClusterRole
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> cluster<span class="token punctuation">-</span>res<span class="token punctuation">-</span>reader
+  <span class="token key atrule">apiGroup</span><span class="token punctuation">:</span> rbac.authorization.k8s.io    
+</code></pre></div><ul><li>测试和预期一样，<code>ClusterRole</code>降级成<code>default</code>名称空间的权限了</li></ul> <div class="language-yaml extra-class"><pre class="language-yaml"><code><span class="token punctuation">[</span>root@centos<span class="token punctuation">-</span>1 RBAC<span class="token punctuation">]</span><span class="token comment"># kubectl get service --kubeconfig=/tmp/ilinux.kubeconfig </span>
+NAME         TYPE        CLUSTER<span class="token punctuation">-</span>IP   EXTERNAL<span class="token punctuation">-</span>IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1    &lt;none<span class="token punctuation">&gt;</span>        443/TCP   11d
+    
+<span class="token punctuation">[</span>root@centos<span class="token punctuation">-</span>1 RBAC<span class="token punctuation">]</span><span class="token comment"># kubectl get service --kubeconfig=/tmp/ilinux.kubeconfig  -n ingress-nginx</span>
+Error from server (Forbidden)<span class="token punctuation">:</span> services is forbidden<span class="token punctuation">:</span> User &quot;ilinux&quot; cannot list resource &quot;services&quot; in API group &quot;&quot; in the namespace &quot;ingress<span class="token punctuation">-</span>nginx&quot;
+</code></pre></div></div> <footer class="page-edit"><div class="edit-link"><a href="https://github.com/Aaron1989/CloudNativeNotes/edit/master/docs/Kubernetes/16.Kubernetes系统安全/index.md" target="_blank" rel="noopener noreferrer">在 GitHub 上编辑此页</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></div> <div class="last-updated"><span class="prefix">上次更新:</span> <span class="time">12/31/2019, 10:54:27 PM</span></div></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/CloudNativeNotes/assets/js/app.c1070463.js" defer></script><script src="/CloudNativeNotes/assets/js/2.6ea23a4f.js" defer></script><script src="/CloudNativeNotes/assets/js/16.6733f10e.js" defer></script>
+  </body>
+</html>
